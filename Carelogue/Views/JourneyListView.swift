@@ -7,6 +7,7 @@ struct JourneyListView: View {
     @Query(sort: \Journey.updatedAt, order: .reverse) private var journeys: [Journey]
 
     @State private var showingCreateSheet = false
+    @State private var showingProfile = false
     @State private var renamingJourney: Journey?
     @State private var renameText = ""
 
@@ -22,6 +23,13 @@ struct JourneyListView: View {
             .background(Theme.background)
             .navigationTitle("Journeys")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showingProfile = true
+                    } label: {
+                        Image(systemName: "person.crop.circle")
+                    }
+                }
                 if !journeys.isEmpty {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
@@ -37,6 +45,9 @@ struct JourneyListView: View {
             }
             .sheet(isPresented: $showingCreateSheet) {
                 JourneyCreationSheet()
+            }
+            .sheet(isPresented: $showingProfile) {
+                ProfileView()
             }
             .alert("重命名 Journey", isPresented: isRenamingBinding) {
                 TextField("名称", text: $renameText)
