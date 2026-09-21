@@ -6,9 +6,24 @@
 
 ---
 
+## T0 · 开工前（你手动，~10 分钟）
+
+1. Mac 上 clone 仓库：`git clone git@github.com:wenshen35105/carelogue.git`
+2. Xcode 新建 iOS App：名 `Carelogue`，Interface **SwiftUI**，Storage **SwiftData**，最低 iOS 17；保存到仓库根目录
+3. 在仓库根目录启动 Claude Code，粘贴这段作为第一句话：
+
+````text
+我已在 Xcode 建好空的 iOS 工程（SwiftUI + SwiftData，iOS 17，名 Carelogue），代码在本仓库根目录。
+请先读 CLAUDE.md、docs/mvp-spec.md、docs/m1-tasks.md、docs/design-review.md，然后：
+1. 用 3 句话复述：项目是什么、M1 目标、你的工作流程；
+2. 开始 T1：建立 Models / Views / Services / Resources 分组，模板文件归位；确认 .gitignore 覆盖 Xcode 产物；
+3. 按 CLAUDE.md 的收尾要求输出（改动清单 + Smoke 自测 + 5 行 Swift 概念）；
+4. 完成后停下，等我确认再做 T2。
+````
+
 ## T1 · 项目初始化（~3h）
-- **做**：Xcode 新建 iOS App（Interface: SwiftUI，Storage: SwiftData）；bundle id（如 `love.carelogue.app` 待定）；最低 iOS 17；建 Git 仓库 + 目录结构（`Models / Views / Services / Resources`）；CloudKit capability 先不勾（M1 纯本地跑通再说）
-- **验收**：`xcodebuild -version` 无误，模拟器能起空 App
+- **做**：（工程已在 T0 建好）建立目录分组 `Models / Views / Services / Resources`，模板文件归位；确认 .gitignore 覆盖 Xcode 产物；CloudKit capability 先不勾（M1 纯本地跑通再说）
+- **验收**：模拟器能起空 App；`git status` 干净
 - **学习点**：Xcode 工程结构、target、模拟器
 
 ## T2 · 数据模型 v1（~3h）
