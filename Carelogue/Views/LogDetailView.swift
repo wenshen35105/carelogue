@@ -52,12 +52,16 @@ struct LogDetailView: View {
         .navigationTitle("详情")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            // Both direct taps, not behind a menu: List -> Timeline card ->
+            // 编辑 is 3 taps total, matching the ≤3-tap edit requirement.
             ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Button("编辑", systemImage: "pencil") { showingEditor = true }
-                    Button("删除", systemImage: "trash", role: .destructive) { showingDeleteConfirm = true }
+                Button("编辑") { showingEditor = true }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(role: .destructive) {
+                    showingDeleteConfirm = true
                 } label: {
-                    Image(systemName: "ellipsis.circle")
+                    Image(systemName: "trash")
                 }
             }
         }
