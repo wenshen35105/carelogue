@@ -7,11 +7,13 @@ import SwiftData
 private enum TimelineItem: Identifiable {
     case log(Log)
     case measurementGroup(logs: [Log], anchorDate: Date)
+    case measurementRow(Log)
 
     var id: String {
         switch self {
         case .log(let log): return log.id.uuidString
-        case .measurementGroup(_, let anchorDate): return "measurement-\(anchorDate.timeIntervalSince1970)"
+        case .measurementGroup(_, let anchorDate): return "measurement-group-\(anchorDate.timeIntervalSince1970)"
+        case .measurementRow(let log): return "measurement-row-\(log.id.uuidString)"
         }
     }
 
@@ -19,12 +21,15 @@ private enum TimelineItem: Identifiable {
         switch self {
         case .log(let log): return log.occurredAt
         case .measurementGroup(_, let anchorDate): return anchorDate
+        case .measurementRow(let log): return log.occurredAt
         }
     }
 }
 
 /// P2 · Journey 时间线
 struct JourneyTimelineView: View {
+    @Environment(\.modelContext) private var modelContext
+
     let journey: Journey
 
     @State private var measurementExpanded = false
@@ -38,7 +43,17 @@ struct JourneyTimelineView: View {
         if let mostRecent = measurements.map(\.occurredAt).max() {
             items.append(.measurementGroup(logs: measurements, anchorDate: mostRecent))
         }
-        return items.sorted { $0.sortDate > $1.sortDate }
+        items.sort { $0.sortDate > $1.sortDate }
+
+        // Splice the expanded rows in right after the group header, as
+        // separate top-level list items so each one gets its own swipe area.
+        if measurementExpanded, let groupIndex = items.firstIndex(where: {
+            if case .measurementGroup = $0 { return true } else { return false }
+        }) {
+            let sorted = measurements.sorted { $0.occurredAt > $1.occurredAt }
+            items.insert(contentsOf: sorted.map { .measurementRow($0) }, at: groupIndex + 1)
+        }
+        return items
     }
 
     var body: some View {
@@ -97,24 +112,29 @@ struct JourneyTimelineView: View {
             NavigationLink(value: log) {
                 LogCard(log: log)
             }
+            .swipeActions(edge: .trailing) {
+                Button("删除", role: .destructive) { deleteLog(log) }
+            }
         case .measurementGroup(let logs, _):
-            VStack(spacing: 0) {
-                Button {
-                    withAnimation { measurementExpanded.toggle() }
-                } label: {
-                    MeasurementGroupCard(logs: logs, expanded: measurementExpanded)
-                }
-                .buttonStyle(.plain)
-
-                if measurementExpanded {
-                    ForEach(logs.sorted(by: { $0.occurredAt > $1.occurredAt })) { log in
-                        NavigationLink(value: log) {
-                            MeasurementRow(log: log)
-                        }
-                    }
-                }
+            Button {
+                withAnimation { measurementExpanded.toggle() }
+            } label: {
+                MeasurementGroupCard(logs: logs, expanded: measurementExpanded)
+            }
+            .buttonStyle(.plain)
+        case .measurementRow(let log):
+            NavigationLink(value: log) {
+                MeasurementRow(log: log)
+            }
+            .swipeActions(edge: .trailing) {
+                Button("删除", role: .destructive) { deleteLog(log) }
             }
         }
+    }
+
+    private func deleteLog(_ log: Log) {
+        modelContext.delete(log)
+        try? modelContext.save()
     }
 }
 
