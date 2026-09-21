@@ -10,6 +10,12 @@ struct LogDetailView: View {
 
     @State private var showingEditor = false
     @State private var showingDeleteConfirm = false
+    @State private var previewingArtifact: Artifact?
+    @State private var artifactPendingDelete: Artifact?
+
+    private var sortedArtifacts: [Artifact] {
+        log.artifacts.sorted { $0.createdAt < $1.createdAt }
+    }
 
     var body: some View {
         ScrollView {
@@ -44,6 +50,14 @@ struct LogDetailView: View {
                     }
                 }
 
+                if !log.artifacts.isEmpty {
+                    AttachmentGalleryCard(
+                        artifacts: sortedArtifacts,
+                        onOpen: { previewingArtifact = $0 },
+                        onDelete: { artifactPendingDelete = $0 }
+                    )
+                }
+
                 Spacer(minLength: 0)
             }
             .padding(20)
@@ -70,9 +84,28 @@ struct LogDetailView: View {
                 LogEditorView(journey: journey, kind: log.kind, existingLog: log)
             }
         }
+        .fullScreenCover(item: $previewingArtifact) { artifact in
+            AttachmentPreviewView(artifact: artifact) {
+                deleteArtifact(artifact)
+            }
+        }
+        .confirmationDialog(
+            "删除这份附件？",
+            isPresented: Binding(
+                get: { artifactPendingDelete != nil },
+                set: { if !$0 { artifactPendingDelete = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: artifactPendingDelete
+        ) { artifact in
+            Button("删除", role: .destructive) { deleteArtifact(artifact) }
+            Button("取消", role: .cancel) {}
+        } message: { _ in
+            Text("删除后无法恢复")
+        }
         .confirmationDialog("删除这条记录？", isPresented: $showingDeleteConfirm, titleVisibility: .visible) {
             Button("删除", role: .destructive) {
-                modelContext.delete(log)
+                modelContext.deleteLog(log)
                 try? modelContext.save()
                 dismiss()
             }
@@ -104,6 +137,15 @@ struct LogDetailView: View {
             }
         }
         .cardSurface()
+    }
+
+    /// Deleting the Artifact row also lets SwiftData drop its external-storage
+    /// file; the Log's relationship array updates on save.
+    private func deleteArtifact(_ artifact: Artifact) {
+        previewingArtifact = nil
+        modelContext.delete(artifact)
+        log.updatedAt = .now
+        try? modelContext.save()
     }
 
     private var hasLocationOrDoctor: Bool {

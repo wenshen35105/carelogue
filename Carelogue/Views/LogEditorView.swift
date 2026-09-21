@@ -354,7 +354,7 @@ struct LogEditorView: View {
 
     private func delete() {
         guard let existingLog else { return }
-        modelContext.delete(existingLog)
+        modelContext.deleteLog(existingLog)
         try? modelContext.save()
         dismiss()
     }

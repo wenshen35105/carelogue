@@ -195,7 +195,7 @@ struct JourneyTimelineView: View {
     }
 
     private func deleteLog(_ log: Log) {
-        modelContext.delete(log)
+        modelContext.deleteLog(log)
         try? modelContext.save()
     }
 }
