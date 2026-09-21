@@ -1,0 +1,125 @@
+# Carelogue — MVP Spec v0.1
+
+> 基于 product-brief v0.2 的术语与原则。
+> 状态：**v0.1 定稿**（2026-09-16）。技术栈已定：iOS 原生（SwiftUI + SwiftData + CloudKit）；AI：DeepSeek + 本地 OCR。
+
+## 1. MVP 定义（一句话）
+
+一个人、一台设备、一条真实 Journey 全流程跑通：**创建 → 记录 → 上传 → 解释**。
+
+## 2. 验收标准（拿它验收，不写"完成度"这种虚词）
+
+- A1：创建"孕期"Journey → 三种 Log（就诊 / 随手记 / 测量）各至少记录 2 条
+- A2：上传 1 份真实报告（照片或 PDF）→ 点"解释" → 得到：白话总结 + 术语卡 + 该问医生的问题
+- A3：产检当天，从预约到拿到报告，全流程不离开 app
+- A4：不需要任何教程；从启动页到任意核心功能 ≤ 3 次点击
+
+## 3. 页面与流程（3 + 1 个页面）
+
+**P1 · Journey 列表（启动页）**
+- 空状态 = Onboarding：wizard 两步（命名 → 选模板[孕期 / 拔牙 / 自定义]）
+- 列表项：名称 · 状态（进行中/已完成）· 最近活动 · Log 数
+- ＋ 新建 Journey
+
+**P2 · Journey 时间线（核心页）**
+- 按时间倒序的 Log 卡片流；图标区分 kind，卡片占一行：
+  - 就诊：类型 + 日期 + 地点（"面诊 · 10/3 · 圣迈克医院"）
+  - 随手记：首行文本（"晚上又开始腰酸"）
+  - 测量：**默认折叠进"测量"分组卡**（"测量 ×12 · 最近 68.5 kg"），点开是列表/简单曲线——不刷屏
+- 右上 ＋ → 三选一（就诊 / 随手记 / 测量）
+- 顶部菜单：编辑 Journey · Profile 入口
+
+**P3 · Log 编辑器（新建/编辑共用）**
+- 就诊：类型 chips（面诊/体检/验血/影像/其他）· 日期 · 地点/医生（可选）· 备注 · 附件区（照片/PDF；每份附件一个 [解释] 按钮）
+- 随手记：类型（症状/情绪/备注）· 时间 · 文本框——**打开即聚焦键盘，3 秒记完**
+- 测量：类型（体重/血压/体温/自定义）· 数值 + 单位 · 时间
+- 所有字段可选；**保存即记录**（无"暂存/草稿"态）
+
+**P4 · Profile（全局档案）**
+- 4 个自由文本域：过敏与不良反应 / 长期用药 / 疫苗记录 / 既往病史与手术史
+- 说明行："只存本机；用于让 AI 解释更准确；可随时清空。"
+
+## 4. 数据模型（本地，一张主表打天下）
+
+```
+Journey
+  id · name · template(孕期/拔牙/自定义) · status(active/done) · created_at · updated_at
+
+Log                                  ← 三种 kind 共用一张表
+  id · journey_id · kind(encounter|quick|measurement)
+  type(面诊/体检/验血/影像/症状/体重/血压/…) · occurred_at · note(null)
+  meta JSON(null; 如 {location, doctor} / {intensity} / 其他)
+  value REAL(null) · unit TEXT(null)      ← measurement 用
+  created_at · updated_at
+
+Artifact
+  id · log_id · file(外部存储引用) · mime · created_at
+  ai_explain JSON(null)   ← {summary_plain, terms[], questions[], model, created_at}
+
+Profile（单行）
+  allergies · medications · vaccines · history · updated_at
+```
+
+- 附件文件存 app 沙盒 + `@Attribute(.externalStorage)`（随 CloudKit 自动同步）
+- **没有任何服务端**；AI 解释结果缓存在 Artifact.ai_explain（重解释可覆盖）
+
+## 5. AI 动作契约（MVP 只做一个动作）
+
+**`explainArtifact(artifact)`**
+
+- 输入（客户端组装，无状态）：
+  a) 附件 → **本地提取文本**：照片走 iOS Vision OCR（中英）；PDF 走 PDFKit 提取。**图像本身不离开设备**，只有提取出的文本随请求发出（备选：DeepSeek 侧已有 OCR 能力——订阅阶段再评估是否由 provider 端处理图像；MVP 先本地，隐私与成本双赢）
+  b) 最小上下文：Journey 名称（如"孕期"）+ Profile 的「过敏」「用药」两栏（设置可关，默认开）
+- 输出（结构化 JSON，便于校验与渲染）：
+  ```json
+  { "summary_plain": "…", "terms": [{"original": "…", "plain": "…"}], "questions": ["…"] }
+  ```
+- 护栏：system prompt 明确"不做诊断、不给治疗建议、不改药量"；展示前固定附免责声明；不做多轮对话（MVP）
+- 模型调用封装在服务层接口后（将来换/加视觉模型只改一处）
+- 失败处理：超时/拒答 → "无法解释，请重试"；不缓存空结果
+- 重试成本控制：同一附件 5 分钟内不重复计费（本地节流）
+
+## 6. 文案与双语
+
+- 所有 UI 字符串进本地化文件（zh-Hans / en）；关键标题中英并排，正文中文优先
+- 术语词典（开发用）：Journey 旅程 / Log 记录 / Encounter 就诊 / Quick Log 随手记 / Measurement 测量 / Artifact 文档 / Profile 档案 / Summary Card 摘要卡
+
+## 7. 隐私与合规（MVP 版）
+
+- 全部本地；**自用阶段无账号、无服务器、无订阅**——客户端直连 DeepSeek API，key 存 Keychain
+- 首次使用 AI 时弹窗说明："提取的文本将发送至模型服务用于解释；不存储、不用于训练"（每设备一次，可在设置收回）
+- 免责声明固定显示在解释结果下方
+
+## 8. 非目标（MVP 明确不做）
+
+账号 / 订阅 / 服务端 / 云端同步（iCloud 同步 = SwiftData+CloudKit 天然自带）/ 共享与导出 / 提醒 / 跨记录问答 / 面诊录音 / 找医生 / Android / Web / 自动导入医院数据
+
+## 9. 技术栈（已定）
+
+- **平台**：iOS 原生（iOS 17+）· SwiftUI + SwiftData
+- **同步**：SwiftData + CloudKit 私有库——夫妻同 Apple ID 零成本自动同步；跨账号（父母）留给 v1.1 的 CKShare / 导出
+- **附件**：SwiftData `@Attribute(.externalStorage)`——附件文件自动进 iCloud 同步，不写同步代码
+- **OCR**：iOS Vision（VNRecognizeTextRequest，中英）；PDF：PDFKit 文本提取
+- **AI**：DeepSeek API（客户端直连）；key 存 Keychain；服务层接口封装（可换 OpenAI / Claude）
+
+**写代码前先记住的坑：**
+- SwiftData + CloudKit：所有非 optional 属性必须有默认值；不支持 unique 约束（用 UUID 手动去重）
+- 附件依赖 externalStorage 自动外置，别把文件塞进 JSON 字段
+- 图像处理：MVP 一律本地 OCR（Vision）成文本再发送；DeepSeek 侧已有 OCR/视觉能力，订阅阶段再评估 provider 端方案
+
+## 10. 里程碑（按每周 5–10 小时估）
+
+| 里程碑 | 内容 | 预估 |
+|---|---|---|
+| M1 | 项目骨架 + 数据层 + Journey/Log 的 CRUD | ~20–30h |
+| M2 | 附件上传/展示 + 测量分组与简单图表 | ~15h |
+| M3 | explain 动作打通（含护栏、缓存、节流） | ~15–20h |
+| M4 | 双语文案 + 打磨 + 真实数据试用（太太孕期旅程） | ~15h |
+| 合计 | | **~65–80h ≈ 10–16 周** |
+
+## 决策记录（2026-09-16）
+
+- 设备：夫妻均为 iPhone → iOS 原生成立
+- 技术栈：SwiftUI + SwiftData + CloudKit
+- AI：DeepSeek；MVP 图像不进模型（本地 OCR 后发文本），订阅阶段再评估 provider 端 OCR
+- 开发分工：代码由 dev bot（Claude Code 在 Mac 上）实现；老板做 review、逐步 pick up Swift

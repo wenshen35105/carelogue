@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Journey · 就医旅程（概念原型）</title>
+<style>
+  body { font-family: var(--font, system-ui, sans-serif); color: var(--foreground); margin: 0; font-size: 14px; line-height: 1.55; }
+  .wrap { max-width: 680px; }
+  h1 { font-size: 18px; margin: 0 0 2px; }
+  .sub { color: var(--muted-foreground); font-size: 12px; margin-bottom: 14px; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .pill { border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; font-size: 13px; cursor: default; }
+  .pill.on { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .pill .tag { font-size: 11px; color: var(--muted-foreground); margin-left: 4px; }
+  .privacy { font-size: 12px; color: var(--muted-foreground); border: 1px dashed var(--border); border-radius: 8px; padding: 8px 10px; margin-bottom: 18px; }
+  .tl { position: relative; padding-left: 18px; }
+  .tl::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: var(--border); }
+  .item { position: relative; margin-bottom: 14px; }
+  .item::before { content: ""; position: absolute; left: -17px; top: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
+  .item.done::before { background: var(--muted-foreground); }
+  .card { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .row time { color: var(--muted-foreground); font-size: 12px; white-space: nowrap; }
+  .card p { margin: 4px 0 0; color: var(--muted-foreground); font-size: 13px; }
+  button { margin-top: 8px; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 8px; padding: 4px 10px; font-size: 13px; cursor: pointer; }
+  button:hover { opacity: .8; }
+  .ex { margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; font-size: 13px; }
+  .ex strong { color: var(--accent); }
+  .ex ul { margin: 6px 0 6px 18px; padding: 0; }
+  .k { display: inline-block; border: 1px solid var(--border); border-radius: 6px; padding: 0 6px; font-size: 12px; color: var(--muted-foreground); margin: 2px 4px 2px 0; }
+  .disc { font-size: 11px; color: var(--muted-foreground); margin-top: 6px; }
+  .note { margin-top: 18px; font-size: 12px; color: var(--muted-foreground); border-top: 1px solid var(--border); padding-top: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Journey · 就医旅程</h1>
+  <div class="sub">概念原型 — 用于讨论界面与流程（数据为演示用假数据）</div>
+
+  <div class="pills">
+    <div class="pill on">🤰 太太 · 孕期 <span class="tag">进行中</span></div>
+    <div class="pill">🦷 拔智齿 <span class="tag">已完成</span></div>
+    <div class="pill">＋ 新建旅程</div>
+  </div>
+
+  <div class="privacy">🔒 数据默认只存本机；AI 解释仅在你点击时处理你选中的那一份文档，可随时在整个旅程内关闭。</div>
+
+  <div class="tl">
+    <div class="item done card">
+      <div class="row"><strong>预约 · 产科初诊</strong><time>3/10</time></div>
+      <p>电话预约 · 等待 12 天 · 已确认 OB 转诊信</p>
+    </div>
+
+    <div class="item done card">
+      <div class="row"><strong>面诊 · 产科</strong><time>3/24</time></div>
+      <p>已附：就诊要点摘录 · 待办 2 条（预约 NT 超声 / 更新用药清单）</p>
+    </div>
+
+    <div class="item card">
+      <div class="row"><strong>报告 · 血检 + NT 超声</strong><time>4/5</time></div>
+      <p>收到 PDF ×2（已归档）</p>
+      <button onclick="explain(this)">✨ 用中文解释这份报告</button>
+      <div class="ex" hidden>
+        <p><strong>白话版</strong>：血红蛋白 11.2，略低于非孕期范围，孕期轻度降低很常见，通常建议饮食补铁或根据医嘱补铁剂。NT 测量值在正常范围内。</p>
+        <p><span class="k">CBC 全血细胞计数</span><span class="k">Hb 血红蛋白</span><span class="k">NT 颈项透明层</span></p>
+        <p><strong>下次可以问医生</strong></p>
+        <ul>
+          <li>需要开始补铁吗？多久后复查血常规？</li>
+          <li>NT 结果和后续 NIPT 检查怎么衔接？</li>
+        </ul>
+        <p class="disc">仅供信息翻译与就诊准备参考，不构成医疗建议。</p>
+      </div>
+    </div>
+
+    <div class="item card">
+      <div class="row"><strong>下次产检（待进行）</strong><time>4/28</time></div>
+      <p>⏳ 提醒：带上 4/5 报告 · 本旅程等待期预计 23 天</p>
+    </div>
+  </div>
+
+  <div class="note">这个模拟里刻意做了几件事：① AI 是"按钮"不是"模式"——点一下才处理一份文档；② 报告卡片同时给"白话 + 术语对照 + 该问医生的问题"；③ 时间线里"等待期"也是可见的一站。真实产品从这条最小流程开始。</div>
+</div>
+
+<script>
+function explain(btn){
+  var ex = btn.nextElementSibling;
+  ex.hidden = !ex.hidden;
+  btn.textContent = ex.hidden ? '✨ 用中文解释这份报告' : '收起解释';
+}
+</script>
+</body>
+</html>
