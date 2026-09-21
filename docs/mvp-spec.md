@@ -107,6 +107,11 @@ Profile（单行）
 - 附件依赖 externalStorage 自动外置，别把文件塞进 JSON 字段
 - 图像处理：MVP 一律本地 OCR（Vision）成文本再发送；DeepSeek 侧已有 OCR/视觉能力，订阅阶段再评估 provider 端方案
 
+**分发与自用（MVP 阶段，无需发布）：**
+- 完全支持"不发布、先自用"：**付费账号（$99/年）+ Xcode 直连两台 iPhone 安装**（签名 1 年有效）即可；想频繁更新再上 TestFlight（build 90 天轮换；夫妻同 Apple ID，两台机都可装）
+- **$99 购买时点 = 开 CloudKit capability 时**（免费签名不支持 iCloud/CloudKit）——即同步上线前，而不是"上架前"
+- 不上架 = 不需要审核 / 隐私标签 / 隐私政策；将来若想"给亲友用但不公开"，备选 Unlisted App（隐形上架）
+
 ## 10. 里程碑（按每周 5–10 小时估）
 
 | 里程碑 | 内容 | 预估 |
