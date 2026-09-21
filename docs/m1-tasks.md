@@ -9,7 +9,7 @@
 ## T0 · 开工前（你手动，~10 分钟）
 
 1. Mac 上 clone 仓库：`git clone git@github.com:wenshen35105/carelogue.git`
-2. Xcode 新建 iOS App：名 `Carelogue`，Interface **SwiftUI**，Storage **SwiftData**，最低 iOS 17；保存到仓库根目录
+2. Xcode 新建 iOS App：名 `Carelogue`，Interface **SwiftUI**，Storage **SwiftData**，最低 iOS 17；保存到仓库根目录（**取消勾选 Create Git repository**——仓库已有）
 3. 在仓库根目录启动 Claude Code，粘贴这段作为第一句话：
 
 ````text
