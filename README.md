@@ -7,7 +7,7 @@ iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
 
 - `CLAUDE.md` — Claude Code 常驻规则（每个会话开工先读）
 - `docs/` — 产品文档：brief / spec / M1 任务卡 / 设计评审
-- `docs/design/` — 设计稿：方向稿 + Stitch 三屏 + DESIGN.md（UI 实现参照）
+- `docs/design/stitch/` — Stitch 三屏 + DESIGN.md（UI 实现参照）
 
 ## 开工流程（Mac）
 
