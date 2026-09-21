@@ -7,10 +7,10 @@ Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）
 
 ## 先读这些（按序）
 
-1. `mvp-spec.md` — 功能蓝图、页面、数据模型、AI 契约（上级文档）
-2. `m1-tasks.md` — 当前里程碑任务卡（**一次只做一张**）
-3. `product-brief.md` — 定位与原则（背景）
-4. `design-review.md` + `stitch_carelogue_medical_tracker_app/` 三屏 PNG — UI 参照
+1. `docs/mvp-spec.md` — 功能蓝图、页面、数据模型、AI 契约（上级文档）
+2. `docs/m1-tasks.md` — 当前里程碑任务卡（**一次只做一张**）
+3. `docs/product-brief.md` — 定位与原则（背景）
+4. `docs/design-review.md` + `docs/design/stitch/` 三屏 PNG — UI 参照
 
 ## 技术约束（硬规则，不准违背）
 
