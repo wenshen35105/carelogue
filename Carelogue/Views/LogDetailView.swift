@@ -80,15 +80,30 @@ struct LogDetailView: View {
         }
     }
 
+    /// Stitch report-detail header: rounded icon tile + title + meta line.
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(log.type.isEmpty ? log.kind.rawValue : log.type)
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(Theme.inkPrimary)
-            Text(log.occurredAt.formatted(.dateTime.year().month().day().hour().minute().locale(Theme.locale)))
-                .font(.subheadline)
-                .foregroundStyle(Theme.inkSecondary)
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: log.kind.iconName)
+                .font(.title3.weight(.medium))
+                .foregroundStyle(Theme.accent)
+                .frame(width: 52, height: 52)
+                .background(RoundedRectangle(cornerRadius: Theme.Radius.inset).fill(Theme.accentTint))
+
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(log.type.isEmpty ? log.kind.displayName : log.type)
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(Theme.inkPrimary)
+                    Spacer(minLength: 8)
+                    TagPill(text: log.isUpcoming ? "即将 Upcoming" : "\(log.kind.displayName) \(log.kind.englishName)",
+                            tinted: log.isUpcoming)
+                }
+                Text(log.occurredAt.formatted(.dateTime.year().month().day().hour().minute().locale(Theme.locale)))
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.inkSecondary)
+            }
         }
+        .cardSurface()
     }
 
     private var hasLocationOrDoctor: Bool {
@@ -106,16 +121,7 @@ struct LogDetailView: View {
         }
     }
 
-    @ViewBuilder
     private func card<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        content()
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Theme.card)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.card))
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.Radius.card)
-                    .stroke(Theme.border, lineWidth: 1)
-            )
+        content().cardSurface()
     }
 }

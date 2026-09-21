@@ -43,6 +43,7 @@ struct JourneyTimelineView: View {
         if let mostRecent = measurements.map(\.occurredAt).max() {
             items.append(.measurementGroup(logs: measurements, anchorDate: mostRecent))
         }
+        // Reverse-chronological, so upcoming (future-dated) encounters sit on top.
         items.sort { $0.sortDate > $1.sortDate }
 
         // Splice the expanded rows in right after the group header, as
@@ -57,33 +58,37 @@ struct JourneyTimelineView: View {
     }
 
     var body: some View {
-        Group {
+        List {
+            header
+                .canvasListRow(top: 4, bottom: 20)
+
             if journey.logs.isEmpty {
                 emptyState
+                    .canvasListRow()
             } else {
-                List {
-                    ForEach(timelineItems) { item in
-                        itemRow(for: item)
-                            .listRowBackground(Theme.card)
-                    }
+                let items = timelineItems
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                    itemRow(for: item, isLast: index == items.count - 1)
+                        .canvasListRow(bottom: 0)
                 }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
+
+                HStack(spacing: 6) {
+                    Image(systemName: "leaf")
+                    Text("温和记录，陪你走好每一步")
+                }
+                    .font(.caption)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .frame(maxWidth: .infinity)
+                    .canvasListRow(top: 12, bottom: 96) // clear the FAB
             }
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .background(Theme.background)
         .navigationTitle(journey.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Button("就诊", systemImage: "stethoscope") { creatingKind = .encounter }
-                    Button("随手记", systemImage: "square.and.pencil") { creatingKind = .quick }
-                    Button("测量", systemImage: "waveform.path.ecg") { creatingKind = .measurement }
-                } label: {
-                    Image(systemName: "plus")
-                }
-            }
+        .navigationBarTitleDisplayMode(.large)
+        .overlay(alignment: .bottomTrailing) {
+            addButton
         }
         .sheet(item: $creatingKind) { kind in
             LogEditorView(journey: journey, kind: kind)
@@ -93,42 +98,99 @@ struct JourneyTimelineView: View {
         }
     }
 
+    // MARK: - Header / empty / FAB
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                if let label = journey.template.englishLabel {
+                    Text(label)
+                        .font(.caption.weight(.semibold))
+                        .tracking(0.8)
+                        .foregroundStyle(Theme.accent)
+                }
+                StatusPill(status: journey.status)
+            }
+            Text("\(journey.template.displayName) · 始于 \(journey.createdAt.formatted(.dateTime.year().month(.defaultDigits).locale(Theme.locale))) · 共 \(journey.logs.count) 条记录")
+                .font(.footnote)
+                .foregroundStyle(Theme.inkSecondary)
+        }
+    }
+
     private var emptyState: some View {
         VStack(spacing: 12) {
             Image(systemName: "tray")
-                .font(.system(size: 36))
+                .font(.system(size: 32))
                 .foregroundStyle(Theme.inkSecondary)
-            Text("还没有记录，点右上角 ＋ 开始")
+            Text("还没有记录，点右下角 ＋ 开始")
                 .font(.subheadline)
                 .foregroundStyle(Theme.inkSecondary)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 48)
     }
 
+    private var addButton: some View {
+        Menu {
+            Button("就诊", systemImage: LogKind.encounter.iconName) { creatingKind = .encounter }
+            Button("随手记", systemImage: LogKind.quick.iconName) { creatingKind = .quick }
+            Button("测量", systemImage: LogKind.measurement.iconName) { creatingKind = .measurement }
+        } label: {
+            Image(systemName: "plus")
+                .font(.title2.weight(.medium))
+                .foregroundStyle(.white)
+                .frame(width: 58, height: 58)
+                .background(Circle().fill(Theme.accent))
+                .shadow(color: Theme.accent.opacity(0.35), radius: 10, y: 5)
+        }
+        .accessibilityLabel("新建记录")
+        .padding(.trailing, Theme.Spacing.margin)
+        .padding(.bottom, 12)
+    }
+
+    // MARK: - Rows
+
     @ViewBuilder
-    private func itemRow(for item: TimelineItem) -> some View {
+    private func itemRow(for item: TimelineItem, isLast: Bool) -> some View {
         switch item {
         case .log(let log):
-            NavigationLink(value: log) {
-                LogCard(log: log)
+            TimelineRail(marker: log.isUpcoming ? .upcoming : (log.kind == .encounter ? .accent : .muted), isLast: isLast) {
+                linkedCard(log) {
+                    if log.isUpcoming {
+                        UpcomingCard(log: log)
+                    } else {
+                        LogCard(log: log)
+                    }
+                }
             }
             .swipeActions(edge: .trailing) {
                 Button("删除", role: .destructive) { deleteLog(log) }
             }
         case .measurementGroup(let logs, _):
-            Button {
-                withAnimation { measurementExpanded.toggle() }
-            } label: {
-                MeasurementGroupCard(logs: logs, expanded: measurementExpanded)
+            TimelineRail(marker: .muted, isLast: isLast && !measurementExpanded) {
+                Button {
+                    withAnimation { measurementExpanded.toggle() }
+                } label: {
+                    MeasurementGroupCard(logs: logs, expanded: measurementExpanded)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         case .measurementRow(let log):
-            NavigationLink(value: log) {
-                MeasurementRow(log: log)
+            TimelineRail(marker: .none, isLast: isLast) {
+                linkedCard(log) { MeasurementRow(log: log) }
             }
             .swipeActions(edge: .trailing) {
                 Button("删除", role: .destructive) { deleteLog(log) }
             }
+        }
+    }
+
+    /// Hidden NavigationLink behind the card, so List doesn't draw a chevron.
+    private func linkedCard<Content: View>(_ log: Log, @ViewBuilder content: () -> Content) -> some View {
+        ZStack {
+            NavigationLink(value: log) { EmptyView() }
+                .opacity(0)
+            content()
         }
     }
 
@@ -138,51 +200,202 @@ struct JourneyTimelineView: View {
     }
 }
 
+// MARK: - Timeline rail
+
+/// Left-hand vertical line + dot. Each row draws its own segment at full
+/// height, so consecutive rows join into one continuous rail.
+private struct TimelineRail<Content: View>: View {
+    enum Marker {
+        case accent, muted, upcoming, none
+    }
+
+    let marker: Marker
+    let isLast: Bool
+    @ViewBuilder let content: Content
+
+    private let railWidth: CGFloat = 14
+    private let dotTop: CGFloat = 22
+
+    var body: some View {
+        content
+            .padding(.bottom, Theme.Spacing.cardGap)
+            .padding(.leading, railWidth + 10)
+            // Drawn as a background so the rail takes the row's real height.
+            .background(alignment: .topLeading) {
+                ZStack(alignment: .top) {
+                    Rectangle()
+                        .fill(Theme.border)
+                        .frame(width: 1.5, height: isLast ? dotTop : nil)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                    dot
+                        .padding(.top, dotTop - 6)
+                }
+                .frame(width: railWidth)
+            }
+    }
+
+    @ViewBuilder
+    private var dot: some View {
+        switch marker {
+        case .accent:
+            Circle().fill(Theme.accent).frame(width: 12, height: 12)
+                .overlay(Circle().stroke(Theme.background, lineWidth: 2))
+        case .muted:
+            Circle().fill(Theme.inkSecondary.opacity(0.6)).frame(width: 10, height: 10)
+                .overlay(Circle().stroke(Theme.background, lineWidth: 2))
+                .frame(width: 12, height: 12)
+        case .upcoming:
+            Circle()
+                .strokeBorder(Theme.accent, style: StrokeStyle(lineWidth: 1.5, dash: [3, 2]))
+                .background(Circle().fill(Theme.background))
+                .frame(width: 12, height: 12)
+        case .none:
+            EmptyView()
+        }
+    }
+}
+
+// MARK: - Cards
+
 private struct LogCard: View {
     let log: Log
 
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: log.kind.iconName)
-                .foregroundStyle(Theme.accent)
-                .frame(width: 28, height: 28)
-                .background(Circle().fill(Theme.accent.opacity(0.12)))
+    private var note: String? {
+        guard let note = log.note?.trimmingCharacters(in: .whitespacesAndNewlines), !note.isEmpty else { return nil }
+        return note
+    }
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(Theme.inkPrimary)
-                    .lineLimit(1)
-                Text(subtitle)
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Image(systemName: log.kind.iconName)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.accent)
+                BilingualTitle(primary: title, secondary: subtitle)
+                Spacer(minLength: 8)
+                Text(timestamp)
                     .font(.caption)
                     .foregroundStyle(Theme.inkSecondary)
             }
-            Spacer()
+
+            switch log.kind {
+            case .encounter:
+                encounterBody
+            case .quick, .measurement:
+                quickBody
+            }
+
+            if !log.artifacts.isEmpty {
+                Label("附件 \(log.artifacts.count) 份", systemImage: "paperclip")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Theme.accent)
+            }
         }
-        .padding(.vertical, 6)
+        .cardSurface()
     }
 
     private var title: String {
         switch log.kind {
         case .encounter:
-            return log.type.isEmpty ? "就诊" : log.type
-        case .quick:
-            let firstLine = (log.note ?? "").split(separator: "\n").first.map(String.init) ?? ""
-            return firstLine.isEmpty ? (log.type.isEmpty ? "随手记" : log.type) : firstLine
-        case .measurement:
-            return log.type
+            return log.type.isEmpty ? log.kind.displayName : "\(log.kind.displayName) · \(log.type)"
+        case .quick, .measurement:
+            return log.kind.displayName
         }
     }
 
-    private var subtitle: String {
-        let dateString = log.occurredAt.formatted(.dateTime.month(.defaultDigits).day().locale(Theme.locale))
+    private var subtitle: String? {
         switch log.kind {
-        case .encounter:
-            let location = log.location?.isEmpty == false ? " · \(log.location!)" : ""
-            return "\(dateString)\(location)"
-        case .quick, .measurement:
-            return dateString
+        case .encounter: return log.typeEnglishName.map { "(\($0))" }
+        case .quick, .measurement: return "· \(log.kind.englishName)"
         }
+    }
+
+    private var timestamp: String {
+        // Encounters only capture a date; quick notes carry a meaningful time.
+        log.kind == .encounter ? log.occurredAt.shortDay : log.occurredAt.shortDayTime
+    }
+
+    @ViewBuilder
+    private var encounterBody: some View {
+        let place = [log.location, log.doctor]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        if !place.isEmpty {
+            Text(place.joined(separator: " · "))
+                .font(.subheadline)
+                .foregroundStyle(Theme.inkPrimary)
+        }
+        if let note {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "note.text")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.accent)
+                Text("备注：\(note)")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.inkPrimary)
+                    .lineLimit(3)
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: Theme.Radius.inset).fill(Theme.insetFill))
+        }
+    }
+
+    @ViewBuilder
+    private var quickBody: some View {
+        if let note {
+            Text(note)
+                .font(.subheadline)
+                .foregroundStyle(Theme.inkPrimary)
+                .lineLimit(4)
+                .lineSpacing(3)
+        }
+        if !log.type.isEmpty {
+            TagPill(text: "# \(log.type)")
+        }
+    }
+}
+
+/// Future-dated encounter: dashed apricot outline on a tinted card.
+private struct UpcomingCard: View {
+    let log: Log
+
+    private var detail: String? {
+        let parts = [log.location, log.doctor, log.note]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Image(systemName: "calendar.badge.clock")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.accent)
+                BilingualTitle(primary: "下次 · \(log.type.isEmpty ? LogKind.encounter.displayName : log.type)", secondary: "(Upcoming)")
+                Spacer(minLength: 8)
+                Text(log.occurredAt.shortDay)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.accent)
+            }
+            HStack(spacing: 8) {
+                TagPill(text: log.daysFromToday == 1 ? "明天" : "距今 \(log.daysFromToday) 天", tinted: true)
+                if let detail {
+                    Text(detail)
+                        .font(.footnote)
+                        .foregroundStyle(Theme.inkPrimary)
+                        .lineLimit(2)
+                }
+            }
+        }
+        .padding(Theme.Spacing.cardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.card).fill(Theme.accentTint.opacity(0.6)))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.Radius.card)
+                .strokeBorder(Theme.accent.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+        )
     }
 }
 
@@ -196,26 +409,26 @@ private struct MeasurementGroupCard: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "waveform.path.ecg")
-                .foregroundStyle(Theme.accent)
-                .frame(width: 28, height: 28)
-                .background(Circle().fill(Theme.accent.opacity(0.12)))
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("测量 ×\(logs.count)")
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(Theme.inkPrimary)
+            IconBadge(systemName: LogKind.measurement.iconName)
+            VStack(alignment: .leading, spacing: 3) {
+                BilingualTitle(primary: LogKind.measurement.displayName, secondary: "· \(LogKind.measurement.englishName)")
                 if let recent = mostRecent {
-                    Text("最近 \(recent.formattedValue) · \(recent.occurredAt.formatted(.dateTime.month(.defaultDigits).day().locale(Theme.locale)))")
-                        .font(.caption)
+                    Text("\(logs.count) 次记录 · 最近 \(recent.type) \(recent.formattedValue)")
+                        .font(.footnote)
                         .foregroundStyle(Theme.inkSecondary)
+                        .lineLimit(1)
                 }
             }
-            Spacer()
-            Image(systemName: expanded ? "chevron.down" : "chevron.right")
-                .foregroundStyle(Theme.inkSecondary)
+            Spacer(minLength: 8)
+            HStack(spacing: 2) {
+                Text(expanded ? "收起" : "展开")
+                Image(systemName: expanded ? "chevron.down" : "chevron.right")
+            }
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(Theme.accent)
         }
-        .padding(.vertical, 6)
+        .cardSurface()
+        .contentShape(Rectangle())
     }
 }
 
@@ -229,37 +442,23 @@ private struct MeasurementRow: View {
                 .foregroundStyle(Theme.inkPrimary)
             Spacer()
             Text(log.formattedValue)
-                .font(.subheadline.weight(.medium))
+                .font(.subheadline.weight(.semibold))
+                .monospacedDigit()
                 .foregroundStyle(Theme.inkPrimary)
-            Text(log.occurredAt.formatted(.dateTime.month(.defaultDigits).day().hour().minute().locale(Theme.locale)))
+            Text(log.occurredAt.shortDayTime)
                 .font(.caption)
                 .foregroundStyle(Theme.inkSecondary)
         }
-        .padding(.leading, 40)
-        .padding(.vertical, 4)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.inset)
+                .fill(Theme.card)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.Radius.inset)
+                .stroke(Theme.border, lineWidth: 1)
+        )
+        .padding(.leading, 16)
     }
-}
-
-private extension LogKind {
-    var iconName: String {
-        switch self {
-        case .encounter: return "stethoscope"
-        case .quick: return "square.and.pencil"
-        case .measurement: return "waveform.path.ecg"
-        }
-    }
-}
-
-private extension Log {
-    var formattedValue: String {
-        guard let value else { return "--" }
-        let numberString = value.truncatingRemainder(dividingBy: 1) == 0
-            ? String(format: "%.0f", value)
-            : String(format: "%.1f", value)
-        return "\(numberString)\(unit ?? "")"
-    }
-}
-
-extension LogKind: Identifiable {
-    public var id: String { rawValue }
 }
