@@ -13,6 +13,10 @@ extension Color {
 }
 
 enum Theme {
+    /// UI copy is Simplified-Chinese-first (CLAUDE.md); force this locale for
+    /// date/time formatting instead of following the device's system locale.
+    static let locale = Locale(identifier: "zh_Hans")
+
     static let accent = Color(hex: "D9784F")
     static let background = Color(hex: "F7F5F2")
     static let card = Color(hex: "FFFFFF")

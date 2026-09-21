@@ -155,7 +155,7 @@ private struct LogCard: View {
     }
 
     private var subtitle: String {
-        let dateString = log.occurredAt.formatted(.dateTime.month(.defaultDigits).day())
+        let dateString = log.occurredAt.formatted(.dateTime.month(.defaultDigits).day().locale(Theme.locale))
         switch log.kind {
         case .encounter:
             let location = log.location?.isEmpty == false ? " · \(log.location!)" : ""
@@ -186,7 +186,7 @@ private struct MeasurementGroupCard: View {
                     .font(.body.weight(.medium))
                     .foregroundStyle(Theme.inkPrimary)
                 if let recent = mostRecent {
-                    Text("最近 \(recent.formattedValue) · \(recent.occurredAt.formatted(.dateTime.month(.defaultDigits).day()))")
+                    Text("最近 \(recent.formattedValue) · \(recent.occurredAt.formatted(.dateTime.month(.defaultDigits).day().locale(Theme.locale)))")
                         .font(.caption)
                         .foregroundStyle(Theme.inkSecondary)
                 }
@@ -211,7 +211,7 @@ private struct MeasurementRow: View {
             Text(log.formattedValue)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(Theme.inkPrimary)
-            Text(log.occurredAt.formatted(.dateTime.month(.defaultDigits).day().hour().minute()))
+            Text(log.occurredAt.formatted(.dateTime.month(.defaultDigits).day().hour().minute().locale(Theme.locale)))
                 .font(.caption)
                 .foregroundStyle(Theme.inkSecondary)
         }

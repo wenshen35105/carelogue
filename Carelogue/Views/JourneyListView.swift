@@ -125,7 +125,7 @@ struct JourneyListView: View {
 
 private let relativeTimeFormatter: RelativeDateTimeFormatter = {
     let formatter = RelativeDateTimeFormatter()
-    formatter.locale = Locale(identifier: "zh_Hans")
+    formatter.locale = Theme.locale
     return formatter
 }()
 
