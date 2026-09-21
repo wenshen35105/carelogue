@@ -7,7 +7,7 @@ import SwiftData
 private enum TimelineItem: Identifiable {
     case log(Log)
     case measurementGroup(logs: [Log], anchorDate: Date)
-    /// Filter chips shown under the expanded group header.
+    /// Filter chips + "图表" entry shown under the expanded group header.
     case measurementControls(anchorDate: Date)
     case measurementRow(Log)
 
@@ -41,6 +41,7 @@ struct JourneyTimelineView: View {
     /// Selected measurement type chip; nil = 全部.
     @State private var measurementFilter: String?
     @State private var editingMeasurement: Log?
+    @State private var showingChart = false
 
     private var measurements: [Log] {
         journey.logs.filter { $0.kind == .measurement }
@@ -79,10 +80,8 @@ struct JourneyTimelineView: View {
             let sorted = measurements
                 .filter { filter == nil || $0.type == filter }
                 .sorted { $0.occurredAt > $1.occurredAt }
-            var expanded: [TimelineItem] = sorted.map { .measurementRow($0) }
-            if measurementTypes.count >= 2 {
-                expanded.insert(.measurementControls(anchorDate: items[groupIndex].sortDate), at: 0)
-            }
+            let expanded: [TimelineItem] = [.measurementControls(anchorDate: items[groupIndex].sortDate)]
+                + sorted.map { .measurementRow($0) }
             items.insert(contentsOf: expanded, at: groupIndex + 1)
         }
         return items
@@ -126,6 +125,9 @@ struct JourneyTimelineView: View {
         }
         .sheet(item: $editingMeasurement) { log in
             LogEditorView(journey: journey, kind: .measurement, existingLog: log)
+        }
+        .sheet(isPresented: $showingChart) {
+            MeasurementChartView(journey: journey, initialType: effectiveMeasurementFilter)
         }
         .navigationDestination(for: Log.self) { log in
             LogDetailView(log: log)
@@ -211,7 +213,7 @@ struct JourneyTimelineView: View {
             }
         case .measurementControls:
             TimelineRail(marker: .none, isLast: isLast) {
-                measurementFilterChips
+                measurementControls
             }
         case .measurementRow(let log):
             // Straight to the editor (which also has 删除): 展开 -> row is
@@ -229,6 +231,32 @@ struct JourneyTimelineView: View {
         }
     }
 
+    private var measurementControls: some View {
+        HStack(spacing: 8) {
+            if measurementTypes.count >= 2 {
+                measurementFilterChips
+            } else {
+                Spacer(minLength: 0)
+            }
+            Button {
+                showingChart = true
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "chart.xyaxis.line")
+                    Text("图表")
+                }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.accent)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Theme.accentTint))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("查看图表")
+        }
+        .padding(.leading, 16)
+    }
+
     private var measurementFilterChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
@@ -244,7 +272,6 @@ struct JourneyTimelineView: View {
             }
             .padding(.vertical, 1)
         }
-        .padding(.leading, 16)
     }
 
     /// Hidden NavigationLink behind the card, so List doesn't draw a chevron.
