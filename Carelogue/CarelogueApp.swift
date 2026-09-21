@@ -5,7 +5,7 @@ import SwiftData
 struct CarelogueApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            JourneyListView()
         }
         .modelContainer(for: [Journey.self, Log.self, Artifact.self, Profile.self])
     }

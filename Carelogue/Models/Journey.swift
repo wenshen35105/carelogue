@@ -5,11 +5,26 @@ enum JourneyTemplate: String, Codable, CaseIterable {
     case pregnancy
     case toothExtraction
     case custom
+
+    var displayName: String {
+        switch self {
+        case .pregnancy: return "孕期"
+        case .toothExtraction: return "拔牙"
+        case .custom: return "自定义"
+        }
+    }
 }
 
 enum JourneyStatus: String, Codable, CaseIterable {
     case active
     case done
+
+    var displayName: String {
+        switch self {
+        case .active: return "进行中"
+        case .done: return "已完成"
+        }
+    }
 }
 
 @Model
