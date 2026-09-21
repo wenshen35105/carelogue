@@ -1,5 +1,7 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
+import UniformTypeIdentifiers
 
 /// Log 编辑器（新建/编辑共用）.
 struct LogEditorView: View {
@@ -19,6 +21,15 @@ struct LogEditorView: View {
     @State private var unit: String
     @State private var measurementCategory: String
     @State private var showingDeleteConfirm = false
+
+    // Attachments (encounter only). New files stay in memory until 保存;
+    // removals of already-saved artifacts are applied on 保存 as well.
+    @State private var pendingAttachments: [PendingAttachment] = []
+    @State private var removedArtifactIDs: Set<UUID> = []
+    @State private var photoSelection: [PhotosPickerItem] = []
+    @State private var showingFileImporter = false
+    @State private var importingCount = 0
+    @State private var importErrorMessage: String?
     @FocusState private var noteFieldFocused: Bool
 
     init(journey: Journey, kind: LogKind, existingLog: Log? = nil) {
@@ -72,12 +83,37 @@ struct LogEditorView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存", action: save)
-                        .disabled(kind != .quick && type.isEmpty)
+                        .disabled((kind != .quick && type.isEmpty) || importingCount > 0)
                 }
             }
             .confirmationDialog("删除这条记录？", isPresented: $showingDeleteConfirm, titleVisibility: .visible) {
                 Button("删除", role: .destructive, action: delete)
                 Button("取消", role: .cancel) {}
+            }
+            .fileImporter(
+                isPresented: $showingFileImporter,
+                allowedContentTypes: [.pdf, .image],
+                allowsMultipleSelection: true
+            ) { result in
+                switch result {
+                case .success(let urls):
+                    Task { await importFiles(urls) }
+                case .failure(let error):
+                    importErrorMessage = error.localizedDescription
+                }
+            }
+            .onChange(of: photoSelection) { _, items in
+                guard !items.isEmpty else { return }
+                photoSelection = []
+                Task { await importPhotos(items) }
+            }
+            .alert("附件导入失败", isPresented: Binding(
+                get: { importErrorMessage != nil },
+                set: { if !$0 { importErrorMessage = nil } }
+            )) {
+                Button("好", role: .cancel) {}
+            } message: {
+                Text(importErrorMessage ?? "")
             }
             .onAppear {
                 if kind == .quick {
@@ -121,10 +157,84 @@ struct LogEditorView: View {
                 .frame(minHeight: 80)
         }
 
-        Section("附件") {
-            Text("附件区（M2 实现）")
-                .font(.footnote)
-                .foregroundStyle(Theme.inkSecondary)
+        attachmentSection
+    }
+
+    // MARK: - Attachments
+
+    private var keptArtifacts: [Artifact] {
+        (existingLog?.artifacts ?? [])
+            .filter { !removedArtifactIDs.contains($0.id) }
+            .sorted { $0.createdAt < $1.createdAt }
+    }
+
+    @ViewBuilder
+    private var attachmentSection: some View {
+        let kept = keptArtifacts
+        Section {
+            ForEach(kept) { artifact in
+                AttachmentInfoRow(data: artifact.fileData, fileName: artifact.fileName, mime: artifact.mime)
+            }
+            .onDelete { offsets in
+                for index in offsets { removedArtifactIDs.insert(kept[index].id) }
+            }
+
+            ForEach(pendingAttachments) { pending in
+                AttachmentInfoRow(data: pending.data, fileName: pending.fileName, mime: pending.mime)
+            }
+            .onDelete { offsets in
+                pendingAttachments.remove(atOffsets: offsets)
+            }
+
+            if importingCount > 0 {
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("正在处理 \(importingCount) 份附件…")
+                        .font(.footnote)
+                        .foregroundStyle(Theme.inkSecondary)
+                }
+            }
+
+            PhotosPicker(selection: $photoSelection, matching: .images) {
+                Label("从相册添加", systemImage: "photo.on.rectangle")
+            }
+            Button {
+                showingFileImporter = true
+            } label: {
+                Label("从文件添加（PDF / 图片）", systemImage: "doc.badge.plus")
+            }
+        } header: {
+            Text("附件 · Attachments")
+        } footer: {
+            Text("左滑可移除 · 图片会自动压缩后保存")
+        }
+    }
+
+    private func importPhotos(_ items: [PhotosPickerItem]) async {
+        importingCount += items.count
+        for item in items {
+            defer { importingCount -= 1 }
+            do {
+                guard let data = try await item.loadTransferable(type: Data.self) else {
+                    throw AttachmentImportError.unreadableImage
+                }
+                let attachment = try await AttachmentImporter.fromPhotoData(data, index: pendingAttachments.count)
+                pendingAttachments.append(attachment)
+            } catch {
+                importErrorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func importFiles(_ urls: [URL]) async {
+        importingCount += urls.count
+        for url in urls {
+            defer { importingCount -= 1 }
+            do {
+                pendingAttachments.append(try await AttachmentImporter.fromFile(at: url))
+            } catch {
+                importErrorMessage = error.localizedDescription
+            }
         }
     }
 
@@ -219,6 +329,7 @@ struct LogEditorView: View {
             log.note = note
             log.location = location.isEmpty ? nil : location
             log.doctor = doctor.isEmpty ? nil : doctor
+            applyAttachmentChanges(to: log)
         case .measurement:
             log.value = Double(valueText)
             log.unit = unit
@@ -227,6 +338,18 @@ struct LogEditorView: View {
         }
         try? modelContext.save()
         dismiss()
+    }
+
+    private func applyAttachmentChanges(to log: Log) {
+        let removed = log.artifacts.filter { removedArtifactIDs.contains($0.id) }
+        for artifact in removed {
+            modelContext.delete(artifact)
+        }
+        for pending in pendingAttachments {
+            let artifact = Artifact(fileData: pending.data, fileName: pending.fileName, mime: pending.mime)
+            modelContext.insert(artifact)
+            artifact.log = log
+        }
     }
 
     private func delete() {
