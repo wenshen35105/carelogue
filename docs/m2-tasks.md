@@ -29,7 +29,12 @@
 - **已知限制**：血压暂按单值（收缩压）记录，舒张值可写备注——双值字段留 M4/v1.1
 
 ## T14 · 深色模式（~2h）
-- **做**：Theme.swift 的 6 个颜色改为动态色（跟随系统，`UIColor { traits }` 分支写法，单一来源保持此文件）；深色 v0：accent `#E08A63` · 背景 `#17140F` · 卡片 `#221E1A` · 主墨 `#F5F1EC` · 次墨 `#A39C93` · 边框 `#332E28`（以 Stitch 深色稿校准后的定稿为准，见 docs/design/stitch/dark-mode-prompt.md）；通查视图无硬编码色残留
+- **做**：Theme.swift 颜色改为动态色（跟随系统，`UIColor { traits }` 分支写法，单一来源保持此文件）。**深色定稿值**（已按 Stitch 深色稿校准，稿见 docs/design/stitch/*_dark_mode/ 与 nocturne_care_journal/DESIGN.md）：
+  - accent `#D9784F → #E08A63` · accentTint `#FAF0EA → #E08A63@15%`（近似 `#3E2E25`，或按 opacity 叠加实现）
+  - background `#F7F5F2 → #17140F` · card `#FFFFFF → #221E1A` · insetFill `#F7F5F2 → #1C1814`
+  - inkPrimary `#1C1B1A → #F5F1EC` · inkSecondary `#8A8680 → #A39C93` · border `#EAE6DF → #332E28`
+  - 抬起层（如需要）：`#2C2621`；深色下阴影退场、改为色阶分层（详见 nocturne DESIGN.md Elevation 一节）
+  - 通查视图无硬编码色残留
 - **验收**：系统切深色后 P1–P3 全正常（无白底残留、对比度可读）；跟随系统切换即可，**不做**手动开关（v1.1 再议）
 - **学习点**：ColorScheme、动态颜色
 

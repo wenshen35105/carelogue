@@ -33,7 +33,8 @@ Per screen:
 Show all three dark screens side by side (for comparison with the light set).
 ````
 
-## 深色 v0 色值（未定稿，等设计稿校准）
+## 深色定稿值（已出稿校准，与 Stitch 深色稿一致）
+> 稿件位置：`journeys_dark_mode/` · `journey_timeline_dark_mode/` · `report_explanation_dark_mode/` · 系统文档 `nocturne_care_journal/DESIGN.md`（含分层色阶与组件规范）。
 
 | 角色 | 浅色 | 深色 v0 |
 |---|---|---|
