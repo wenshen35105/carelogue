@@ -1,8 +1,7 @@
 import SwiftUI
 import SwiftData
 
-/// Log 编辑器（新建/编辑共用）. Encounter fields built out in T5; T6 replaces
-/// the quick-log/measurement branches below with their real layouts.
+/// Log 编辑器（新建/编辑共用）.
 struct LogEditorView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -18,19 +17,31 @@ struct LogEditorView: View {
     @State private var doctor: String
     @State private var valueText: String
     @State private var unit: String
+    @State private var measurementCategory: String
     @State private var showingDeleteConfirm = false
+    @FocusState private var noteFieldFocused: Bool
 
     init(journey: Journey, kind: LogKind, existingLog: Log? = nil) {
         self.journey = journey
         self.kind = kind
         self.existingLog = existingLog
-        _type = State(initialValue: existingLog?.type ?? "")
+        let defaultType = existingLog?.type ?? (kind == .quick ? "备注" : kind == .measurement ? "体重" : "")
+        _type = State(initialValue: defaultType)
         _occurredAt = State(initialValue: existingLog?.occurredAt ?? .now)
         _note = State(initialValue: existingLog?.note ?? "")
         _location = State(initialValue: existingLog?.location ?? "")
         _doctor = State(initialValue: existingLog?.doctor ?? "")
         _valueText = State(initialValue: existingLog?.value.map { String($0) } ?? "")
-        _unit = State(initialValue: existingLog?.unit ?? "")
+        _unit = State(initialValue: existingLog?.unit ?? (kind == .measurement ? "kg" : ""))
+
+        let presetNames = Self.measurementTypes.map(\.name).dropLast() // exclude 自定义
+        if let existingType = existingLog?.type, presetNames.contains(existingType) {
+            _measurementCategory = State(initialValue: existingType)
+        } else if existingLog != nil {
+            _measurementCategory = State(initialValue: "自定义")
+        } else {
+            _measurementCategory = State(initialValue: "体重")
+        }
     }
 
     var body: some View {
@@ -61,17 +72,22 @@ struct LogEditorView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存", action: save)
-                        .disabled(kind == .encounter && type.isEmpty)
+                        .disabled(kind != .quick && type.isEmpty)
                 }
             }
             .confirmationDialog("删除这条记录？", isPresented: $showingDeleteConfirm, titleVisibility: .visible) {
                 Button("删除", role: .destructive, action: delete)
                 Button("取消", role: .cancel) {}
             }
+            .onAppear {
+                if kind == .quick {
+                    noteFieldFocused = true
+                }
+            }
         }
     }
 
-    // MARK: - Encounter (T5)
+    // MARK: - Encounter
 
     private static let encounterTypes = ["面诊", "体检", "验血", "影像", "其他"]
 
@@ -112,33 +128,78 @@ struct LogEditorView: View {
         }
     }
 
-    // MARK: - Quick log (placeholder, T6 fills this in)
+    // MARK: - Quick log
+    // Design goal: open -> keyboard already up -> type -> save, in ~3s.
+    // Type/time get sane defaults so neither needs to be touched.
+
+    private static let quickTypes = ["症状", "情绪", "备注"]
 
     @ViewBuilder
     private var quickFields: some View {
+        Section {
+            TextEditor(text: $note)
+                .frame(minHeight: 120)
+                .focused($noteFieldFocused)
+        }
+
+        Section("类型") {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(Self.quickTypes, id: \.self) { option in
+                        ChipButton(title: option, isSelected: type == option) {
+                            type = option
+                        }
+                    }
+                }
+                .padding(.vertical, 2)
+            }
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+        }
+
         Section("时间") {
             DatePicker("发生时间", selection: $occurredAt)
         }
-        Section("备注") {
-            TextEditor(text: $note)
-                .frame(minHeight: 100)
-        }
     }
 
-    // MARK: - Measurement (placeholder, T6 fills this in)
+    // MARK: - Measurement
+
+    private static let measurementTypes: [(name: String, unit: String)] = [
+        ("体重", "kg"), ("血压", "mmHg"), ("体温", "°C"), ("自定义", "")
+    ]
 
     @ViewBuilder
     private var measurementFields: some View {
         Section("类型") {
-            TextField("如：体重", text: $type)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(Self.measurementTypes, id: \.name) { option in
+                        ChipButton(title: option.name, isSelected: measurementCategory == option.name) {
+                            measurementCategory = option.name
+                            if option.name == "自定义" {
+                                type = ""
+                            } else {
+                                type = option.name
+                                unit = option.unit
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 2)
+            }
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            if measurementCategory == "自定义" {
+                TextField("自定义类型名称", text: $type)
+            }
         }
-        Section("时间") {
-            DatePicker("发生时间", selection: $occurredAt)
-        }
+
         Section("数值") {
             TextField("数值", text: $valueText)
                 .keyboardType(.decimalPad)
             TextField("单位（如 kg）", text: $unit)
+        }
+
+        Section("时间") {
+            DatePicker("发生时间", selection: $occurredAt)
         }
     }
 
