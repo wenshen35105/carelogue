@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct CarelogueApp: App {
@@ -6,5 +7,6 @@ struct CarelogueApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Journey.self, Log.self, Artifact.self, Profile.self])
     }
 }
