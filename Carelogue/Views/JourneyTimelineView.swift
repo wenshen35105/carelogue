@@ -7,12 +7,15 @@ import SwiftData
 private enum TimelineItem: Identifiable {
     case log(Log)
     case measurementGroup(logs: [Log], anchorDate: Date)
+    /// Filter chips shown under the expanded group header.
+    case measurementControls(anchorDate: Date)
     case measurementRow(Log)
 
     var id: String {
         switch self {
         case .log(let log): return log.id.uuidString
         case .measurementGroup(_, let anchorDate): return "measurement-group-\(anchorDate.timeIntervalSince1970)"
+        case .measurementControls: return "measurement-controls"
         case .measurementRow(let log): return "measurement-row-\(log.id.uuidString)"
         }
     }
@@ -21,6 +24,7 @@ private enum TimelineItem: Identifiable {
         switch self {
         case .log(let log): return log.occurredAt
         case .measurementGroup(_, let anchorDate): return anchorDate
+        case .measurementControls(let anchorDate): return anchorDate
         case .measurementRow(let log): return log.occurredAt
         }
     }
@@ -34,9 +38,29 @@ struct JourneyTimelineView: View {
 
     @State private var measurementExpanded = false
     @State private var creatingKind: LogKind?
+    /// Selected measurement type chip; nil = 全部.
+    @State private var measurementFilter: String?
+    @State private var editingMeasurement: Log?
+
+    private var measurements: [Log] {
+        journey.logs.filter { $0.kind == .measurement }
+    }
+
+    /// Distinct measurement types, most-recorded first.
+    private var measurementTypes: [(name: String, count: Int)] {
+        let counts = Dictionary(grouping: measurements, by: \.type).mapValues(\.count)
+        return counts.map { (name: $0.key, count: $0.value) }
+            .sorted { $0.count != $1.count ? $0.count > $1.count : $0.name < $1.name }
+    }
+
+    /// Ignores a stale selection (e.g. the last 血压 entry was deleted).
+    private var effectiveMeasurementFilter: String? {
+        guard let measurementFilter, measurementTypes.contains(where: { $0.name == measurementFilter }) else { return nil }
+        return measurementFilter
+    }
 
     private var timelineItems: [TimelineItem] {
-        let measurements = journey.logs.filter { $0.kind == .measurement }
+        let measurements = self.measurements
         let others = journey.logs.filter { $0.kind != .measurement }
 
         var items: [TimelineItem] = others.map { .log($0) }
@@ -51,8 +75,15 @@ struct JourneyTimelineView: View {
         if measurementExpanded, let groupIndex = items.firstIndex(where: {
             if case .measurementGroup = $0 { return true } else { return false }
         }) {
-            let sorted = measurements.sorted { $0.occurredAt > $1.occurredAt }
-            items.insert(contentsOf: sorted.map { .measurementRow($0) }, at: groupIndex + 1)
+            let filter = effectiveMeasurementFilter
+            let sorted = measurements
+                .filter { filter == nil || $0.type == filter }
+                .sorted { $0.occurredAt > $1.occurredAt }
+            var expanded: [TimelineItem] = sorted.map { .measurementRow($0) }
+            if measurementTypes.count >= 2 {
+                expanded.insert(.measurementControls(anchorDate: items[groupIndex].sortDate), at: 0)
+            }
+            items.insert(contentsOf: expanded, at: groupIndex + 1)
         }
         return items
     }
@@ -92,6 +123,9 @@ struct JourneyTimelineView: View {
         }
         .sheet(item: $creatingKind) { kind in
             LogEditorView(journey: journey, kind: kind)
+        }
+        .sheet(item: $editingMeasurement) { log in
+            LogEditorView(journey: journey, kind: .measurement, existingLog: log)
         }
         .navigationDestination(for: Log.self) { log in
             LogDetailView(log: log)
@@ -175,14 +209,42 @@ struct JourneyTimelineView: View {
                 }
                 .buttonStyle(.plain)
             }
-        case .measurementRow(let log):
+        case .measurementControls:
             TimelineRail(marker: .none, isLast: isLast) {
-                linkedCard(log) { MeasurementRow(log: log) }
+                measurementFilterChips
+            }
+        case .measurementRow(let log):
+            // Straight to the editor (which also has 删除): 展开 -> row is
+            // 2 taps from the timeline to edit or delete a measurement.
+            TimelineRail(marker: .none, isLast: isLast) {
+                Button { editingMeasurement = log } label: {
+                    MeasurementRow(log: log)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
             .swipeActions(edge: .trailing) {
                 Button("删除", role: .destructive) { deleteLog(log) }
             }
         }
+    }
+
+    private var measurementFilterChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ChipButton(title: "全部 \(measurements.count)", isSelected: effectiveMeasurementFilter == nil) {
+                    withAnimation { measurementFilter = nil }
+                }
+                ForEach(measurementTypes, id: \.name) { type in
+                    ChipButton(title: "\(type.name.isEmpty ? "未命名" : type.name) \(type.count)",
+                               isSelected: effectiveMeasurementFilter == type.name) {
+                        withAnimation { measurementFilter = type.name }
+                    }
+                }
+            }
+            .padding(.vertical, 1)
+        }
+        .padding(.leading, 16)
     }
 
     /// Hidden NavigationLink behind the card, so List doesn't draw a chevron.

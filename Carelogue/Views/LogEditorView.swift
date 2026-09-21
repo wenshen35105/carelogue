@@ -359,26 +359,3 @@ struct LogEditorView: View {
         dismiss()
     }
 }
-
-private struct ChipButton: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(isSelected ? Theme.accent : Theme.inkSecondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule().fill(isSelected ? Theme.accent.opacity(0.12) : Theme.card)
-                )
-                .overlay(
-                    Capsule().stroke(isSelected ? Theme.accent : Theme.border, lineWidth: 1)
-                )
-        }
-        .buttonStyle(.plain)
-    }
-}
