@@ -32,6 +32,7 @@ Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）
    b. 对照卡内"验收"逐条自测
    c. 跑一遍 Smoke 清单（见下）
    d. 输出：改动文件清单（每文件一句话）+ 5 行"本卡涉及的 Swift/SwiftUI 概念"（给非 Swift 背景的 reviewer 学习用）
+   e. **界面有变化时**：把模拟器跑起来，`xcrun simctl io booted screenshot docs/screenshots/<卡号>-<页面名>.png` 存 1–2 张关键界面截图（供 review 与验收留档）
 4. **不要**主动重构、升级依赖、或改动数据模型（schema 已冻结；确需变更 → 停下来说明原因）
 
 ## Smoke 清单（每次提交前）
