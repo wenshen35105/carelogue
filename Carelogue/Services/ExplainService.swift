@@ -219,8 +219,8 @@ enum ExplainPrompt {
         Reply with ONE JSON object and nothing else:
         {"summary_plain": string, "terms": [{"original": string, "plain": string}], "questions": [string]}
         - summary_plain: 3–6 sentences, the overall picture first, then notable values.
-        - terms: up to 8 medical terms or abbreviations from the report (not plain units \
-        such as g/L). "original" is the \
+        - terms: up to 8 medical terms or abbreviations from the report (never units such \
+        as g/L, mm or ×10^9/L, and never generic words such as "reference range"). "original" is the \
         term as printed (abbreviation plus a short name, e.g. "Hb · 血红蛋白" or \
         "Hb · Hemoglobin"); "plain" is a one-line plain explanation.
         - questions: 2–5 short, specific questions the patient could ask their doctor.

@@ -246,6 +246,40 @@
         }
       }
     },
+    "5 分钟内刚解释过，先显示上次的结果" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 分钟内刚解释过，先显示上次的结果"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explained less than 5 minutes ago — showing that result"
+          }
+        }
+      }
+    },
+    "AI Explained" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Explained"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Explained"
+          }
+        }
+      }
+    },
     "AI Explanation Service" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -259,6 +293,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI Explanation Service"
+          }
+        }
+      }
+    },
+    "AI Explanation disabled in Settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Explanation disabled in Settings"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Explanation disabled in Settings"
           }
         }
       }
@@ -283,16 +334,16 @@
     "AI 解释仅帮助理解报告，不能替代医生的诊断。" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI 解释仅帮助理解报告，不能替代医生的诊断。"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI explanations only help you understand a report — they don't replace your doctor's diagnosis."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 解释仅帮助理解报告，不能替代医生的诊断。"
           }
         }
       }
@@ -300,16 +351,16 @@
     "AI 解释已在设置中关闭" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI 解释已在设置中关闭"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI explanations are turned off in Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 解释已在设置中关闭"
           }
         }
       }
@@ -416,6 +467,23 @@
         }
       }
     },
+    "Couldn't explain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't explain"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't explain"
+          }
+        }
+      }
+    },
     "DeepSeek 账户余额不足" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -429,6 +497,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DeepSeek 账户余额不足"
+          }
+        }
+      }
+    },
+    "Explaining" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explaining"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explaining"
           }
         }
       }
@@ -565,6 +650,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profile & Settings"
+          }
+        }
+      }
+    },
+    "Questions for your Doctor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions for your Doctor"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions for your Doctor"
           }
         }
       }
@@ -1045,6 +1147,23 @@
         }
       }
     },
+    "前往开启" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往开启"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn On"
+          }
+        }
+      }
+    },
     "医生" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1147,6 +1266,23 @@
         }
       }
     },
+    "只发送识别出的文字 · 通常几秒内完成" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只发送识别出的文字 · 通常几秒内完成"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the recognized text is sent · usually takes a few seconds"
+          }
+        }
+      }
+    },
     "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1198,19 +1334,36 @@
         }
       }
     },
-    "可以问问医生：" : {
+    "可以问问医生" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "可以问问医生："
+            "value" : "可以问问医生"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Questions for Your Doctor"
+          }
+        }
+      }
+    },
+    "可以问问医生：" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Questions for your doctor:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可以问问医生："
           }
         }
       }
@@ -1317,6 +1470,23 @@
         }
       }
     },
+    "在本机识别文字后发送给 DeepSeek · 通常几秒内完成" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在本机识别文字后发送给 DeepSeek · 通常几秒内完成"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text is recognized on this device and sent to DeepSeek · usually a few seconds"
+          }
+        }
+      }
+    },
     "地点" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1415,6 +1585,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "备注：%@"
+          }
+        }
+      }
+    },
+    "复制" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
           }
         }
       }
@@ -1555,6 +1742,23 @@
         }
       }
     },
+    "已复制" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已复制"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copied"
+          }
+        }
+      }
+    },
     "已完成" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1585,6 +1789,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已完成 Done"
+          }
+        }
+      }
+    },
+    "已解释" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已解释"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explained"
           }
         }
       }
@@ -1844,6 +2065,23 @@
         }
       }
     },
+    "无法解释，请重试" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法解释，请重试"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't explain — please try again"
+          }
+        }
+      }
+    },
     "无法访问所选文件" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2082,6 +2320,23 @@
         }
       }
     },
+    "术语速查 · Key Terms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "术语速查 · Key Terms"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key Terms"
+          }
+        }
+      }
+    },
     "查看" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2150,6 +2405,23 @@
         }
       }
     },
+    "检查 API Key 与网络设置" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查 API Key 与网络设置"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check API key and network settings"
+          }
+        }
+      }
+    },
     "模型服务暂时不可用（%lld）" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2209,6 +2481,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在处理 %lld 份附件…"
+          }
+        }
+      }
+    },
+    "正在解释…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在解释…"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explaining…"
           }
         }
       }
@@ -2332,6 +2621,23 @@
         }
       }
     },
+    "生成白话解释 · Explain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成白话解释 · Explain"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explain"
+          }
+        }
+      }
+    },
     "疫苗记录" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2379,6 +2685,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "白话解释 (AI Explained)"
+          }
+        }
+      }
+    },
+    "白话解释（AI 生成）" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "白话解释（AI 生成）"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plain-Language Explanation"
           }
         }
       }
@@ -2573,16 +2896,16 @@
     "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sends the Allergies and Current Medications from your profile along, so explanations fit you better"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你"
           }
         }
       }
@@ -2820,6 +3143,23 @@
         }
       }
     },
+    "还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请 DeepSeek 用白话讲给你听。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请 DeepSeek 用白话讲给你听。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not explained yet. Tap below: the report's text is recognized on this device, then DeepSeek explains it in plain words."
+          }
+        }
+      }
+    },
     "还没有记录，点右下角 ＋ 开始" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2840,16 +3180,16 @@
     "这次没有得到可用的解释" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "这次没有得到可用的解释"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No usable explanation came back this time"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这次没有得到可用的解释"
           }
         }
       }
@@ -2973,6 +3313,40 @@
         }
       }
     },
+    "重新解释" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新解释"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Re-explain"
+          }
+        }
+      }
+    },
+    "重试 · Retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重试 · Retry"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
     "长按附件可删除" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3070,6 +3444,23 @@
         }
       }
     },
+    "附件和记录都不受影响。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附件和记录都不受影响。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your attachments and entries are not affected."
+          }
+        }
+      }
+    },
     "附件导入失败" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3090,16 +3481,16 @@
     "附带档案信息" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "附带档案信息"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Include profile details"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附带档案信息"
           }
         }
       }

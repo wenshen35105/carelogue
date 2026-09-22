@@ -142,6 +142,9 @@ struct AttachmentGalleryCard: View {
                                                             size: proxy.size.width, cornerRadius: Theme.Radius.inset)
                                     }
                                 }
+                                .overlay(alignment: .topTrailing) {
+                                    if artifact.aiExplainJSON != nil { ExplainedBadge().padding(5) }
+                                }
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
@@ -157,6 +160,11 @@ struct AttachmentGalleryCard: View {
                     HStack(spacing: 12) {
                         AttachmentInfoRow(data: artifact.fileData, fileName: artifact.fileName, mime: artifact.mime)
                         Spacer(minLength: 4)
+                        if artifact.aiExplainJSON != nil {
+                            Label("已解释", systemImage: "checkmark.circle")
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(Theme.accent)
+                        }
                         Image(systemName: "eye")
                             .font(.subheadline)
                             .foregroundStyle(Theme.inkSecondary)
@@ -181,6 +189,19 @@ struct AttachmentGalleryCard: View {
     private func menu(for artifact: Artifact) -> some View {
         Button("查看", systemImage: "eye") { onOpen(artifact) }
         Button("删除附件", systemImage: "trash", role: .destructive) { onDelete(artifact) }
+    }
+}
+
+/// Small "✓" on an image thumbnail whose explanation is cached.
+private struct ExplainedBadge: View {
+    var body: some View {
+        Image(systemName: "checkmark")
+            .font(.system(size: 10, weight: .bold))
+            .foregroundStyle(Theme.onAccent)
+            .frame(width: 20, height: 20)
+            .background(Circle().fill(Theme.accent))
+            .overlay(Circle().stroke(Theme.card, lineWidth: 1.5))
+            .accessibilityLabel("已解释")
     }
 }
 

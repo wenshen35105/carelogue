@@ -55,6 +55,8 @@ struct LogDetailView: View {
                 }
 
                 if !log.artifacts.isEmpty {
+                    ExplanationCard(artifacts: sortedArtifacts)
+
                     AttachmentGalleryCard(
                         artifacts: sortedArtifacts,
                         onOpen: { previewingArtifact = $0 },

@@ -229,7 +229,7 @@ struct FakeAIService: AIService {
         FakeAIService.requestCount += 1
         switch mode {
         case "fail":
-            try await Task.sleep(for: .milliseconds(600))
+            try await Task.sleep(for: .milliseconds(1500))
             throw AIServiceError.timeout
         case "invalid":
             return "{\"summary_plain\": \"\"}"
@@ -238,6 +238,12 @@ struct FakeAIService: AIService {
             // (throttled) result from a fresh one.
             try await Task.sleep(for: .milliseconds(400))
             return Self.sampleJSON.replacingOccurrences(of: "参考上限。", with: "参考上限。[#\(FakeAIService.requestCount)]")
+        case "long":
+            try await Task.sleep(for: .milliseconds(300))
+            let summary = String(repeating: "这是一段用来测试长文本排版的白话总结，包含很多很多字，确保卡片在内容很长时也不会破版。", count: 8)
+            let terms = (1...10).map { "{\"original\": \"LongTerm\($0) · 一个名字特别特别长的医学术语缩写示例\($0)\", \"plain\": \"解释\($0)\"}" }
+            let questions = (1...5).map { "\"第 \($0) 个问题：" + String(repeating: "这是一个很长的问题，", count: 6) + "\"" }
+            return "{\"summary_plain\": \"\(summary)\", \"terms\": [\(terms.joined(separator: ","))], \"questions\": [\(questions.joined(separator: ","))]}"
         case "slow":
             try await Task.sleep(for: .seconds(4))
         default:
