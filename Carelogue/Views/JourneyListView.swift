@@ -277,7 +277,7 @@ private struct NewJourneyCard: View {
             VStack(spacing: 10) {
                 Image(systemName: "plus")
                     .font(.title2.weight(.medium))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.onAccent)
                     .frame(width: 56, height: 56)
                     .background(Circle().fill(Theme.accent))
                     .shadow(color: Theme.accent.opacity(0.3), radius: 8, y: 4)

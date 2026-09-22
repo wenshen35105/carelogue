@@ -174,7 +174,7 @@ struct JourneyTimelineView: View {
         } label: {
             Image(systemName: "plus")
                 .font(.title2.weight(.medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.onAccent)
                 .frame(width: 58, height: 58)
                 .background(Circle().fill(Theme.accent))
                 .shadow(color: Theme.accent.opacity(0.35), radius: 10, y: 5)
