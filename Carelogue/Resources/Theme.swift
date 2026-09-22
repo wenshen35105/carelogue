@@ -52,6 +52,10 @@ enum Theme {
     static let inkPrimary = Color.dynamic(light: "1C1B1A", dark: "F5F1EC")
     static let inkSecondary = Color.dynamic(light: "8A8680", dark: "A39C93")
     static let border = Color.dynamic(light: "EAE6DF", dark: "332E28")
+    /// Calm sage for "configured / OK" status dots (Stitch settings).
+    static let success = Color.dynamic(light: "5E8C61", dark: "8DB890")
+    /// Muted terracotta for failures and destructive hints — not pure red.
+    static let warning = Color.dynamic(light: "B5573A", dark: "E39A7E")
     /// Card shadow: ultra-diffused warm shadow in light; dark mode drops
     /// shadows and relies on tonal layering + hairline borders instead.
     static let cardShadow = Color.dynamic(light: UIColor(hex: "1C1B1A", alpha: 0.04), dark: .clear)

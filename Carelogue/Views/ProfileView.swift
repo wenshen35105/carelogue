@@ -19,6 +19,15 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    NavigationLink {
+                        SettingsView()
+                    } label: {
+                        Label("设置 Settings", systemImage: "gearshape")
+                    }
+                    .accessibilityIdentifier("profile.settings")
+                }
+
                 Section("过敏与不良反应") {
                     TextEditor(text: $allergies).frame(minHeight: 70)
                 }

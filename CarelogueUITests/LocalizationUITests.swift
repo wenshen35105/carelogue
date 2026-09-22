@@ -59,6 +59,19 @@ final class LocalizationUITests: CarelogueUITestCase {
         assertNoChinese(on: "Quick note editor")
     }
 
+    func testEnglishSettingsHaveNoChineseCopy() {
+        language = "en"
+        launch(["-uitest-reset"])
+        waitFor(app.navigationBars["Journeys"])
+        button(containing: "Profile & Settings").tap()
+        waitFor(app.navigationBars["Profile"])
+        assertNoChinese(on: "Profile")
+        app.buttons["profile.settings"].tap()
+        waitFor(app.staticTexts["Settings"])
+        assertNoChinese(on: "Settings")
+        screenshot("T18-settings-en")
+    }
+
     func testChineseUIKeepsBilingualStyle() {
         launch(["-uitest-reset", "-uitest-seed-attachments"])
         waitFor(app.navigationBars["Journeys"])

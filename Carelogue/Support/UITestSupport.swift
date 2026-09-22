@@ -11,6 +11,9 @@ import UIKit
 ///   -uitest-seed-attachments      add a Journey with an encounter holding
 ///                                 2 images (a zh/en lab report + a textless
 ///                                 photo) + 1 two-page PDF
+///   -uitest-fake-ai <mode>        explain through a scripted provider instead
+///                                 of DeepSeek: success | slow | fail | invalid
+///   env UITEST_API_KEY=<key>      store this key in the Keychain at launch
 ///   -selftest-extract             run TextExtractor on generated samples and
 ///                                 write the results to
 ///                                 Documents/selftest-extract.txt
@@ -23,6 +26,17 @@ enum UITestSupport {
             try? context.delete(model: Artifact.self)
             try? context.delete(model: Log.self)
             try? context.delete(model: Journey.self)
+            try? context.delete(model: Profile.self)
+            AISettings.setAPIKey(nil)
+            for key in UserDefaults.standard.dictionaryRepresentation().keys where key.hasPrefix("ai.") {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+        }
+        if let key = ProcessInfo.processInfo.environment["UITEST_API_KEY"], !key.isEmpty {
+            AISettings.setAPIKey(key)
+        }
+        if let index = arguments.firstIndex(of: "-uitest-fake-ai"), index + 1 < arguments.count {
+            fakeAIService = FakeAIService(mode: arguments[index + 1])
         }
         if arguments.contains("-uitest-seed-measurements") || arguments.contains("-uitest-seed-attachments") {
             let journey = Journey(name: seededJourneyName, template: .pregnancy)
@@ -39,6 +53,9 @@ enum UITestSupport {
             Task { await runExtractionSelfTest() }
         }
     }
+
+    /// Set by -uitest-fake-ai; AISettings.makeService() prefers it.
+    static var fakeAIService: FakeAIService?
 
     private static func runExtractionSelfTest() async {
         let samples: [(String, Data, String)] = [
@@ -172,5 +189,46 @@ enum UITestSupport {
             scan.draw(in: CGRect(x: 0, y: 0, width: 700, height: 450))
         }
     }
+}
+/// Scripted provider for UI tests: no network, deterministic output.
+struct FakeAIService: AIService {
+    let mode: String
+    var modelName: String { "fake-model" }
+
+    /// Every request the app sent, so tests can check what left the device.
+    static var requestCount = 0
+
+    func complete(system: String, user: String, json: Bool) async throws -> String {
+        FakeAIService.requestCount += 1
+        switch mode {
+        case "fail":
+            try await Task.sleep(for: .milliseconds(600))
+            throw AIServiceError.timeout
+        case "invalid":
+            return "{\"summary_plain\": \"\"}"
+        case "slow":
+            try await Task.sleep(for: .seconds(4))
+        default:
+            try await Task.sleep(for: .milliseconds(800))
+        }
+        return Self.sampleJSON
+    }
+
+    static let sampleJSON = """
+    {
+      "summary_plain": "这次检查整体情况平稳。血红蛋白 112 g/L，略低于参考范围（115–150），孕中期常见，属于生理性血液稀释；白细胞和血小板都在正常范围。NT 颈项透明层 1.4 mm，低于 2.5 mm 的参考上限。",
+      "terms": [
+        {"original": "Hb · 血红蛋白", "plain": "血液里运送氧气的蛋白，偏低时容易累"},
+        {"original": "WBC · 白细胞", "plain": "免疫细胞数量，反映有没有感染"},
+        {"original": "PLT · 血小板", "plain": "帮助止血的细胞"},
+        {"original": "NT · 颈项透明层", "plain": "孕早期超声测量的胎儿颈后积液厚度"}
+      ],
+      "questions": [
+        "血红蛋白 112 g/L 需要补铁吗？还是先从饮食调整？",
+        "如果要补铁，多久后复查一次血常规比较合适？",
+        "NT 结果正常，后续还需要做哪些筛查？"
+      ]
+    }
+    """
 }
 #endif

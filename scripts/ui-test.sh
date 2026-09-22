@@ -5,6 +5,7 @@
 #   scripts/ui-test.sh -only-testing:CarelogueUITests/SmokeUITests
 #   APPEARANCE=dark scripts/ui-test.sh                   # run in dark mode
 #   SIM_ID=<udid> scripts/ui-test.sh                     # pick a simulator
+#   DEEPSEEK_API_KEY=sk-... scripts/ui-test.sh           # also run real-API tests
 #
 # Before testing it provisions the simulator once: fixture photos go into the
 # Photos library and fixture PDFs into Files > On My iPhone, so the picker
@@ -58,6 +59,12 @@ xcrun simctl spawn "$SIM_ID" defaults write com.apple.keyboard.preferences DidSh
 
 if [[ -n "${APPEARANCE:-}" ]]; then
   xcrun simctl ui "$SIM_ID" appearance "$APPEARANCE"
+fi
+
+# Real-provider tests (SettingsUITests.testRealConnection, explain) only
+# run when a DeepSeek key is in the environment; otherwise they skip.
+if [[ -n "${DEEPSEEK_API_KEY:-}" ]]; then
+  export TEST_RUNNER_DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
 fi
 
 rm -rf "$OUT" "$RESULT"
