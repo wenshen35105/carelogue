@@ -103,6 +103,7 @@ struct AttachmentInfoRow: View {
                     .foregroundStyle(Theme.inkSecondary)
             }
         }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -146,6 +147,7 @@ struct AttachmentGalleryCard: View {
                         .buttonStyle(.plain)
                         .contextMenu { menu(for: artifact) }
                         .accessibilityLabel("图片 \(artifact.fileName)")
+                        .accessibilityIdentifier("attachment.image")
                     }
                 }
             }
@@ -165,6 +167,7 @@ struct AttachmentGalleryCard: View {
                 }
                 .buttonStyle(.plain)
                 .contextMenu { menu(for: artifact) }
+                .accessibilityIdentifier("attachment.file")
             }
 
             Text("长按附件可删除")
@@ -206,6 +209,7 @@ struct AttachmentPreviewView: View {
     var body: some View {
         NavigationStack {
             content
+                .accessibilityIdentifier("attachment.preview")
                 .ignoresSafeArea(edges: .bottom)
                 .background(Theme.background)
                 .navigationTitle(fileName)
@@ -226,8 +230,8 @@ struct AttachmentPreviewView: View {
                 }
                 .confirmationDialog("删除这份附件？", isPresented: $showingDeleteConfirm, titleVisibility: .visible) {
                     Button("删除", role: .destructive) {
-                        dismiss()
                         onDelete()
+                        dismiss()
                     }
                     Button("取消", role: .cancel) {}
                 } message: {

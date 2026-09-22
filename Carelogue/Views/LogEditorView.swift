@@ -174,6 +174,7 @@ struct LogEditorView: View {
         Section {
             ForEach(kept) { artifact in
                 AttachmentInfoRow(data: artifact.fileData, fileName: artifact.fileName, mime: artifact.mime)
+                    .accessibilityIdentifier("editor.attachment")
             }
             .onDelete { offsets in
                 for index in offsets { removedArtifactIDs.insert(kept[index].id) }
@@ -181,6 +182,7 @@ struct LogEditorView: View {
 
             ForEach(pendingAttachments) { pending in
                 AttachmentInfoRow(data: pending.data, fileName: pending.fileName, mime: pending.mime)
+                    .accessibilityIdentifier("editor.attachment")
             }
             .onDelete { offsets in
                 pendingAttachments.remove(atOffsets: offsets)
@@ -319,7 +321,10 @@ struct LogEditorView: View {
         let log = existingLog ?? Log(kind: kind)
         if existingLog == nil {
             modelContext.insert(log)
-            log.journey = journey
+            // Mutate the parent's array (not just log.journey): views observe
+            // journey.logs, and setting only the inverse side did not refresh
+            // the timeline after save.
+            journey.logs.append(log)
         }
         log.type = type
         log.occurredAt = occurredAt
@@ -341,14 +346,16 @@ struct LogEditorView: View {
     }
 
     private func applyAttachmentChanges(to log: Log) {
+        // Edit log.artifacts itself so views observing it refresh.
         let removed = log.artifacts.filter { removedArtifactIDs.contains($0.id) }
+        log.artifacts.removeAll { removedArtifactIDs.contains($0.id) }
         for artifact in removed {
             modelContext.delete(artifact)
         }
         for pending in pendingAttachments {
             let artifact = Artifact(fileData: pending.data, fileName: pending.fileName, mime: pending.mime)
             modelContext.insert(artifact)
-            artifact.log = log
+            log.artifacts.append(artifact)
         }
     }
 

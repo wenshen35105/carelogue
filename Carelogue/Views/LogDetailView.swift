@@ -12,6 +12,10 @@ struct LogDetailView: View {
     @State private var showingDeleteConfirm = false
     @State private var previewingArtifact: Artifact?
     @State private var artifactPendingDelete: Artifact?
+    /// Delete requested from inside the full-screen viewer; applied only
+    /// after the viewer has fully dismissed, so the cover's content is never
+    /// re-evaluated against an already-deleted Artifact.
+    @State private var artifactDeletedInViewer: Artifact?
 
     private var sortedArtifacts: [Artifact] {
         log.artifacts.sorted { $0.createdAt < $1.createdAt }
@@ -77,6 +81,7 @@ struct LogDetailView: View {
                 } label: {
                     Image(systemName: "trash")
                 }
+                .accessibilityLabel("删除记录")
             }
         }
         .sheet(isPresented: $showingEditor) {
@@ -84,9 +89,14 @@ struct LogDetailView: View {
                 LogEditorView(journey: journey, kind: log.kind, existingLog: log)
             }
         }
-        .fullScreenCover(item: $previewingArtifact) { artifact in
-            AttachmentPreviewView(artifact: artifact) {
+        .fullScreenCover(item: $previewingArtifact, onDismiss: {
+            if let artifact = artifactDeletedInViewer {
+                artifactDeletedInViewer = nil
                 deleteArtifact(artifact)
+            }
+        }) { artifact in
+            AttachmentPreviewView(artifact: artifact) {
+                artifactDeletedInViewer = artifact
             }
         }
         .confirmationDialog(
@@ -140,9 +150,10 @@ struct LogDetailView: View {
     }
 
     /// Deleting the Artifact row also lets SwiftData drop its external-storage
-    /// file; the Log's relationship array updates on save.
+    /// file. It is removed from log.artifacts first so this page refreshes.
     private func deleteArtifact(_ artifact: Artifact) {
         previewingArtifact = nil
+        log.artifacts.removeAll { $0.id == artifact.id }
         modelContext.delete(artifact)
         log.updatedAt = .now
         try? modelContext.save()

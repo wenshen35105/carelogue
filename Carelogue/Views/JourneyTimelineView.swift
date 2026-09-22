@@ -210,6 +210,7 @@ struct JourneyTimelineView: View {
                     MeasurementGroupCard(logs: logs, expanded: measurementExpanded)
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("measurement.group")
             }
         case .measurementControls:
             TimelineRail(marker: .none, isLast: isLast) {
@@ -224,6 +225,7 @@ struct JourneyTimelineView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("measurement.row")
             }
             .swipeActions(edge: .trailing) {
                 Button("删除", role: .destructive) { deleteLog(log) }
