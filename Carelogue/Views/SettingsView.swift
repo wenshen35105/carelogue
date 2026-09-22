@@ -5,6 +5,7 @@ import SwiftUI
 /// the AI switch, the DeepSeek key and the privacy notes.
 struct SettingsView: View {
     @AppStorage(AISettings.enabledKey) private var aiEnabled = true
+    @AppStorage(AISettings.includeProfileKey) private var includeProfile = true
 
     @State private var apiKey: String? = AISettings.apiKey
     @State private var showingKeyEditor = false
@@ -78,6 +79,22 @@ struct SettingsView: View {
                 .padding(.vertical, 14)
                 .accessibilityIdentifier("settings.aiToggle")
 
+                SettingsDivider()
+
+                Toggle(isOn: $includeProfile) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("附带档案信息")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Theme.inkPrimary)
+                        Text("解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你")
+                            .font(.footnote)
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                }
+                .tint(Theme.accent)
+                .padding(.vertical, 14)
+                .disabled(!aiEnabled)
+                .accessibilityIdentifier("settings.profileToggle")
                 SettingsDivider()
 
                 HStack(alignment: .top, spacing: 10) {

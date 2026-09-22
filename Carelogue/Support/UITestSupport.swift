@@ -14,6 +14,9 @@ import UIKit
 ///   -uitest-fake-ai <mode>        explain through a scripted provider instead
 ///                                 of DeepSeek: success | slow | fail | invalid
 ///   env UITEST_API_KEY=<key>      store this key in the Keychain at launch
+///   -selftest-explain             explain the seeded report photo twice (needs
+///                                 -uitest-seed-attachments and a key) and
+///                                 write Documents/selftest-explain.txt
 ///   -selftest-extract             run TextExtractor on generated samples and
 ///                                 write the results to
 ///                                 Documents/selftest-extract.txt
@@ -52,10 +55,34 @@ enum UITestSupport {
         if arguments.contains("-selftest-extract") {
             Task { await runExtractionSelfTest() }
         }
+        if arguments.contains("-selftest-explain") {
+            Task { await runExplainSelfTest(context) }
+        }
     }
 
     /// Set by -uitest-fake-ai; AISettings.makeService() prefers it.
     static var fakeAIService: FakeAIService?
+
+    private static func runExplainSelfTest(_ context: ModelContext) async {
+        var report = ""
+        let artifacts = (try? context.fetch(FetchDescriptor<Artifact>())) ?? []
+        if let photo = artifacts.first(where: { $0.fileName == "seed_photo_1.jpg" }) {
+            for attempt in 1...2 {
+                let start = Date.now
+                do {
+                    let outcome = try await ExplainService.explain(photo, in: context)
+                    report += "== attempt \(attempt): \(outcome) (\(Int(Date.now.timeIntervalSince(start) * 1000))ms)\n"
+                } catch {
+                    report += "== attempt \(attempt) ERROR \(error): \(error.localizedDescription)\n"
+                }
+            }
+            report += "\n== stored aiExplainJSON:\n\(photo.aiExplainJSON ?? "nil")\n"
+        } else {
+            report += "no seeded photo\n"
+        }
+        let url = URL.documentsDirectory.appendingPathComponent("selftest-explain.txt")
+        try? report.write(to: url, atomically: true, encoding: .utf8)
+    }
 
     private static func runExtractionSelfTest() async {
         let samples: [(String, Data, String)] = [
@@ -206,6 +233,11 @@ struct FakeAIService: AIService {
             throw AIServiceError.timeout
         case "invalid":
             return "{\"summary_plain\": \"\"}"
+        case "count":
+            // Summary carries the request number, so a test can tell a cached
+            // (throttled) result from a fresh one.
+            try await Task.sleep(for: .milliseconds(400))
+            return Self.sampleJSON.replacingOccurrences(of: "参考上限。", with: "参考上限。[#\(FakeAIService.requestCount)]")
         case "slow":
             try await Task.sleep(for: .seconds(4))
         default:

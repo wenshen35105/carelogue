@@ -40,8 +40,13 @@ enum AIServiceError: LocalizedError, Equatable {
 enum AISettings {
     static let keychainAccount = "deepseek-api-key"
 
-    /// UserDefaults keys (used with @AppStorage).
+    /// UserDefaults keys (used with @AppStorage). Both default to on.
     static let enabledKey = "ai.enabled"
+    /// Send Profile allergies / medications along as context (spec §5b).
+    static let includeProfileKey = "ai.includeProfile"
+
+    static var isEnabled: Bool { UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? true }
+    static var includesProfile: Bool { UserDefaults.standard.object(forKey: includeProfileKey) as? Bool ?? true }
 
     static var apiKey: String? {
         guard let key = KeychainStore.string(for: keychainAccount), !key.isEmpty else { return nil }

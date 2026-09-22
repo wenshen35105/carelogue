@@ -249,13 +249,13 @@
     "AI Explanation Service" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI Explanation Service"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI Explanation Service"
@@ -266,16 +266,50 @@
     "AI · 解释功能" : {
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Explanations"
+          }
+        },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI · 解释功能"
           }
+        }
+      }
+    },
+    "AI 解释仅帮助理解报告，不能替代医生的诊断。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 解释仅帮助理解报告，不能替代医生的诊断。"
+          }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AI Explanations"
+            "value" : "AI explanations only help you understand a report — they don't replace your doctor's diagnosis."
+          }
+        }
+      }
+    },
+    "AI 解释已在设置中关闭" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 解释已在设置中关闭"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI explanations are turned off in Settings"
           }
         }
       }
@@ -283,16 +317,16 @@
     "AI 解释服务与隐私 · AI Services & Privacy" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AI 解释服务与隐私 · AI Services & Privacy"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI Services & Privacy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 解释服务与隐私 · AI Services & Privacy"
           }
         }
       }
@@ -300,13 +334,13 @@
     "API Key" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "API Key"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "API Key"
@@ -317,16 +351,16 @@
     "API Key 无效，请到设置里检查" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "API Key 无效，请到设置里检查"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The API key is invalid — check it in Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Key 无效，请到设置里检查"
           }
         }
       }
@@ -351,13 +385,13 @@
     "CARELOGUE PREFERENCES" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "CARELOGUE PREFERENCES"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "CARELOGUE PREFERENCES"
@@ -368,13 +402,13 @@
     "Carelogue iOS v%@" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carelogue iOS v%@"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Carelogue iOS v%@"
@@ -385,16 +419,16 @@
     "DeepSeek 账户余额不足" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DeepSeek 账户余额不足"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your DeepSeek balance is too low"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 账户余额不足"
           }
         }
       }
@@ -402,13 +436,13 @@
     "Extracted text only" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Extracted text only"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Extracted text only"
@@ -436,16 +470,16 @@
     "Key 只保存在本机钥匙串（iOS Keychain），不上传" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Key 只保存在本机钥匙串（iOS Keychain），不上传"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The key stays in this device's Keychain and is never uploaded"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key 只保存在本机钥匙串（iOS Keychain），不上传"
           }
         }
       }
@@ -453,13 +487,13 @@
     "No storage, no training" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No storage, no training"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No storage, no training"
@@ -470,13 +504,13 @@
     "On-device only" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "On-device only"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "On-device only"
@@ -504,13 +538,13 @@
     "Privacy & Data Flow" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
+        "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privacy & Data Flow"
           }
         },
-        "en" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privacy & Data Flow"
@@ -691,16 +725,16 @@
     "不存储、不用于训练" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不存储、不用于训练"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No storage, no training"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不存储、不用于训练"
           }
         }
       }
@@ -708,16 +742,16 @@
     "仅发送提取文本" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "仅发送提取文本"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Extracted text only"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅发送提取文本"
           }
         }
       }
@@ -1116,16 +1150,16 @@
     "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sent once over an encrypted connection, only when you tap Explain. Carelogue has no server and keeps none of your data."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。"
           }
         }
       }
@@ -1160,6 +1194,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "只有 1 条记录，再记一次就能看到趋势"
+          }
+        }
+      }
+    },
+    "可以问问医生：" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可以问问医生："
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions for your doctor:"
           }
         }
       }
@@ -1252,16 +1303,16 @@
     "在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Get one at platform.deepseek.com. The key is stored only in this device's Keychain."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。"
           }
         }
       }
@@ -1320,16 +1371,16 @@
     "填写 Add" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "填写 Add"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "填写 Add"
           }
         }
       }
@@ -1541,16 +1592,16 @@
     "已配置 Connected" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已配置 Connected"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connected"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已配置 Connected"
           }
         }
       }
@@ -1609,16 +1660,16 @@
     "把检验报告里的医学术语，解释成家人都能看懂的话" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "把检验报告里的医学术语，解释成家人都能看懂的话"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Turns the medical terms in your reports into words the whole family understands"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把检验报告里的医学术语，解释成家人都能看懂的话"
           }
         }
       }
@@ -1626,16 +1677,16 @@
     "报告文字在本机识别，只有文字会发给 DeepSeek；照片和 PDF 原件不离开设备。" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "报告文字在本机识别，只有文字会发给 DeepSeek；照片和 PDF 原件不离开设备。"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report text is recognized on this device and only that text is sent to DeepSeek; photos and original PDFs never leave it."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报告文字在本机识别，只有文字会发给 DeepSeek；照片和 PDF 原件不离开设备。"
           }
         }
       }
@@ -1660,16 +1711,16 @@
     "授权密钥 API Key" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "授权密钥 API Key"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "API Key"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授权密钥 API Key"
           }
         }
       }
@@ -1711,16 +1762,16 @@
     "数据只存本机" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "数据只存本机"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "On-device only"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据只存本机"
           }
         }
       }
@@ -1779,16 +1830,16 @@
     "旅程、记录、附件和档案都只保存在这台设备上。" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "旅程、记录、附件和档案都只保存在这台设备上。"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Journeys, entries, attachments and your profile are stored only on this device."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅程、记录、附件和档案都只保存在这台设备上。"
           }
         }
       }
@@ -1932,16 +1983,16 @@
     "更换 Change" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更换 Change"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Change"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更换 Change"
           }
         }
       }
@@ -2000,16 +2051,16 @@
     "未填写" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未填写"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not set"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未填写"
           }
         }
       }
@@ -2017,16 +2068,16 @@
     "未配置 Not set" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未配置 Not set"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not set"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未配置 Not set"
           }
         }
       }
@@ -2102,16 +2153,16 @@
     "模型服务暂时不可用（%lld）" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模型服务暂时不可用（%lld）"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The model service is unavailable right now (%lld)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型服务暂时不可用（%lld）"
           }
         }
       }
@@ -2119,16 +2170,16 @@
     "模型返回的内容无法识别" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "模型返回的内容无法识别"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The model's reply couldn't be read"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型返回的内容无法识别"
           }
         }
       }
@@ -2182,16 +2233,16 @@
     "测试连接" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "测试连接"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Test Connection"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试连接"
           }
         }
       }
@@ -2318,16 +2369,16 @@
     "白话解释 (AI Explained)" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "白话解释 (AI Explained)"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plain-Language Explanations"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "白话解释 (AI Explained)"
           }
         }
       }
@@ -2335,16 +2386,16 @@
     "移除 API Key" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "移除 API Key"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remove API Key"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除 API Key"
           }
         }
       }
@@ -2369,16 +2420,16 @@
     "粘贴 DeepSeek API Key（sk-…）" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "粘贴 DeepSeek API Key（sk-…）"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Paste your DeepSeek API key (sk-…)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "粘贴 DeepSeek API Key（sk-…）"
           }
         }
       }
@@ -2437,16 +2488,16 @@
     "网络未连接，请检查网络后重试" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "网络未连接，请检查网络后重试"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "You're offline — check your connection and try again"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络未连接，请检查网络后重试"
           }
         }
       }
@@ -2519,19 +2570,36 @@
         }
       }
     },
-    "解释服务 · DeepSeek" : {
+    "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你" : {
       "extractionState" : "manual",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "解释服务 · DeepSeek"
+            "value" : "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Sends the Allergies and Current Medications from your profile along, so explanations fit you better"
+          }
+        }
+      }
+    },
+    "解释服务 · DeepSeek" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Provider · DeepSeek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解释服务 · DeepSeek"
           }
         }
       }
@@ -2556,16 +2624,16 @@
     "设置" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
           }
         }
       }
@@ -2573,16 +2641,16 @@
     "设置 Settings" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置 Settings"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置 Settings"
           }
         }
       }
@@ -2607,16 +2675,16 @@
     "请求太频繁，请稍后再试" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请求太频繁，请稍后再试"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Too many requests — try again in a moment"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求太频繁，请稍后再试"
           }
         }
       }
@@ -2624,16 +2692,16 @@
     "请求超时，请稍后重试" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请求超时，请稍后重试"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The request timed out — try again shortly"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求超时，请稍后重试"
           }
         }
       }
@@ -2738,16 +2806,16 @@
     "还没有填写 API Key，请到设置里添加" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "还没有填写 API Key，请到设置里添加"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No API key yet — add one in Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有填写 API Key，请到设置里添加"
           }
         }
       }
@@ -2765,6 +2833,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "还没有记录，点右下角 ＋ 开始"
+          }
+        }
+      }
+    },
+    "这次没有得到可用的解释" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这次没有得到可用的解释"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No usable explanation came back this time"
           }
         }
       }
@@ -2806,16 +2891,16 @@
     "连接正常" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "连接正常"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connected"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接正常"
           }
         }
       }
@@ -3002,6 +3087,23 @@
         }
       }
     },
+    "附带档案信息" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附带档案信息"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include profile details"
+          }
+        }
+      }
+    },
     "随手记" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3022,16 +3124,16 @@
     "隐私与数据流向" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "隐私与数据流向"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privacy & Data Flow"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私与数据流向"
           }
         }
       }
