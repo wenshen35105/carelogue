@@ -9,7 +9,11 @@ import UIKit
 ///   -uitest-reset                 wipe all Journeys / Logs / Artifacts
 ///   -uitest-seed-measurements     add a Journey with 20 体重 + 3 血压 + 1 体温
 ///   -uitest-seed-attachments      add a Journey with an encounter holding
-///                                 2 images + 1 PDF
+///                                 2 images (a zh/en lab report + a textless
+///                                 photo) + 1 two-page PDF
+///   -selftest-extract             run TextExtractor on generated samples and
+///                                 write the results to
+///                                 Documents/selftest-extract.txt
 enum UITestSupport {
     static let seededJourneyName = "UITest 孕期"
 
@@ -31,6 +35,31 @@ enum UITestSupport {
             }
         }
         try? context.save()
+        if arguments.contains("-selftest-extract") {
+            Task { await runExtractionSelfTest() }
+        }
+    }
+
+    private static func runExtractionSelfTest() async {
+        let samples: [(String, Data, String)] = [
+            ("report-photo", reportImage(), AttachmentMime.jpeg),
+            ("blank-photo", image(hue: 0.07), AttachmentMime.jpeg),
+            ("text-pdf", pdf(), AttachmentMime.pdf),
+            ("scanned-pdf", scannedPDF(), AttachmentMime.pdf),
+            ("garbage", Data("not an image".utf8), AttachmentMime.jpeg),
+        ]
+        var report = ""
+        for (name, data, mime) in samples {
+            let start = Date.now
+            do {
+                let text = try await TextExtractor.extract(data: data, mime: mime)
+                report += "== \(name) OK (\(Int(Date.now.timeIntervalSince(start) * 1000))ms)\n\(text)\n\n"
+            } catch {
+                report += "== \(name) ERROR \(error): \(error.localizedDescription)\n\n"
+            }
+        }
+        let url = URL.documentsDirectory.appendingPathComponent("selftest-extract.txt")
+        try? report.write(to: url, atomically: true, encoding: .utf8)
     }
 
     private static func seedMeasurements(in journey: Journey, context: ModelContext) {
@@ -56,7 +85,7 @@ enum UITestSupport {
                         note: "UITest 附件就诊", location: "BC Women's", doctor: "Dr. Chen")
         add(visit, to: journey, context: context)
         let files: [(Data, String, String)] = [
-            (image(hue: 0.07), "seed_photo_1.jpg", AttachmentMime.jpeg),
+            (reportImage(), "seed_photo_1.jpg", AttachmentMime.jpeg),
             (image(hue: 0.55), "seed_photo_2.jpg", AttachmentMime.jpeg),
             (pdf(), "seed_report.pdf", AttachmentMime.pdf),
         ]
@@ -87,7 +116,36 @@ enum UITestSupport {
         }
     }
 
-    private static func pdf() -> Data {
+    static let reportLines = [
+        "BC Women's Hospital 检验报告 Laboratory Report",
+        "项目 Test          结果 Result   参考范围 Range",
+        "血红蛋白 Hemoglobin (Hb)   112 g/L   115-150",
+        "白细胞 WBC   8.6 ×10^9/L   3.5-9.5",
+        "血小板 PLT   210 ×10^9/L   125-350",
+        "NT 颈项透明层 1.4 mm   < 2.5 mm",
+    ]
+
+    /// A photographed-looking lab report: mixed Chinese / English lines on
+    /// an off-white page.
+    static func reportImage() -> Data {
+        let size = CGSize(width: 1400, height: 900)
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: size, format: format).jpegData(withCompressionQuality: 0.85) { context in
+            UIColor(white: 0.97, alpha: 1).setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+            for (index, line) in reportLines.enumerated() {
+                (line as NSString).draw(
+                    at: CGPoint(x: 70, y: 80 + CGFloat(index) * 120),
+                    withAttributes: [.font: UIFont.systemFont(ofSize: index == 0 ? 44 : 38, weight: index == 0 ? .bold : .regular),
+                                     .foregroundColor: UIColor(white: 0.12, alpha: 1)]
+                )
+            }
+        }
+    }
+
+    /// Two text-layer pages (PDFKit path).
+    static func pdf() -> Data {
         UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: 612, height: 792)).pdfData { context in
             for page in 1...2 {
                 context.beginPage()
@@ -95,7 +153,23 @@ enum UITestSupport {
                     at: CGPoint(x: 60, y: 80),
                     withAttributes: [.font: UIFont.systemFont(ofSize: 28)]
                 )
+                let lines = page == 1 ? Array(reportLines.prefix(3)) : Array(reportLines.suffix(3))
+                for (index, line) in lines.enumerated() {
+                    (line as NSString).draw(
+                        at: CGPoint(x: 60, y: 150 + CGFloat(index) * 40),
+                        withAttributes: [.font: UIFont.systemFont(ofSize: 16)]
+                    )
+                }
             }
+        }
+    }
+
+    /// One page that is only an embedded photo — no text layer (OCR path).
+    private static func scannedPDF() -> Data {
+        guard let scan = UIImage(data: reportImage()) else { return Data() }
+        return UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: 700, height: 450)).pdfData { context in
+            context.beginPage()
+            scan.draw(in: CGRect(x: 0, y: 0, width: 700, height: 450))
         }
     }
 }
