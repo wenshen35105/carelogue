@@ -25,6 +25,7 @@
 ## T18 · AI 服务层 + Keychain + 设置页启用（~4h）
 - **做**：AIService 协议（provider 可换）＋ DeepSeek 实现（URLSession → chat/completions，要求 JSON 输出；超时/错误映射）；设置页启用最小集：**AI 总开关** + **API Key 输入**（SecureField → Keychain）+ **隐私说明**三行
 - **验收**：key 填入后重开仍在（Keychain）；总开关可关；最小测试调用能拿到回复
+- **注**：本卡的 key 输入为**自用阶段形态**（阶段 2 公开/订阅版由我们的 server 托管 key，见 spec §11）；`AIService` 协议抽象即为该演进留口
 - **学习点**：Keychain、URLSession async、协议抽象
 
 ## T19 · explain 端到端 + 缓存 + 节流（~4h）
