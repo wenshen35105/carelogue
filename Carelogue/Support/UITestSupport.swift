@@ -15,7 +15,8 @@ import UIKit
 ///                                 of DeepSeek: success | slow | fail | invalid
 ///   env UITEST_API_KEY=<key>      store this key in the Keychain at launch
 ///   -selftest-explain             explain the seeded report photo twice (needs
-///                                 -uitest-seed-attachments and a key) and
+///                                 -uitest-seed-attachments, a key and
+///                                 -ai.consent granted) and
 ///                                 write Documents/selftest-explain.txt
 ///   -selftest-extract             run TextExtractor on generated samples and
 ///                                 write the results to
