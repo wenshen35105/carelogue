@@ -1,0 +1,119 @@
+import XCTest
+
+/// M2 T10 (import) and T11 (gallery / preview / delete).
+final class AttachmentUITests: CarelogueUITestCase {
+    private let journeyName = "UITest 孕期"
+
+    private var images: XCUIElementQuery { app.buttons.matching(identifier: "attachment.image") }
+    private var files: XCUIElementQuery { app.buttons.matching(identifier: "attachment.file") }
+
+    private func openSeededEncounter() {
+        openJourney(journeyName)
+        element(containing: "UITest 附件就诊").tap()
+        waitFor(app.navigationBars["详情"])
+    }
+
+    func testPreviewAndDelete() {
+        launch(["-uitest-reset", "-uitest-seed-attachments"])
+        openSeededEncounter()
+        waitForCount(images, 2)
+        waitForCount(files, 1)
+        screenshot("T11-detail-attachments")
+
+        // Image preview: pinch + double-tap zoom, then close.
+        images.firstMatch.tap()
+        let preview = app.descendants(matching: .any)["attachment.preview"]
+        waitFor(preview)
+        preview.pinch(withScale: 2.5, velocity: 2)
+        preview.doubleTap()
+        screenshot("T11-image-preview")
+        app.buttons["关闭"].tap()
+
+        // PDF preview.
+        files.firstMatch.tap()
+        waitFor(preview)
+        screenshot("T11-pdf-preview")
+
+        // Delete from the viewer's trash button.
+        app.buttons["删除附件"].tap()
+        confirmDelete()
+        waitForCount(files, 0)
+
+        // Delete an image via long-press menu.
+        images.firstMatch.press(forDuration: 1.2)
+        let menuItem = app.buttons["删除附件"]
+        waitFor(menuItem)
+        menuItem.tap()
+        confirmDelete()
+        waitForCount(images, 1)
+
+        // Deletions persist across a relaunch.
+        relaunch()
+        openSeededEncounter()
+        waitForCount(images, 1)
+        XCTAssertEqual(files.count, 0)
+    }
+
+    /// Full import through the system pickers. Needs photos in the library and
+    /// PDFs under Files > On My iPhone (scripts/ui-test.sh provisions both).
+    func testImportFromPhotosAndFiles() throws {
+        launch(["-uitest-reset", "-uitest-seed-measurements"])
+        openJourney(journeyName)
+        startNewLog("就诊")
+        selectChip("面诊")
+
+        let editorRows = app.descendants(matching: .any).matching(identifier: "editor.attachment")
+
+        // Photos: pick two.
+        let photosButton = app.buttons["从相册添加"]
+        photosButton.swipeUp() // bring the attachment section on screen
+        waitFor(photosButton)
+        photosButton.tap()
+        let photos = app.scrollViews.otherElements.images
+        XCTAssertTrue(photos.firstMatch.waitForExistence(timeout: 10), "Photo picker shows no photos")
+        guard photos.count >= 2 else {
+            throw XCTSkip("Photo library has fewer than 2 photos")
+        }
+        photos.element(boundBy: 0).tap()
+        photos.element(boundBy: 1).tap()
+        tapFirstExisting([app.buttons["Add"], app.buttons["添加"], app.navigationBars.buttons["Add"]])
+        waitForCount(editorRows, 2, timeout: 15)
+
+        // Files: pick two PDFs from On My iPhone. The picker reopens at its
+        // last location, so only navigate there when the files aren't shown.
+        app.buttons["从文件添加（PDF / 图片）"].tap()
+        let reportA = app.cells["report_a, pdf"]
+        let reportB = app.cells["report_b, pdf"]
+        if !reportA.waitForExistence(timeout: 5) {
+            app.tabBars.buttons["Browse"].firstMatch.tap()
+            app.tabBars.buttons["Browse"].firstMatch.tap() // second tap pops to the root list
+            let onMyIPhone = app.cells["DOC.sidebar.item.On My iPhone"]
+            waitFor(onMyIPhone, timeout: 10)
+            onMyIPhone.tap()
+        }
+        // Wait out the navigation transition: taps during it are dropped.
+        waitFor(reportA, timeout: 10)
+        let settled = expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: reportB)
+        wait(for: [settled], timeout: 10)
+        sleep(1)
+        reportA.tap()
+        reportB.tap()
+        let open = app.buttons["Open"].exists ? app.buttons["Open"] : app.buttons["打开"]
+        let enabled = expectation(for: NSPredicate(format: "isEnabled == true"), evaluatedWith: open)
+        wait(for: [enabled], timeout: 5)
+        tapFirstExisting([app.buttons["Open"], app.buttons["打开"]])
+        waitForCount(editorRows, 4, timeout: 15)
+        screenshot("T10-editor-imported")
+
+        app.buttons["保存"].tap()
+        waitFor(element(containing: "附件 4 份"))
+
+        // Survives kill + relaunch.
+        relaunch()
+        openJourney(journeyName)
+        element(containing: "就诊 · 面诊").tap()
+        waitForCount(images, 2)
+        waitForCount(files, 2)
+        screenshot("T10-detail-after-relaunch")
+    }
+}

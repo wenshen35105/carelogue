@@ -43,6 +43,8 @@ Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）
 4. 编辑一条 + 删除一条
 5. 杀 app 重开，数据都在
 
+**自动化**：`scripts/ui-test.sh` 一条命令在模拟器跑完上述 Smoke + 已有功能的 UI 测试（`CarelogueUITests/`），截图输出到 `build/ui-screenshots/`；界面有变化时再跑一次 `APPEARANCE=dark scripts/ui-test.sh`。新卡涉及的交互，应在 `CarelogueUITests/` 里补对应用例，自测以跑通测试为准，尽量不交给用户手测。
+
 ## 语言
 
 - 代码、注释、commit message：英文
