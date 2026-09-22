@@ -8,9 +8,9 @@ enum JourneyTemplate: String, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .pregnancy: return "孕期"
-        case .toothExtraction: return "拔牙"
-        case .custom: return "自定义"
+        case .pregnancy: return String(localized: "孕期")
+        case .toothExtraction: return String(localized: "拔牙")
+        case .custom: return String(localized: "自定义")
         }
     }
 }
@@ -21,8 +21,8 @@ enum JourneyStatus: String, Codable, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .active: return "进行中"
-        case .done: return "已完成"
+        case .active: return String(localized: "进行中")
+        case .done: return String(localized: "已完成")
         }
     }
 }

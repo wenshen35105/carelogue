@@ -24,9 +24,9 @@ enum AttachmentImportError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .unreadableImage: return "无法读取这张图片"
-        case .unsupportedType: return "仅支持图片和 PDF"
-        case .accessDenied: return "无法访问所选文件"
+        case .unreadableImage: return String(localized: "无法读取这张图片")
+        case .unsupportedType: return String(localized: "仅支持图片和 PDF")
+        case .accessDenied: return String(localized: "无法访问所选文件")
         }
     }
 }

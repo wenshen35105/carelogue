@@ -18,8 +18,8 @@ enum AttachmentFormat {
 
     static func kindLabel(mime: String) -> String {
         if mime == AttachmentMime.pdf { return "PDF" }
-        if mime.hasPrefix("image/") { return "图片" }
-        return "文件"
+        if mime.hasPrefix("image/") { return String(localized: "图片") }
+        return String(localized: "文件")
     }
 }
 
@@ -93,12 +93,12 @@ struct AttachmentInfoRow: View {
         HStack(spacing: 12) {
             AttachmentThumbnail(data: data, mime: mime)
             VStack(alignment: .leading, spacing: 3) {
-                Text(fileName.isEmpty ? "未命名附件" : fileName)
+                Text(fileName.isEmpty ? String(localized: "未命名附件") : fileName)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(Theme.inkPrimary)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                Text("\(AttachmentFormat.size(of: data)) · \(AttachmentFormat.kindLabel(mime: mime))")
+                Text(verbatim: "\(AttachmentFormat.size(of: data)) · \(AttachmentFormat.kindLabel(mime: mime))")
                     .font(.caption)
                     .foregroundStyle(Theme.inkSecondary)
             }
@@ -127,7 +127,7 @@ struct AttachmentGalleryCard: View {
                 Image(systemName: "paperclip")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.accent)
-                BilingualTitle(primary: "附件 (\(artifacts.count))", secondary: "Attachments")
+                BilingualTitle(primary: String(localized: "附件 (\(artifacts.count))"), secondary: AppLanguage.gloss(String(localized: "Attachments")))
             }
 
             if !images.isEmpty {

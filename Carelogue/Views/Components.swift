@@ -9,18 +9,19 @@ extension JourneyTemplate {
     /// Small-caps English label shown next to a Journey's name (Stitch: "PREGNANCY").
     var englishLabel: String? {
         switch self {
-        case .pregnancy: return "PREGNANCY"
-        case .toothExtraction: return "TOOTH EXTRACTION"
+        case .pregnancy: return String(localized: "PREGNANCY")
+        case .toothExtraction: return String(localized: "TOOTH EXTRACTION")
         case .custom: return nil
         }
     }
 }
 
 extension JourneyStatus {
-    var englishName: String {
+    /// "进行中 Active" / "Active".
+    var pillLabel: String {
         switch self {
-        case .active: return "Active"
-        case .done: return "Done"
+        case .active: return String(localized: "进行中 Active")
+        case .done: return String(localized: "已完成 Done")
         }
     }
 }
@@ -28,18 +29,24 @@ extension JourneyStatus {
 extension LogKind {
     var displayName: String {
         switch self {
-        case .encounter: return "就诊"
-        case .quick: return "随手记"
-        case .measurement: return "测量"
+        case .encounter: return String(localized: "就诊")
+        case .quick: return String(localized: "随手记")
+        case .measurement: return String(localized: "测量")
         }
     }
 
-    var englishName: String {
+    /// English sub-label next to the Chinese kind name (Chinese UI only).
+    var englishGloss: String? {
         switch self {
-        case .encounter: return "Visit"
-        case .quick: return "Quick Note"
-        case .measurement: return "Vitals"
+        case .encounter: return AppLanguage.gloss(String(localized: "Visit"))
+        case .quick: return AppLanguage.gloss(String(localized: "Quick Note"))
+        case .measurement: return AppLanguage.gloss(String(localized: "Vitals"))
         }
+    }
+
+    /// "就诊 Visit" / "Visit" pill text.
+    var pillLabel: String {
+        [displayName, englishGloss].compactMap { $0 }.joined(separator: " ")
     }
 
     var iconName: String {
@@ -55,16 +62,56 @@ extension LogKind: Identifiable {
     public var id: String { rawValue }
 }
 
-extension Log {
-    /// English gloss for the preset encounter sub-types, e.g. 面诊 -> In-Person.
-    var typeEnglishName: String? {
-        switch type {
-        case "面诊": return "In-Person"
-        case "体检": return "Checkup"
-        case "验血": return "Blood Test"
-        case "影像": return "Imaging"
-        default: return nil
+/// Preset Log sub-types. The stored value stays the Chinese preset name
+/// (data written before localization keeps working); only its display is
+/// localized. Custom (user-typed) types are shown verbatim.
+enum LogTypePreset {
+    static let encounter = ["面诊", "体检", "验血", "影像", "其他"]
+    static let quick = ["症状", "情绪", "备注"]
+    /// Measurement presets with their default unit; 自定义 = user-named type.
+    static let measurement: [(name: String, unit: String)] = [
+        ("体重", "kg"), ("血压", "mmHg"), ("体温", "°C"), ("自定义", "")
+    ]
+    static let custom = "自定义"
+
+    static func displayName(_ raw: String) -> String {
+        switch raw {
+        case "面诊": return String(localized: "面诊")
+        case "体检": return String(localized: "体检")
+        case "验血": return String(localized: "验血")
+        case "影像": return String(localized: "影像")
+        case "其他": return String(localized: "其他")
+        case "症状": return String(localized: "症状")
+        case "情绪": return String(localized: "情绪")
+        case "备注": return String(localized: "备注")
+        case "体重": return String(localized: "体重")
+        case "血压": return String(localized: "血压")
+        case "体温": return String(localized: "体温")
+        case "自定义": return String(localized: "自定义")
+        case "": return String(localized: "未命名")
+        default: return raw
         }
+    }
+
+    /// English sub-label for preset encounter types, e.g. 面诊 -> (In-Person).
+    /// Chinese UI only; English UI already shows the English name.
+    static func encounterGloss(_ raw: String) -> String? {
+        let english: String?
+        switch raw {
+        case "面诊": english = String(localized: "(In-Person)")
+        case "体检": english = String(localized: "(Checkup)")
+        case "验血": english = String(localized: "(Blood Test)")
+        case "影像": english = String(localized: "(Imaging)")
+        default: english = nil
+        }
+        return AppLanguage.gloss(english)
+    }
+}
+
+extension Log {
+    /// Localized sub-type for display; falls back to the kind name when empty.
+    var typeDisplayName: String {
+        type.isEmpty ? kind.displayName : LogTypePreset.displayName(type)
     }
 
     var formattedValue: String {
@@ -82,6 +129,11 @@ extension Log {
         guard kind == .encounter else { return false }
         let calendar = Calendar.current
         return calendar.startOfDay(for: occurredAt) > calendar.startOfDay(for: .now)
+    }
+
+    /// "明天" / "距今 11 天" pill for an upcoming appointment.
+    var daysUntilLabel: String {
+        daysFromToday == 1 ? String(localized: "明天") : String(localized: "距今 \(daysFromToday) 天")
     }
 
     /// Whole days from today until this log's day (0 = today).
@@ -114,14 +166,24 @@ extension Journey {
 // MARK: - Date formatting
 
 extension Date {
-    /// "10月2日"
+    /// "10月2日" / "Oct 2"
     var shortDay: String {
-        formatted(.dateTime.month(.defaultDigits).day().locale(Theme.locale))
+        formatted(.dateTime.month(.abbreviated).day().locale(AppLanguage.locale))
     }
 
-    /// "10月2日 22:15"
+    /// "10月2日 22:15" / "Oct 2, 10:15 PM"
     var shortDayTime: String {
-        formatted(.dateTime.month(.defaultDigits).day().hour().minute().locale(Theme.locale))
+        formatted(.dateTime.month(.abbreviated).day().hour().minute().locale(AppLanguage.locale))
+    }
+
+    /// "2026年9月" / "Sep 2026"
+    var yearMonth: String {
+        formatted(.dateTime.year().month(.abbreviated).locale(AppLanguage.locale))
+    }
+
+    /// "2026/9/2" / "9/2/2026"
+    var numericDate: String {
+        formatted(.dateTime.year().month(.defaultDigits).day().locale(AppLanguage.locale))
     }
 }
 
@@ -139,7 +201,7 @@ struct StatusPill: View {
                 Image(systemName: "checkmark.circle")
                     .font(.caption2)
             }
-            Text("\(status.displayName) \(status.englishName)")
+            Text(status.pillLabel)
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(status == .active ? Theme.accent : Theme.inkSecondary)
@@ -178,7 +240,9 @@ struct TagPill: View {
     }
 }
 
-/// "中文 · English" title pair used on card headers.
+/// "中文 · English" title pair used on card headers. `secondary` is the
+/// English gloss — pass it through `AppLanguage.gloss` so English UI shows
+/// the primary text only.
 struct BilingualTitle: View {
     let primary: String
     let secondary: String?

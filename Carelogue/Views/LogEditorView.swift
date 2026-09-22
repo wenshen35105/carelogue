@@ -45,11 +45,11 @@ struct LogEditorView: View {
         _valueText = State(initialValue: existingLog?.value.map { String($0) } ?? "")
         _unit = State(initialValue: existingLog?.unit ?? (kind == .measurement ? "kg" : ""))
 
-        let presetNames = Self.measurementTypes.map(\.name).dropLast() // exclude 自定义
+        let presetNames = LogTypePreset.measurement.map(\.name).filter { $0 != LogTypePreset.custom }
         if let existingType = existingLog?.type, presetNames.contains(existingType) {
             _measurementCategory = State(initialValue: existingType)
         } else if existingLog != nil {
-            _measurementCategory = State(initialValue: "自定义")
+            _measurementCategory = State(initialValue: LogTypePreset.custom)
         } else {
             _measurementCategory = State(initialValue: "体重")
         }
@@ -75,7 +75,7 @@ struct LogEditorView: View {
                     }
                 }
             }
-            .navigationTitle(existingLog == nil ? "新建记录" : "编辑记录")
+            .navigationTitle(existingLog == nil ? String(localized: "新建记录") : String(localized: "编辑记录"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -125,15 +125,13 @@ struct LogEditorView: View {
 
     // MARK: - Encounter
 
-    private static let encounterTypes = ["面诊", "体检", "验血", "影像", "其他"]
-
     @ViewBuilder
     private var encounterFields: some View {
         Section("类型") {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(Self.encounterTypes, id: \.self) { option in
-                        ChipButton(title: option, isSelected: type == option) {
+                    ForEach(LogTypePreset.encounter, id: \.self) { option in
+                        ChipButton(title: LogTypePreset.displayName(option), isSelected: type == option) {
                             type = option
                         }
                     }
@@ -244,8 +242,6 @@ struct LogEditorView: View {
     // Design goal: open -> keyboard already up -> type -> save, in ~3s.
     // Type/time get sane defaults so neither needs to be touched.
 
-    private static let quickTypes = ["症状", "情绪", "备注"]
-
     @ViewBuilder
     private var quickFields: some View {
         Section {
@@ -257,8 +253,8 @@ struct LogEditorView: View {
         Section("类型") {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(Self.quickTypes, id: \.self) { option in
-                        ChipButton(title: option, isSelected: type == option) {
+                    ForEach(LogTypePreset.quick, id: \.self) { option in
+                        ChipButton(title: LogTypePreset.displayName(option), isSelected: type == option) {
                             type = option
                         }
                     }
@@ -275,19 +271,15 @@ struct LogEditorView: View {
 
     // MARK: - Measurement
 
-    private static let measurementTypes: [(name: String, unit: String)] = [
-        ("体重", "kg"), ("血压", "mmHg"), ("体温", "°C"), ("自定义", "")
-    ]
-
     @ViewBuilder
     private var measurementFields: some View {
         Section("类型") {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(Self.measurementTypes, id: \.name) { option in
-                        ChipButton(title: option.name, isSelected: measurementCategory == option.name) {
+                    ForEach(LogTypePreset.measurement, id: \.name) { option in
+                        ChipButton(title: LogTypePreset.displayName(option.name), isSelected: measurementCategory == option.name) {
                             measurementCategory = option.name
-                            if option.name == "自定义" {
+                            if option.name == LogTypePreset.custom {
                                 type = ""
                             } else {
                                 type = option.name
@@ -299,7 +291,7 @@ struct LogEditorView: View {
                 .padding(.vertical, 2)
             }
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-            if measurementCategory == "自定义" {
+            if measurementCategory == LogTypePreset.custom {
                 TextField("自定义类型名称", text: $type)
             }
         }

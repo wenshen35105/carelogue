@@ -28,7 +28,7 @@ struct LogDetailView: View {
 
                 if log.kind == .measurement, let value = log.value {
                     card {
-                        Text("\(value.formatted()) \(log.unit ?? "")")
+                        Text(verbatim: "\(value.formatted(.number.locale(AppLanguage.locale))) \(log.unit ?? "")")
                             .font(.title.weight(.semibold))
                             .foregroundStyle(Theme.inkPrimary)
                     }
@@ -38,10 +38,10 @@ struct LogDetailView: View {
                     card {
                         VStack(alignment: .leading, spacing: 6) {
                             if let location = log.location, !location.isEmpty {
-                                labeledRow(label: "地点", value: location)
+                                labeledRow(label: String(localized: "地点"), value: location)
                             }
                             if let doctor = log.doctor, !doctor.isEmpty {
-                                labeledRow(label: "医生", value: doctor)
+                                labeledRow(label: String(localized: "医生"), value: doctor)
                             }
                         }
                     }
@@ -134,14 +134,14 @@ struct LogDetailView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text(log.type.isEmpty ? log.kind.displayName : log.type)
+                    Text(log.typeDisplayName)
                         .font(.title2.weight(.bold))
                         .foregroundStyle(Theme.inkPrimary)
                     Spacer(minLength: 8)
-                    TagPill(text: log.isUpcoming ? "即将 Upcoming" : "\(log.kind.displayName) \(log.kind.englishName)",
+                    TagPill(text: log.isUpcoming ? String(localized: "即将 Upcoming") : log.kind.pillLabel,
                             tinted: log.isUpcoming)
                 }
-                Text(log.occurredAt.formatted(.dateTime.year().month().day().hour().minute().locale(Theme.locale)))
+                Text(log.occurredAt.formatted(.dateTime.year().month().day().hour().minute().locale(AppLanguage.locale)))
                     .font(.subheadline)
                     .foregroundStyle(Theme.inkSecondary)
             }

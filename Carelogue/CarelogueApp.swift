@@ -19,7 +19,7 @@ struct CarelogueApp: App {
     var body: some Scene {
         WindowGroup {
             JourneyListView()
-                .environment(\.locale, Theme.locale)
+                .environment(\.locale, AppLanguage.locale)
                 .tint(Theme.accent)
         }
         .modelContainer(container)

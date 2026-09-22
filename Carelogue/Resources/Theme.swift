@@ -37,10 +37,6 @@ extension Color {
 /// Single source of truth for colours. Every token is dynamic; views never
 /// branch on colorScheme themselves.
 enum Theme {
-    /// UI copy is Simplified-Chinese-first (CLAUDE.md); force this locale for
-    /// date/time formatting instead of following the device's system locale.
-    static let locale = Locale(identifier: "zh_Hans")
-
     static let accent = Color.dynamic(light: "D9784F", dark: "E08A63")
     /// Low-intensity apricot fill for chips, icon badges and soft highlights (DESIGN.md).
     /// Dark: accent at 15% so it blends with whatever surface sits beneath.

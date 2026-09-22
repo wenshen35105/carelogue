@@ -14,12 +14,17 @@ class CarelogueUITestCase: XCTestCase {
         app = XCUIApplication()
     }
 
+    /// App language for this test. Queries in the suite use the Chinese UI
+    /// labels, so tests pin zh-Hans unless they opt into English.
+    var language = "zh-Hans"
+
     func launch(_ arguments: [String] = []) {
-        app.launchArguments = arguments
+        let locale = language.hasPrefix("zh") ? "zh_CN" : "en_CA"
+        app.launchArguments = ["-AppleLanguages", "(\(language))", "-AppleLocale", locale] + arguments
         app.launch()
     }
 
-    /// Kill and relaunch without flags, so data must come from the store.
+    /// Kill and relaunch without data flags, so data must come from the store.
     func relaunch() {
         app.terminate()
         launch()

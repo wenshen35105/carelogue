@@ -27,7 +27,7 @@ struct JourneyCreationSheet: View {
             }
             .padding(20)
             .background(Theme.background.ignoresSafeArea())
-            .navigationTitle(step == .name ? "命名 · Name" : "选择模板 · Template")
+            .navigationTitle(step == .name ? String(localized: "命名 · Name") : String(localized: "选择模板 · Template"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

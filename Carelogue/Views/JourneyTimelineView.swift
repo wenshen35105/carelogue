@@ -147,7 +147,7 @@ struct JourneyTimelineView: View {
                 }
                 StatusPill(status: journey.status)
             }
-            Text("\(journey.template.displayName) · 始于 \(journey.createdAt.formatted(.dateTime.year().month(.defaultDigits).locale(Theme.locale))) · 共 \(journey.logs.count) 条记录")
+            Text("\(journey.template.displayName) · 始于 \(journey.createdAt.yearMonth) · 共 \(journey.logs.count) 条记录")
                 .font(.footnote)
                 .foregroundStyle(Theme.inkSecondary)
         }
@@ -168,9 +168,9 @@ struct JourneyTimelineView: View {
 
     private var addButton: some View {
         Menu {
-            Button("就诊", systemImage: LogKind.encounter.iconName) { creatingKind = .encounter }
-            Button("随手记", systemImage: LogKind.quick.iconName) { creatingKind = .quick }
-            Button("测量", systemImage: LogKind.measurement.iconName) { creatingKind = .measurement }
+            Button(LogKind.encounter.displayName, systemImage: LogKind.encounter.iconName) { creatingKind = .encounter }
+            Button(LogKind.quick.displayName, systemImage: LogKind.quick.iconName) { creatingKind = .quick }
+            Button(LogKind.measurement.displayName, systemImage: LogKind.measurement.iconName) { creatingKind = .measurement }
         } label: {
             Image(systemName: "plus")
                 .font(.title2.weight(.medium))
@@ -262,11 +262,11 @@ struct JourneyTimelineView: View {
     private var measurementFilterChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                ChipButton(title: "全部 \(measurements.count)", isSelected: effectiveMeasurementFilter == nil) {
+                ChipButton(title: String(localized: "全部 \(measurements.count)"), isSelected: effectiveMeasurementFilter == nil) {
                     withAnimation { measurementFilter = nil }
                 }
                 ForEach(measurementTypes, id: \.name) { type in
-                    ChipButton(title: "\(type.name.isEmpty ? "未命名" : type.name) \(type.count)",
+                    ChipButton(title: "\(LogTypePreset.displayName(type.name)) \(type.count)",
                                isSelected: effectiveMeasurementFilter == type.name) {
                         withAnimation { measurementFilter = type.name }
                     }
@@ -388,7 +388,7 @@ private struct LogCard: View {
     private var title: String {
         switch log.kind {
         case .encounter:
-            return log.type.isEmpty ? log.kind.displayName : "\(log.kind.displayName) · \(log.type)"
+            return log.type.isEmpty ? log.kind.displayName : "\(log.kind.displayName) · \(log.typeDisplayName)"
         case .quick, .measurement:
             return log.kind.displayName
         }
@@ -396,8 +396,8 @@ private struct LogCard: View {
 
     private var subtitle: String? {
         switch log.kind {
-        case .encounter: return log.typeEnglishName.map { "(\($0))" }
-        case .quick, .measurement: return "· \(log.kind.englishName)"
+        case .encounter: return LogTypePreset.encounterGloss(log.type)
+        case .quick, .measurement: return log.kind.englishGloss.map { "· \($0)" }
         }
     }
 
@@ -442,7 +442,7 @@ private struct LogCard: View {
                 .lineSpacing(3)
         }
         if !log.type.isEmpty {
-            TagPill(text: "# \(log.type)")
+            TagPill(text: "# \(log.typeDisplayName)")
         }
     }
 }
@@ -464,14 +464,14 @@ private struct UpcomingCard: View {
                 Image(systemName: "calendar.badge.clock")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(Theme.accent)
-                BilingualTitle(primary: "下次 · \(log.type.isEmpty ? LogKind.encounter.displayName : log.type)", secondary: "(Upcoming)")
+                BilingualTitle(primary: String(localized: "下次 · \(log.typeDisplayName)"), secondary: AppLanguage.gloss(String(localized: "(Upcoming)")))
                 Spacer(minLength: 8)
                 Text(log.occurredAt.shortDay)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.accent)
             }
             HStack(spacing: 8) {
-                TagPill(text: log.daysFromToday == 1 ? "明天" : "距今 \(log.daysFromToday) 天", tinted: true)
+                TagPill(text: log.daysUntilLabel, tinted: true)
                 if let detail {
                     Text(detail)
                         .font(.footnote)
@@ -502,9 +502,9 @@ private struct MeasurementGroupCard: View {
         HStack(spacing: 12) {
             IconBadge(systemName: LogKind.measurement.iconName)
             VStack(alignment: .leading, spacing: 3) {
-                BilingualTitle(primary: LogKind.measurement.displayName, secondary: "· \(LogKind.measurement.englishName)")
+                BilingualTitle(primary: LogKind.measurement.displayName, secondary: LogKind.measurement.englishGloss.map { "· \($0)" })
                 if let recent = mostRecent {
-                    Text("\(logs.count) 次记录 · 最近 \(recent.type) \(recent.formattedValue)")
+                    Text("\(logs.count) 次记录 · 最近 \(recent.typeDisplayName) \(recent.formattedValue)")
                         .font(.footnote)
                         .foregroundStyle(Theme.inkSecondary)
                         .lineLimit(1)
@@ -512,7 +512,7 @@ private struct MeasurementGroupCard: View {
             }
             Spacer(minLength: 8)
             HStack(spacing: 2) {
-                Text(expanded ? "收起" : "展开")
+                Text(expanded ? String(localized: "收起") : String(localized: "展开"))
                 Image(systemName: expanded ? "chevron.down" : "chevron.right")
             }
             .font(.footnote.weight(.semibold))
@@ -528,7 +528,7 @@ private struct MeasurementRow: View {
 
     var body: some View {
         HStack {
-            Text(log.type)
+            Text(LogTypePreset.displayName(log.type))
                 .font(.subheadline)
                 .foregroundStyle(Theme.inkPrimary)
             Spacer()

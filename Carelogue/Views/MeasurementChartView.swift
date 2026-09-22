@@ -29,6 +29,10 @@ struct MeasurementChartView: View {
             .sorted { $0.occurredAt < $1.occurredAt }
     }
 
+    private var typeName: String {
+        selectedType.isEmpty ? LogKind.measurement.displayName : LogTypePreset.displayName(selectedType)
+    }
+
     private var unit: String {
         points.last?.unit ?? ""
     }
@@ -72,7 +76,7 @@ struct MeasurementChartView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(types, id: \.self) { type in
-                    ChipButton(title: type.isEmpty ? "未命名" : type, isSelected: type == selectedType) {
+                    ChipButton(title: LogTypePreset.displayName(type), isSelected: type == selectedType) {
                         withAnimation { selectedType = type }
                     }
                 }
@@ -86,7 +90,7 @@ struct MeasurementChartView: View {
             Image(systemName: "chart.xyaxis.line")
                 .font(.system(size: 30))
                 .foregroundStyle(Theme.inkSecondary)
-            Text("还没有「\(selectedType.isEmpty ? "测量" : selectedType)」的数值记录")
+            Text("还没有「\(typeName)」的数值记录")
                 .font(.subheadline)
                 .foregroundStyle(Theme.inkSecondary)
         }
@@ -102,7 +106,7 @@ struct MeasurementChartView: View {
         return VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
                 IconBadge(systemName: LogKind.measurement.iconName)
-                BilingualTitle(primary: selectedType.isEmpty ? "测量" : selectedType, secondary: "· 最新 Latest")
+                BilingualTitle(primary: typeName, secondary: String(localized: "· 最新 Latest"))
             }
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Text(Self.format(latest.value ?? 0))
@@ -115,7 +119,7 @@ struct MeasurementChartView: View {
                 Spacer(minLength: 8)
                 if values.count >= 2, let first = values.first, let last = values.last {
                     let delta = last - first
-                    TagPill(text: "较首次 \(delta >= 0 ? "+" : "−")\(Self.format(abs(delta)))\(unit)", tinted: true)
+                    TagPill(text: String(localized: "较首次 \(delta >= 0 ? "+" : "−")\(Self.format(abs(delta)))\(unit)"), tinted: true)
                 }
             }
             Text("\(points.count) 次记录 · 最低 \(Self.format(values.min() ?? 0)) · 最高 \(Self.format(values.max() ?? 0)) · 最近 \(latest.occurredAt.shortDay)")
@@ -135,7 +139,7 @@ struct MeasurementChartView: View {
                 AreaMark(
                     x: .value("日期", log.occurredAt),
                     yStart: .value("基线", yDomain.lowerBound),
-                    yEnd: .value(selectedType, log.value ?? 0)
+                    yEnd: .value(typeName, log.value ?? 0)
                 )
                 .foregroundStyle(LinearGradient(
                     colors: [Theme.accent.opacity(0.18), Theme.accent.opacity(0)],
@@ -145,7 +149,7 @@ struct MeasurementChartView: View {
 
                 LineMark(
                     x: .value("日期", log.occurredAt),
-                    y: .value(selectedType, log.value ?? 0)
+                    y: .value(typeName, log.value ?? 0)
                 )
                 .foregroundStyle(Theme.accent)
                 .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
@@ -153,7 +157,7 @@ struct MeasurementChartView: View {
 
                 PointMark(
                     x: .value("日期", log.occurredAt),
-                    y: .value(selectedType, log.value ?? 0)
+                    y: .value(typeName, log.value ?? 0)
                 )
                 .foregroundStyle(Theme.accent)
                 .symbolSize(points.count > 30 ? 12 : 30)
@@ -174,7 +178,7 @@ struct MeasurementChartView: View {
                 }
             }
             .frame(height: 240)
-            .accessibilityLabel("\(selectedType)趋势图，共 \(points.count) 个点")
+            .accessibilityLabel("\(typeName)趋势图，共 \(points.count) 个点")
 
             if points.count == 1 {
                 Text("只有 1 条记录，再记一次就能看到趋势")

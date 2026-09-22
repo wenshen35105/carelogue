@@ -58,7 +58,7 @@ struct JourneyListView: View {
             HStack(spacing: 6) {
                 Image(systemName: "calendar")
                     .foregroundStyle(Theme.accent)
-                Text(Date.now.formatted(.dateTime.month().day().weekday(.wide).locale(Theme.locale)))
+                Text(Date.now.formatted(.dateTime.month().day().weekday(.wide).locale(AppLanguage.locale)))
             }
             .font(.footnote)
             .foregroundStyle(Theme.inkSecondary)
@@ -92,7 +92,7 @@ struct JourneyListView: View {
                 try? modelContext.save()
             } label: {
                 Label(
-                    journey.status == .active ? "归档" : "取消归档",
+                    journey.status == .active ? String(localized: "归档") : String(localized: "取消归档"),
                     systemImage: journey.status == .active ? "archivebox" : "arrow.uturn.backward"
                 )
             }
@@ -118,9 +118,11 @@ struct JourneyListView: View {
                 Text("档案与设置")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.inkPrimary)
-                Text("Profile & Settings")
-                    .font(.caption)
-                    .foregroundStyle(Theme.inkSecondary)
+                if let gloss = AppLanguage.gloss(String(localized: "Profile & Settings")) {
+                    Text(gloss)
+                        .font(.caption)
+                        .foregroundStyle(Theme.inkSecondary)
+                }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.semibold))
@@ -171,7 +173,7 @@ private struct JourneyCard: View {
                                 .lineLimit(1)
                         }
                     }
-                    Text("\(journey.template.displayName) · 始于 \(journey.createdAt.formatted(.dateTime.year().month(.defaultDigits).day().locale(Theme.locale)))")
+                    Text("\(journey.template.displayName) · 始于 \(journey.createdAt.numericDate)")
                         .font(.footnote)
                         .foregroundStyle(Theme.inkSecondary)
                 }
@@ -200,13 +202,13 @@ private struct JourneyCard: View {
     private var statsRow: some View {
         HStack(spacing: 8) {
             if let latest = journey.latestPastLog {
-                stat(icon: "calendar", text: "最近 \(latest.occurredAt.shortDay)")
+                stat(icon: "calendar", text: String(localized: "最近 \(latest.occurredAt.shortDay)"))
                 dot
             }
-            stat(icon: "doc.text", text: "\(journey.logs.count) 条记录")
+            stat(icon: "doc.text", text: String(localized: "\(journey.logs.count) 条记录"))
             if journey.artifactCount > 0 {
                 dot
-                stat(icon: "photo", text: "\(journey.artifactCount) 份附件")
+                stat(icon: "photo", text: String(localized: "\(journey.artifactCount) 份附件"))
             }
         }
     }
@@ -249,10 +251,10 @@ private struct NextAppointmentBanner: View {
             IconBadge(systemName: "calendar.badge.clock", size: 36)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text("下次\(log.type.isEmpty ? "就诊" : log.type)：\(log.occurredAt.shortDay)")
+                    Text("下次\(log.typeDisplayName)：\(log.occurredAt.shortDay)")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Theme.inkPrimary)
-                    TagPill(text: log.daysFromToday == 1 ? "明天" : "距今 \(log.daysFromToday) 天", tinted: true)
+                    TagPill(text: log.daysUntilLabel, tinted: true)
                 }
                 if let detail {
                     Text(detail)
@@ -285,9 +287,11 @@ private struct NewJourneyCard: View {
                     Text("新建健康旅程")
                         .font(.headline)
                         .foregroundStyle(Theme.inkPrimary)
-                    Text("· New Journey")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(Theme.accent)
+                    if let gloss = AppLanguage.gloss(String(localized: "· New Journey")) {
+                        Text(gloss)
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.accent)
+                    }
                 }
                 Text("孕期 · 术后康复 · 慢病随访 · 年度体检")
                     .font(.footnote)
