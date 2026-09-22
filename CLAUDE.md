@@ -3,12 +3,12 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：M1（项目骨架 + 数据层 + Journey/Log CRUD）。首期用户：单人自用（孕期 Journey）。
+当前阶段：M4（真机化 + 真实试用：CloudKit 双机同步、真机适配、太太孕期真实数据试用）。
 
 ## 先读这些（按序）
 
 1. `docs/mvp-spec.md` — 功能蓝图、页面、数据模型、AI 契约（上级文档）
-2. `docs/m1-tasks.md` — 当前里程碑任务卡（**一次只做一张**）
+2. `docs/m4-tasks.md` — 当前里程碑任务卡（**一次只做一张**；M1–M3 卡见各自文件）
 3. `docs/product-brief.md` — 定位与原则（背景）
 4. `docs/design-review.md` + `docs/design/stitch/` 三屏 PNG — UI 参照
 
