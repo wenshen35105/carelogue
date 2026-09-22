@@ -81,7 +81,9 @@ Profile（单行）
 
 ## 6. 文案与双语
 
-- 所有 UI 字符串进本地化文件（zh-Hans / en）；关键标题中英并排，正文中文优先
+- **语言机制**：iOS per-app language（系统设置 → Carelogue → 首选语言），**不在 app 内做语言设置**；支持 zh-Hans / en
+- 所有 UI 字符串进 String Catalog（`Localizable.xcstrings`），禁止硬编码；**中文文案保留"中英并排"格式**（如"设置 Settings"），**英文文案为纯英文**
+- 日期/数字格式跟随 app 语言（不再硬编码 zh_Hans）
 - 术语词典（开发用）：Journey 旅程 / Log 记录 / Encounter 就诊 / Quick Log 随手记 / Measurement 测量 / Artifact 文档 / Profile 档案 / Summary Card 摘要卡
 
 ## 7. 隐私与合规（MVP 版）

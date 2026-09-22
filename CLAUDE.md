@@ -19,6 +19,7 @@ Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）
 - 附件用 `@Attribute(.externalStorage)`；不要把二进制塞进其它字段
 - 颜色：accent `#D9784F` · 背景 `#F7F5F2` · 卡片 `#FFFFFF` · 主墨 `#1C1B1A` · 次墨 `#8A8680` · 边框 `#EAE6DF`
 - 字体：系统字体（SF Pro + 苹方），不引入第三方字体
+- UI 文案一律进 String Catalog（zh-Hans / en），禁止硬编码；中文保持"中英并排"、英文纯英文；日期/数字格式跟随 app 语言
 - 圆角：卡片 18–20pt · 按钮 12–14pt · 标签 pill 全圆
 - 文案：简体中文为主，关键标题中英并排
 - 不做（v1.1+ 才考虑）：账号 / 订阅 / 服务端 / Tab bar / 全局视图 / 通知

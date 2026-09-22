@@ -44,3 +44,13 @@
 ## 落地
 - "采纳项"在更新 M1 任务卡 UI 口径时并入；"搁置项"不动
 - 实现基准：本目录三屏 PNG 为 UI 参照 + DESIGN.md 的色板 / 间距 / 组件规范（取其精神；字体与假数据除外）
+
+## M3 稿评审（settings / explanation_states / first_use_consent_sheet）
+
+**结论：通过**——三面均按 M3 prompt 出齐（设置页 / 解释四态+OFF 态 / 同意 sheet）。
+
+修正（实现时注意）：
+1. **"端到端加密"措辞必须改** → 用"加密传输 · Encrypted in transit"。纯文本在 DeepSeek 服务端解密处理，技术上不是 E2E——对用户不能声称"端到端加密"
+2. 解释服务行别写未定的模型名（如 Med-Instruct）→ 用实际调用的模型（deepseek-chat）
+3. 生成中态"预计剩余 xx 秒"→ 改为"通常几秒内完成"或去掉（不做假进度条）
+
