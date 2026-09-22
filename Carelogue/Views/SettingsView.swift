@@ -6,6 +6,8 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage(AISettings.enabledKey) private var aiEnabled = true
     @AppStorage(AISettings.includeProfileKey) private var includeProfile = true
+    @AppStorage(AISettings.consentKey) private var consentRaw = ""
+    @State private var showingRevokeConfirm = false
 
     @State private var apiKey: String? = AISettings.apiKey
     @State private var showingKeyEditor = false
@@ -227,9 +229,48 @@ struct SettingsView: View {
                            title: String(localized: "不存储、不用于训练"),
                            gloss: AppLanguage.gloss(String(localized: "No storage, no training")),
                            detail: String(localized: "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。"))
+                consentFooter
+                    .padding(.bottom, 16)
             }
             .padding(.horizontal, Theme.Spacing.cardPadding)
             .cardSurface(padding: 0)
+            .confirmationDialog("撤回 AI 解释同意？", isPresented: $showingRevokeConfirm, titleVisibility: .visible) {
+                Button("撤回同意", role: .destructive) {
+                    consentRaw = AISettings.Consent.revoked.rawValue
+                }
+                Button("取消", role: .cancel) {}
+            } message: {
+                Text("撤回后不会再发送任何报告文字，报告页的 AI 解释入口会停用；已有的解释结果仍保留在本机。")
+            }
+        }
+    }
+
+    /// 撤回 AI 同意 (T21). Only shown when there is something to withdraw.
+    @ViewBuilder
+    private var consentFooter: some View {
+        switch AISettings.Consent(rawValue: consentRaw) ?? .undecided {
+        case .granted:
+            Button {
+                showingRevokeConfirm = true
+            } label: {
+                Label("撤回 AI 同意 · Revoke Consent", systemImage: "arrow.uturn.backward")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.inkPrimary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Theme.insetFill))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.border, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("settings.revokeConsent")
+        case .revoked:
+            Label("已撤回同意，AI 解释入口已停用。在报告页可重新同意。", systemImage: "hand.raised")
+                .font(.footnote)
+                .foregroundStyle(Theme.inkSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityIdentifier("settings.consentRevoked")
+        case .undecided:
+            EmptyView()
         }
     }
 

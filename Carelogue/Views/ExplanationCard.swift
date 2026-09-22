@@ -8,6 +8,7 @@ import UIKit
 struct ExplanationCard: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage(AISettings.enabledKey) private var aiEnabled = true
+    @AppStorage(AISettings.consentKey) private var consentRaw = ""
 
     let artifacts: [Artifact]
 
@@ -18,6 +19,8 @@ struct ExplanationCard: View {
     @State private var selectedTerm: Explanation.Term?
     @State private var notice: String?
     @State private var copied = false
+    /// Artifact waiting on the consent sheet's answer.
+    @State private var pendingConsent: Artifact?
 
     enum Phase: Equatable {
         case running
@@ -28,11 +31,29 @@ struct ExplanationCard: View {
         artifacts.first { $0.id == selectedID } ?? artifacts.first
     }
 
+    private var consent: AISettings.Consent {
+        AISettings.Consent(rawValue: consentRaw) ?? .undecided
+    }
+
     var body: some View {
-        if !aiEnabled {
-            DisabledLine()
-        } else if let artifact = selected {
-            card(for: artifact)
+        Group {
+            if !aiEnabled {
+                DisabledLine()
+            } else if consent == .revoked {
+                RevokedLine { pendingConsent = selected }
+            } else if let artifact = selected {
+                card(for: artifact)
+            }
+        }
+        .sheet(item: $pendingConsent) { artifact in
+            ConsentSheet(
+                onAccept: {
+                    consentRaw = AISettings.Consent.granted.rawValue
+                    pendingConsent = nil
+                    start(artifact)
+                },
+                onDecline: { pendingConsent = nil }
+            )
         }
     }
 
@@ -256,6 +277,10 @@ struct ExplanationCard: View {
 
     private func start(_ artifact: Artifact) {
         guard phases[artifact.id] != .running else { return }
+        guard consent == .granted else {
+            pendingConsent = artifact
+            return
+        }
         notice = nil
         selectedTerm = nil
         collapsed = false
@@ -423,6 +448,43 @@ private struct DisabledLine: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("explain.disabled")
+    }
+}
+
+/// Replaces the card after consent was withdrawn in Settings.
+private struct RevokedLine: View {
+    let onReconsent: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "hand.raised")
+                .font(.subheadline)
+                .foregroundStyle(Theme.inkSecondary)
+                .frame(width: 32, height: 32)
+                .background(Circle().fill(Theme.insetFill))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("已撤回 AI 解释同意")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.inkPrimary)
+                Text("不会再发送任何报告文字")
+                    .font(.caption)
+                    .foregroundStyle(Theme.inkSecondary)
+            }
+            Spacer(minLength: 8)
+            Button(action: onReconsent) {
+                Text("重新同意")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Theme.accent)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Capsule().fill(Theme.accentTint))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("explain.reconsent")
+        }
+        .cardSurface(padding: 14)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("explain.revoked")
     }
 }
 

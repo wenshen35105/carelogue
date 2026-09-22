@@ -45,6 +45,20 @@ enum AISettings {
     /// Send Profile allergies / medications along as context (spec §5b).
     static let includeProfileKey = "ai.includeProfile"
 
+    /// First-use consent (spec §7): "" = not asked / declined,
+    /// "granted", "revoked" (withdrawn in Settings; AI entry disabled).
+    static let consentKey = "ai.consent"
+
+    enum Consent: String {
+        case undecided = ""
+        case granted
+        case revoked
+    }
+
+    static var consent: Consent {
+        Consent(rawValue: UserDefaults.standard.string(forKey: consentKey) ?? "") ?? .undecided
+    }
+
     static var isEnabled: Bool { UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? true }
     static var includesProfile: Bool { UserDefaults.standard.object(forKey: includeProfileKey) as? Bool ?? true }
 

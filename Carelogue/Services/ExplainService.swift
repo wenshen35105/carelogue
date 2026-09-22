@@ -68,6 +68,7 @@ extension Artifact {
 
 enum ExplainError: LocalizedError, Equatable {
     case aiDisabled
+    case consentRequired
     case extraction(TextExtractionError)
     case service(AIServiceError)
     /// Blank / non-JSON / refused reply.
@@ -76,6 +77,7 @@ enum ExplainError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .aiDisabled: return String(localized: "AI 解释已在设置中关闭")
+        case .consentRequired: return String(localized: "需要先同意 AI 解释说明")
         case .extraction(let error): return error.errorDescription
         case .service(let error): return error.errorDescription
         case .unusableReply: return String(localized: "这次没有得到可用的解释")
@@ -119,6 +121,9 @@ enum ExplainService {
 
     static func explain(_ artifact: Artifact, in context: ModelContext, now: Date = .now) async throws -> ExplainOutcome {
         guard AISettings.isEnabled else { throw ExplainError.aiDisabled }
+        // Nothing leaves the device without consent — the UI asks first,
+        // this is the backstop.
+        guard AISettings.consent == .granted else { throw ExplainError.consentRequired }
 
         if let cached = artifact.explanation, let createdAt = cached.createdAt,
            now.timeIntervalSince(createdAt) < throttleInterval {
