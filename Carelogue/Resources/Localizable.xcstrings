@@ -2218,6 +2218,23 @@
         }
       }
     },
+    "拍照添加" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take a photo"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拍照添加"
+          }
+        }
+      }
+    },
     "拔牙" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3212,6 +3229,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "白话解释（AI 生成）"
+          }
+        }
+      }
+    },
+    "相机权限已关闭。在「设置 › Carelogue › 相机」里打开后即可拍照。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera access is off. Turn it on in Settings › Carelogue › Camera to take photos."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "相机权限已关闭。在「设置 › Carelogue › 相机」里打开后即可拍照。"
           }
         }
       }

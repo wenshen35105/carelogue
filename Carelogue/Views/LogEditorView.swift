@@ -28,6 +28,7 @@ struct LogEditorView: View {
     @State private var removedArtifactIDs: Set<UUID> = []
     @State private var photoSelection: [PhotosPickerItem] = []
     @State private var showingFileImporter = false
+    @State private var showingCamera = false
     @State private var importingCount = 0
     @State private var importErrorMessage: String?
     @FocusState private var noteFieldFocused: Bool
@@ -105,6 +106,16 @@ struct LogEditorView: View {
                 case .failure(let error):
                     importErrorMessage = error.localizedDescription
                 }
+            }
+            .fullScreenCover(isPresented: $showingCamera) {
+                CameraPicker(
+                    onCapture: { data in
+                        showingCamera = false
+                        Task { await importCapture(data) }
+                    },
+                    onCancel: { showingCamera = false }
+                )
+                .ignoresSafeArea()
             }
             .onChange(of: photoSelection) { _, items in
                 guard !items.isEmpty else { return }
@@ -199,6 +210,15 @@ struct LogEditorView: View {
                 }
             }
 
+            if CameraPicker.isAvailable {
+                Button {
+                    Task { await startCamera() }
+                } label: {
+                    Label("拍照添加", systemImage: "camera")
+                }
+                .accessibilityIdentifier("editor.camera")
+            }
+
             PhotosPicker(selection: $photoSelection, matching: .images) {
                 Label("从相册添加", systemImage: "photo.on.rectangle")
             }
@@ -211,6 +231,29 @@ struct LogEditorView: View {
             Text("附件 · Attachments")
         } footer: {
             Text("左滑可移除 · 图片会自动压缩后保存 · PDF 最大 \(AttachmentImporter.megabytes(AttachmentImporter.maxPDFBytes)) MB")
+        }
+    }
+
+    /// Asks for camera permission first, so a denial can be explained
+    /// instead of opening a black viewfinder (T24).
+    private func startCamera() async {
+        switch await CameraPicker.requestAccess() {
+        case .authorized:
+            showingCamera = true
+        case .denied, .restricted:
+            importErrorMessage = String(localized: "相机权限已关闭。在「设置 › Carelogue › 相机」里打开后即可拍照。")
+        default:
+            break
+        }
+    }
+
+    private func importCapture(_ data: Data) async {
+        importingCount += 1
+        defer { importingCount -= 1 }
+        do {
+            pendingAttachments.append(try await AttachmentImporter.fromPhotoData(data, index: pendingAttachments.count))
+        } catch {
+            importErrorMessage = error.localizedDescription
         }
     }
 
