@@ -30,7 +30,7 @@
 ## T25 · 打磨批（~5h，纯代码、不依赖账号，等待期可先跑）
 - ① **AI 服务商切换（待拍）** → 新 provider 实现 + 全用例回归；AI 披露文案改**责任版**（"我们只选用承诺不用你的数据训练的 AI 服务"——措辞随 provider 定稿）
 - ② 设置页"清空所有数据"（显式逐层删除，M2 教训；二次确认）
-- ③ 时间线卡片内嵌解释摘要（design-review 采纳项）
+- ③ 时间线卡片内嵌解释摘要（design-review 采纳项）；设计参照 `docs/design/stitch/journey_timeline_with_ai_summary/`——只取"AI 摘要"行元素（muted 小条+箭头），其余卡片（里程碑/每日寄语等）忽略
 - ④ 英文修漏 + P3 顺手清（附件上限 #3、Form 深色 #2、chip 遮挡 #12 等，对照 m2/m3-bugs）
 - **验收**：各条自测 + UI 测试全绿；文案对照复核
 
@@ -42,11 +42,13 @@
 
 ## T27 · iOS 订阅接入（StoreKit 2，~4h）
 - **做**：订阅页（$4.99/月，产品建在 App Store Connect）；购买/恢复/管理入口；Transaction JWS 随解释请求附带；AI 功能门控（未订阅 → 引导订阅；订阅 → 全开）；StoreKit Testing 本地跑通 + 沙盒
+- **设计参照**：`docs/design/stitch/carelogue_plus_paywall/`、`report_view_not_subscribed/`——注意：**锁只作用于解释卡**，附件/记录本身保持免费；权益文案用通用表述（**不点名未规划功能**——设计稿里的"双语病历梳理/随访助理"删）；"DIGNIFIED CARE" pill 可略
 - **验收**：沙盒购买 → 解释全流程；退款/过期降级不崩
 - **学习点**：StoreKit 2、订阅生命周期
 
 ## T28 · 合规件 + 设置页订阅区（~3h）
 - **做**：设置页"AI 区"改造（BYOK 移除 → 订阅状态 / 恢复购买 / 管理订阅）；隐私政策 + 服务条款（文本 + carelogue.ca 托管页，app 内链接）；AI 披露"责任版"按定案服务商定稿；同意弹窗文案更新（订阅语境）
+- **设计参照**：`docs/design/stitch/settings_subscribed/`——订阅卡三行结构照用；"Family Care Tier"、版本号等 Stitch 自创元素忽略；**全部文案以本卡"责任版"定稿为准**（设计稿中"端到端加密"、旧服务商名已过时）
 - **验收**：App Store 审核要素自检（AI 披露、隐私政策 URL、恢复购买）
 - **学习点**：App Store 合规要素
 
