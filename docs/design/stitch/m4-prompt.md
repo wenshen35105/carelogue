@@ -13,9 +13,9 @@ bilingual labels (Simplified Chinese primary, small English sub-labels),
 native iOS feel. Show the light theme (the dark "Nocturne" system already
 exists and follows automatically).
 
-SCREEN 1 — Subscription page ("Curlologue Plus" paywall)
+SCREEN 1 — Subscription page ("Carelogue Plus" paywall)
 A calm, focused full-screen page (may be presented as a sheet), single column.
-- Top: small brand mark (heart + cross), title "Curlologue Plus", subtitle
+- Top: small brand mark (heart + cross), title "Carelogue Plus", subtitle
   "解锁全部 AI 功能 · Unlock all AI"
 - Benefit list (3 rows, small line icons, generous spacing):
   1. "白话解释 — 把报告变成白话总结、术语卡和「问问医生」清单"
@@ -31,7 +31,7 @@ A calm, focused full-screen page (may be presented as a sheet), single column.
 SCREEN 2 — Settings page, subscription version (replaces the current
 "AI · 解释功能" section)
 - New "订阅 · Subscription" card:
-  * row "Curlologue Plus" with a small green pill "订阅中 · Active"
+  * row "Carelogue Plus" with a small green pill "订阅中 · Active"
   * row "下次续费 · 2026年10月22日"
   * row "管理订阅 · Manage" (chevron) and row "恢复购买 · Restore"
 - Privacy card stays, copy updated to:
