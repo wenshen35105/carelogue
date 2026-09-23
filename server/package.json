@@ -1,0 +1,11 @@
+{
+  "name": "carelogue-explain",
+  "private": true,
+  "type": "module",
+  "description": "Carelogue's stateless explain relay (Cloudflare Worker)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test \"test/*.test.js\""
+  }
+}

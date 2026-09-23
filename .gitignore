@@ -6,3 +6,7 @@ build/
 
 # Local-only helper scripts
 *.local.sh
+
+# Worker deps (server/ has none at runtime; wrangler is run via npx)
+server/node_modules/
+server/.wrangler/

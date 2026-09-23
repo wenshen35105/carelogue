@@ -1,0 +1,33 @@
+name = "carelogue-explain"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+# Fill these in before the first deploy (see README.md).
+[vars]
+BUNDLE_ID = "com.jiajinlinpersonalteam.Carelogue"
+PRODUCT_IDS = "com.jiajinlinpersonalteam.Carelogue.plus.monthly"
+# The DeepSeek model id exactly as deepinfra.com/models lists it.
+DEEPINFRA_MODEL = ""
+# shasum -a 256 of Apple Root CA G3 in DER form — see README.
+APPLE_ROOT_CA_G3_SHA256 = ""
+# "1" while testing with sandbox purchases; remove before the public launch.
+ALLOW_SANDBOX = "1"
+PER_DEVICE_LIMIT = "40"
+PER_IP_LIMIT = "120"
+WINDOW_SECONDS = "3600"
+
+# Rate-limit counters. Create with:
+#   npx wrangler kv namespace create RATE_LIMIT
+# then paste the id below. Without the binding the service still runs, unlimited.
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = ""
+
+# Custom domain, added after the zone is on Cloudflare:
+# [[routes]]
+# pattern = "api.carelogue.ca/v1/*"
+# zone_name = "carelogue.ca"
+
+# Secret, never in this file:
+#   npx wrangler secret put DEEPINFRA_API_KEY
