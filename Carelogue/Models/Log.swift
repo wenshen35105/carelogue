@@ -31,8 +31,29 @@ final class Log {
 
     var journey: Journey? = nil
 
+    /// Optional for CloudKit (T23) — see Journey.logs. Read through
+    /// `allArtifacts`; change through `add(_:)` / `removeArtifact(id:)`.
     @Relationship(deleteRule: .cascade, inverse: \Artifact.log)
-    var artifacts: [Artifact] = []
+    var artifacts: [Artifact]? = []
+
+    var allArtifacts: [Artifact] { artifacts ?? [] }
+
+    func add(_ artifact: Artifact) {
+        artifacts = allArtifacts + [artifact]
+        artifact.log = self
+    }
+
+    func removeArtifact(id: UUID) {
+        artifacts = allArtifacts.filter { $0.id != id }
+    }
+
+    /// Detaches every attachment and hands them back for deletion.
+    @discardableResult
+    func removeAllArtifacts() -> [Artifact] {
+        let existing = allArtifacts
+        artifacts = []
+        return existing
+    }
 
     var kind: LogKind {
         get { LogKind(rawValue: kindRaw) ?? .quick }

@@ -824,6 +824,23 @@
         }
       }
     },
+    "Your devices & iCloud" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your devices & iCloud"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your devices & iCloud"
+          }
+        }
+      }
+    },
     "· New Journey" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1041,6 +1058,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "体重"
+          }
+        }
+      }
+    },
+    "你的设备与 iCloud" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your devices & iCloud"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的设备与 iCloud"
           }
         }
       }
@@ -2405,6 +2439,23 @@
         }
       }
     },
+    "旅程、记录、附件和档案保存在这台设备上，并通过你自己的 iCloud 私有库同步到你的其他设备。我们读不到这些内容。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journeys, records, attachments and your profile are stored on this device and sync to your other devices through your own private iCloud database. We cannot read any of it."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅程、记录、附件和档案保存在这台设备上，并通过你自己的 iCloud 私有库同步到你的其他设备。我们读不到这些内容。"
+          }
+        }
+      }
+    },
     "旅程、记录、附件和档案都只保存在这台设备上。" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2418,6 +2469,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "旅程、记录、附件和档案都只保存在这台设备上。"
+          }
+        }
+      }
+    },
+    "旅程、记录、附件和档案都只保存在这台设备上。登录 iCloud 后，它们会在你自己的私有库里同步到其他设备。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journeys, records, attachments and your profile are stored only on this device. Sign in to iCloud and they will sync to your other devices through your own private database."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅程、记录、附件和档案都只保存在这台设备上。登录 iCloud 后，它们会在你自己的私有库里同步到其他设备。"
           }
         }
       }

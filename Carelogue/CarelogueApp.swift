@@ -6,11 +6,9 @@ struct CarelogueApp: App {
     private let container: ModelContainer
 
     init() {
-        do {
-            container = try ModelContainer(for: Journey.self, Log.self, Artifact.self, Profile.self)
-        } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
-        }
+        // CloudKit-backed private database (T23); CloudSync falls back to a
+        // local store if the container can't be opened.
+        container = CloudSync.makeContainer()
         #if DEBUG
         UITestSupport.prepare(container.mainContext)
         #endif

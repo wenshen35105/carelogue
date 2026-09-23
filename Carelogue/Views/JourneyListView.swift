@@ -205,7 +205,7 @@ private struct JourneyCard: View {
                 stat(icon: "calendar", text: String(localized: "最近 \(latest.occurredAt.shortDay)"))
                 dot
             }
-            stat(icon: "doc.text", text: String(localized: "\(journey.logs.count) 条记录"))
+            stat(icon: "doc.text", text: String(localized: "\(journey.allLogs.count) 条记录"))
             if journey.artifactCount > 0 {
                 dot
                 stat(icon: "photo", text: String(localized: "\(journey.artifactCount) 份附件"))

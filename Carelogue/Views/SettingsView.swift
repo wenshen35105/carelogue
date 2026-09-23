@@ -221,10 +221,7 @@ struct SettingsView: View {
                                   gloss: AppLanguage.gloss(String(localized: "Privacy & Data Flow")))
 
             VStack(spacing: 0) {
-                PrivacyRow(icon: "lock.iphone",
-                           title: String(localized: "数据只存本机"),
-                           gloss: AppLanguage.gloss(String(localized: "On-device only")),
-                           detail: String(localized: "旅程、记录、附件和档案都只保存在这台设备上。"))
+                storageRow
                 SettingsDivider()
                 PrivacyRow(icon: "text.viewfinder",
                            title: String(localized: "仅发送提取文本"),
@@ -248,6 +245,25 @@ struct SettingsView: View {
             } message: {
                 Text("撤回后不会再发送任何报告文字，报告页的 AI 解释入口会停用；已有的解释结果仍保留在本机。")
             }
+        }
+    }
+
+    /// Where records live. With CloudKit on (T23) they also sync through the
+    /// user's own private iCloud database, so the copy has to say so.
+    @ViewBuilder
+    private var storageRow: some View {
+        if CloudSync.isSyncing {
+            PrivacyRow(icon: "icloud",
+                       title: String(localized: "你的设备与 iCloud"),
+                       gloss: AppLanguage.gloss(String(localized: "Your devices & iCloud")),
+                       detail: String(localized: "旅程、记录、附件和档案保存在这台设备上，并通过你自己的 iCloud 私有库同步到你的其他设备。我们读不到这些内容。"))
+        } else {
+            PrivacyRow(icon: "lock.iphone",
+                       title: String(localized: "数据只存本机"),
+                       gloss: AppLanguage.gloss(String(localized: "On-device only")),
+                       detail: CloudSync.mode == .cloudKit
+                           ? String(localized: "旅程、记录、附件和档案都只保存在这台设备上。登录 iCloud 后，它们会在你自己的私有库里同步到其他设备。")
+                           : String(localized: "旅程、记录、附件和档案都只保存在这台设备上。"))
         }
     }
 

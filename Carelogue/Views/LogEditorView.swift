@@ -165,7 +165,7 @@ struct LogEditorView: View {
     // MARK: - Attachments
 
     private var keptArtifacts: [Artifact] {
-        (existingLog?.artifacts ?? [])
+        (existingLog?.allArtifacts ?? [])
             .filter { !removedArtifactIDs.contains($0.id) }
             .sorted { $0.createdAt < $1.createdAt }
     }
@@ -320,7 +320,7 @@ struct LogEditorView: View {
             // Mutate the parent's array (not just log.journey): views observe
             // journey.logs, and setting only the inverse side did not refresh
             // the timeline after save.
-            journey.logs.append(log)
+            journey.add(log)
         }
         log.type = type
         log.occurredAt = occurredAt
@@ -343,15 +343,15 @@ struct LogEditorView: View {
 
     private func applyAttachmentChanges(to log: Log) {
         // Edit log.artifacts itself so views observing it refresh.
-        let removed = log.artifacts.filter { removedArtifactIDs.contains($0.id) }
-        log.artifacts.removeAll { removedArtifactIDs.contains($0.id) }
+        let removed = log.allArtifacts.filter { removedArtifactIDs.contains($0.id) }
+        log.artifacts = log.allArtifacts.filter { !removedArtifactIDs.contains($0.id) }
         for artifact in removed {
             modelContext.delete(artifact)
         }
         for pending in pendingAttachments {
             let artifact = Artifact(fileData: pending.data, fileName: pending.fileName, mime: pending.mime)
             modelContext.insert(artifact)
-            log.artifacts.append(artifact)
+            log.add(artifact)
         }
     }
 

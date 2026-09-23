@@ -36,8 +36,23 @@ final class Journey {
     var createdAt: Date = Date.now
     var updatedAt: Date = Date.now
 
+    /// CloudKit requires every to-many relationship to be optional (T23), so
+    /// the stored property is `[Log]?`; read it through `allLogs` and change it
+    /// through `add(_:)` / `removeLog(id:)`, which also keep views observing
+    /// the parent array refreshed (m2-bugs #10).
     @Relationship(deleteRule: .cascade, inverse: \Log.journey)
-    var logs: [Log] = []
+    var logs: [Log]? = []
+
+    var allLogs: [Log] { logs ?? [] }
+
+    func add(_ log: Log) {
+        logs = allLogs + [log]
+        log.journey = self
+    }
+
+    func removeLog(id: UUID) {
+        logs = allLogs.filter { $0.id != id }
+    }
 
     var template: JourneyTemplate {
         get { JourneyTemplate(rawValue: templateRaw) ?? .custom }

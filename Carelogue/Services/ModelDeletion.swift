@@ -14,12 +14,10 @@ extension ModelContext {
     /// (log == nil) behind, so attachments are removed explicitly. The Log is
     /// also removed from `journey.logs` so views observing the Journey refresh.
     func deleteLog(_ log: Log) {
-        let artifacts = log.artifacts
-        log.artifacts.removeAll()
-        for artifact in artifacts {
+        for artifact in log.removeAllArtifacts() {
             delete(artifact)
         }
-        log.journey?.logs.removeAll { $0.id == log.id }
+        log.journey?.removeLog(id: log.id)
         delete(log)
     }
 
@@ -44,12 +42,12 @@ extension ModelContext {
         var summary = EraseSummary()
 
         for artifact in (try? fetch(FetchDescriptor<Artifact>())) ?? [] {
-            artifact.log?.artifacts.removeAll { $0.id == artifact.id }
+            artifact.log?.removeArtifact(id: artifact.id)
             delete(artifact)
             summary.artifacts += 1
         }
         for log in (try? fetch(FetchDescriptor<Log>())) ?? [] {
-            log.journey?.logs.removeAll { $0.id == log.id }
+            log.journey?.removeLog(id: log.id)
             delete(log)
             summary.logs += 1
         }

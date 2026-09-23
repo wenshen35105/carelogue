@@ -18,7 +18,7 @@ struct LogDetailView: View {
     @State private var artifactDeletedInViewer: Artifact?
 
     private var sortedArtifacts: [Artifact] {
-        log.artifacts.sorted { $0.createdAt < $1.createdAt }
+        log.allArtifacts.sorted { $0.createdAt < $1.createdAt }
     }
 
     var body: some View {
@@ -54,7 +54,7 @@ struct LogDetailView: View {
                     }
                 }
 
-                if !log.artifacts.isEmpty {
+                if !log.allArtifacts.isEmpty {
                     ExplanationCard(artifacts: sortedArtifacts)
 
                     AttachmentGalleryCard(
@@ -155,7 +155,7 @@ struct LogDetailView: View {
     /// file. It is removed from log.artifacts first so this page refreshes.
     private func deleteArtifact(_ artifact: Artifact) {
         previewingArtifact = nil
-        log.artifacts.removeAll { $0.id == artifact.id }
+        log.removeArtifact(id: artifact.id)
         modelContext.delete(artifact)
         log.updatedAt = .now
         try? modelContext.save()

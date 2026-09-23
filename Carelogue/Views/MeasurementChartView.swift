@@ -15,7 +15,7 @@ struct MeasurementChartView: View {
     }
 
     private static func types(in journey: Journey) -> [String] {
-        let counts = Dictionary(grouping: journey.logs.filter { $0.kind == .measurement }, by: \.type)
+        let counts = Dictionary(grouping: journey.allLogs.filter { $0.kind == .measurement }, by: \.type)
             .mapValues(\.count)
         return counts.keys.sorted { counts[$0]! != counts[$1]! ? counts[$0]! > counts[$1]! : $0 < $1 }
     }
@@ -24,7 +24,7 @@ struct MeasurementChartView: View {
 
     /// Chronological points of the selected type that carry a value.
     private var points: [Log] {
-        journey.logs
+        journey.allLogs
             .filter { $0.kind == .measurement && $0.type == selectedType && $0.value != nil }
             .sorted { $0.occurredAt < $1.occurredAt }
     }

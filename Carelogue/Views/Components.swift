@@ -145,7 +145,7 @@ extension Log {
         // that read the card keeps its pre-explanation body until the next
         // launch (same class of miss as m2-bugs #10).
         _ = updatedAt
-        for artifact in artifacts.sorted(by: { $0.createdAt < $1.createdAt }) {
+        for artifact in allArtifacts.sorted(by: { $0.createdAt < $1.createdAt }) {
             guard let summary = artifact.explanation?.summaryPlain else { continue }
             let line = summary.split(whereSeparator: \.isWhitespace).joined(separator: " ")
             if !line.isEmpty { return line }
@@ -167,16 +167,16 @@ extension Log {
 extension Journey {
     /// The soonest upcoming encounter, if any.
     var nextAppointment: Log? {
-        logs.filter(\.isUpcoming).min { $0.occurredAt < $1.occurredAt }
+        allLogs.filter(\.isUpcoming).min { $0.occurredAt < $1.occurredAt }
     }
 
     /// Most recent log that has already happened.
     var latestPastLog: Log? {
-        logs.filter { !$0.isUpcoming }.max { $0.occurredAt < $1.occurredAt }
+        allLogs.filter { !$0.isUpcoming }.max { $0.occurredAt < $1.occurredAt }
     }
 
     var artifactCount: Int {
-        logs.reduce(0) { $0 + $1.artifacts.count }
+        allLogs.reduce(0) { $0 + $1.allArtifacts.count }
     }
 }
 

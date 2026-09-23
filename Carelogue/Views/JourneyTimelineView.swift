@@ -44,7 +44,7 @@ struct JourneyTimelineView: View {
     @State private var showingChart = false
 
     private var measurements: [Log] {
-        journey.logs.filter { $0.kind == .measurement }
+        journey.allLogs.filter { $0.kind == .measurement }
     }
 
     /// Distinct measurement types, most-recorded first.
@@ -62,7 +62,7 @@ struct JourneyTimelineView: View {
 
     private var timelineItems: [TimelineItem] {
         let measurements = self.measurements
-        let others = journey.logs.filter { $0.kind != .measurement }
+        let others = journey.allLogs.filter { $0.kind != .measurement }
 
         var items: [TimelineItem] = others.map { .log($0) }
         if let mostRecent = measurements.map(\.occurredAt).max() {
@@ -92,7 +92,7 @@ struct JourneyTimelineView: View {
             header
                 .canvasListRow(top: 4, bottom: 20)
 
-            if journey.logs.isEmpty {
+            if journey.allLogs.isEmpty {
                 emptyState
                     .canvasListRow()
             } else {
@@ -147,7 +147,7 @@ struct JourneyTimelineView: View {
                 }
                 StatusPill(status: journey.status)
             }
-            Text("\(journey.template.displayName) · 始于 \(journey.createdAt.yearMonth) · 共 \(journey.logs.count) 条记录")
+            Text("\(journey.template.displayName) · 始于 \(journey.createdAt.yearMonth) · 共 \(journey.allLogs.count) 条记录")
                 .font(.footnote)
                 .foregroundStyle(Theme.inkSecondary)
         }
@@ -384,8 +384,8 @@ private struct LogCard: View {
                 quickBody
             }
 
-            if !log.artifacts.isEmpty {
-                Label("附件 \(log.artifacts.count) 份", systemImage: "paperclip")
+            if !log.allArtifacts.isEmpty {
+                Label("附件 \(log.allArtifacts.count) 份", systemImage: "paperclip")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(Theme.accent)
             }
