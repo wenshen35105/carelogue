@@ -118,7 +118,7 @@ struct ExplanationCard: View {
                 .layoutPriority(1)
             Spacer(minLength: 6)
             if explained {
-                Text(verbatim: "DeepSeek")
+                Text(verbatim: AIDisclosure.serviceName)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(Theme.accent)
                     .padding(.horizontal, 9)
@@ -307,7 +307,7 @@ private struct NotStartedBody: View {
     let action: () -> Void
 
     var body: some View {
-        Text("还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请 DeepSeek 用白话讲给你听。")
+        Text("还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请我们选用的 AI 服务用白话讲给你听。")
             .font(.subheadline)
             .foregroundStyle(Theme.inkSecondary)
             .fixedSize(horizontal: false, vertical: true)
@@ -351,7 +351,7 @@ private struct GeneratingBody: View {
         .opacity(pulse ? 0.45 : 1)
         .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: pulse)
         .onAppear { pulse = true }
-        Text("在本机识别文字后发送给 DeepSeek · 通常几秒内完成")
+        Text("在本机识别文字后只发送文字 · 通常几秒内完成")
             .font(.caption)
             .foregroundStyle(Theme.inkSecondary)
     }

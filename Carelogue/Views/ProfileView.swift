@@ -19,40 +19,44 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    NavigationLink {
-                        SettingsView()
-                    } label: {
-                        Label("设置 Settings", systemImage: "gearshape")
+                Group {
+                    Section {
+                        NavigationLink {
+                            SettingsView()
+                        } label: {
+                            Label("设置 Settings", systemImage: "gearshape")
+                        }
+                        .accessibilityIdentifier("profile.settings")
                     }
-                    .accessibilityIdentifier("profile.settings")
-                }
 
-                Section("过敏与不良反应") {
-                    TextEditor(text: $allergies).frame(minHeight: 70)
-                }
-                Section("长期用药") {
-                    TextEditor(text: $medications).frame(minHeight: 70)
-                }
-                Section("疫苗记录") {
-                    TextEditor(text: $vaccines).frame(minHeight: 70)
-                }
-                Section("既往病史与手术史") {
-                    TextEditor(text: $history).frame(minHeight: 70)
-                }
+                    Section("过敏与不良反应") {
+                        TextEditor(text: $allergies).frame(minHeight: 70)
+                    }
+                    Section("长期用药") {
+                        TextEditor(text: $medications).frame(minHeight: 70)
+                    }
+                    Section("疫苗记录") {
+                        TextEditor(text: $vaccines).frame(minHeight: 70)
+                    }
+                    Section("既往病史与手术史") {
+                        TextEditor(text: $history).frame(minHeight: 70)
+                    }
 
-                Section {
-                    Text("只存本机；用于让 AI 解释更准确；可随时清空。")
-                        .font(.footnote)
-                        .foregroundStyle(Theme.inkSecondary)
-                }
+                    Section {
+                        Text("只存本机；用于让 AI 解释更准确；可随时清空。")
+                            .font(.footnote)
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
 
-                Section {
-                    Button("清空档案", role: .destructive) {
-                        showingClearConfirm = true
+                    Section {
+                        Button("清空档案", role: .destructive) {
+                            showingClearConfirm = true
+                        }
                     }
                 }
+                .listRowBackground(Theme.card)
             }
+            .warmFormChrome()
             .navigationTitle("档案 · Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -65,6 +69,13 @@ struct ProfileView: View {
             }
             .onAppear(perform: load)
             .onDisappear(perform: save)
+            // 设置 › 清空所有数据 runs while this page is still in the stack.
+            .onReceive(NotificationCenter.default.publisher(for: .carelogueDataErased)) { _ in
+                allergies = ""
+                medications = ""
+                vaccines = ""
+                history = ""
+            }
             .confirmationDialog("清空所有档案内容？", isPresented: $showingClearConfirm, titleVisibility: .visible) {
                 Button("清空", role: .destructive, action: clear)
                 Button("取消", role: .cancel) {}
@@ -81,6 +92,12 @@ struct ProfileView: View {
     }
 
     private func save() {
+        // Nothing typed and nothing stored: don't create an empty row (it
+        // would reappear right after 清空所有数据).
+        let isBlank = [allergies, medications, vaccines, history]
+            .allSatisfy { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard profiles.first != nil || !isBlank else { return }
+
         let target: Profile
         if let existing = profiles.first {
             target = existing

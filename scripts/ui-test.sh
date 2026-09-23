@@ -50,6 +50,13 @@ fi
 PROVIDER="$(provider_dir)"
 if [[ -n "$PROVIDER" ]]; then
   cp "$FIXTURES"/report_*.pdf "$PROVIDER"/
+  # Oversized PDF for the 20MB import cap (m2-bugs #3): generated here, and
+  # never committed — the importer checks the size before reading the file,
+  # so zero padding is enough to make it too big.
+  if [[ ! -f "$PROVIDER/report_oversize.pdf" ]]; then
+    cp "$FIXTURES/report_a.pdf" "$PROVIDER/report_oversize.pdf"
+    dd if=/dev/zero bs=1048576 count=21 >> "$PROVIDER/report_oversize.pdf" 2>/dev/null
+  fi
 else
   echo "warning: Files storage not found; file-import test may fail" >&2
 fi

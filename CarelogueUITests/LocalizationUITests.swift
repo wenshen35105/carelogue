@@ -70,6 +70,11 @@ final class LocalizationUITests: CarelogueUITestCase {
         waitFor(app.staticTexts["Settings"])
         assertNoChinese(on: "Settings")
         screenshot("T18-settings-en")
+
+        app.swipeUp()
+        waitFor(app.buttons["settings.eraseAll"])
+        assertNoChinese(on: "Settings (data management)")
+        screenshot("T25-settings-data-en")
     }
 
     func testChineseUIKeepsBilingualStyle() {

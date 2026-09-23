@@ -21,12 +21,16 @@ enum AttachmentImportError: LocalizedError {
     case unreadableImage
     case unsupportedType
     case accessDenied
+    /// The picked file is bigger than the cap for its type (m2-bugs #3).
+    case fileTooLarge(limitMB: Int)
 
     var errorDescription: String? {
         switch self {
         case .unreadableImage: return String(localized: "无法读取这张图片")
         case .unsupportedType: return String(localized: "仅支持图片和 PDF")
         case .accessDenied: return String(localized: "无法访问所选文件")
+        case .fileTooLarge(let limitMB):
+            return String(localized: "这份文件超过 \(limitMB) MB，请先压缩或拆分后再导入")
         }
     }
 }
@@ -38,8 +42,20 @@ enum AttachmentImporter {
     nonisolated static let maxImageDimension: CGFloat = 2048
     nonisolated static let jpegQuality: CGFloat = 0.8
 
+    /// PDFs are stored as picked, so they get a hard cap: an unbounded scan
+    /// would sit in memory until 保存 and then bloat CloudKit sync
+    /// (m2-bugs #3). Images are re-encoded down to `maxImageDimension`, so
+    /// only their decode needs a ceiling — a far looser one.
+    nonisolated static let maxPDFBytes = 20 * 1024 * 1024
+    nonisolated static let maxSourceImageBytes = 50 * 1024 * 1024
+
+    nonisolated static func megabytes(_ bytes: Int) -> Int { bytes / (1024 * 1024) }
+
     /// Photo library item (HEIC/JPEG/PNG bytes) -> compressed JPEG.
     static func fromPhotoData(_ data: Data, index: Int) async throws -> PendingAttachment {
+        guard data.count <= maxSourceImageBytes else {
+            throw AttachmentImportError.fileTooLarge(limitMB: megabytes(maxSourceImageBytes))
+        }
         let jpeg = try await compressImage(data)
         return PendingAttachment(data: jpeg, fileName: photoFileName(index: index), mime: AttachmentMime.jpeg)
     }
@@ -59,9 +75,15 @@ enum AttachmentImporter {
 
         let type = UTType(filenameExtension: url.pathExtension)
         if type?.conforms(to: .pdf) == true {
+            guard data.count <= maxPDFBytes else {
+                throw AttachmentImportError.fileTooLarge(limitMB: megabytes(maxPDFBytes))
+            }
             return PendingAttachment(data: data, fileName: url.lastPathComponent, mime: AttachmentMime.pdf)
         }
         if type?.conforms(to: .image) == true {
+            guard data.count <= maxSourceImageBytes else {
+                throw AttachmentImportError.fileTooLarge(limitMB: megabytes(maxSourceImageBytes))
+            }
             let jpeg = try await compressImage(data)
             let baseName = url.deletingPathExtension().lastPathComponent
             return PendingAttachment(data: jpeg, fileName: "\(baseName).jpg", mime: AttachmentMime.jpeg)

@@ -136,6 +136,23 @@ extension Log {
         daysFromToday == 1 ? String(localized: "明天") : String(localized: "距今 \(daysFromToday) 天")
     }
 
+    /// One-line AI summary for the timeline card (Stitch
+    /// journey_timeline_with_ai_summary): the first explained attachment's
+    /// plain-language summary, whitespace collapsed so it stays on one line.
+    var aiSummaryLine: String? {
+        // Reading updatedAt subscribes the timeline row to this Log:
+        // ExplainService stamps it when it caches an explanation, and without
+        // that read the card keeps its pre-explanation body until the next
+        // launch (same class of miss as m2-bugs #10).
+        _ = updatedAt
+        for artifact in artifacts.sorted(by: { $0.createdAt < $1.createdAt }) {
+            guard let summary = artifact.explanation?.summaryPlain else { continue }
+            let line = summary.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+            if !line.isEmpty { return line }
+        }
+        return nil
+    }
+
     /// Whole days from today until this log's day (0 = today).
     var daysFromToday: Int {
         let calendar = Calendar.current

@@ -58,23 +58,27 @@ struct LogEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                switch kind {
-                case .encounter:
-                    encounterFields
-                case .quick:
-                    quickFields
-                case .measurement:
-                    measurementFields
-                }
+                Group {
+                    switch kind {
+                    case .encounter:
+                        encounterFields
+                    case .quick:
+                        quickFields
+                    case .measurement:
+                        measurementFields
+                    }
 
-                if existingLog != nil {
-                    Section {
-                        Button("删除记录", role: .destructive) {
-                            showingDeleteConfirm = true
+                    if existingLog != nil {
+                        Section {
+                            Button("删除记录", role: .destructive) {
+                                showingDeleteConfirm = true
+                            }
                         }
                     }
                 }
+                .listRowBackground(Theme.card)
             }
+            .warmFormChrome()
             .navigationTitle(existingLog == nil ? String(localized: "新建记录") : String(localized: "编辑记录"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -206,7 +210,7 @@ struct LogEditorView: View {
         } header: {
             Text("附件 · Attachments")
         } footer: {
-            Text("左滑可移除 · 图片会自动压缩后保存")
+            Text("左滑可移除 · 图片会自动压缩后保存 · PDF 最大 \(AttachmentImporter.megabytes(AttachmentImporter.maxPDFBytes)) MB")
         }
     }
 

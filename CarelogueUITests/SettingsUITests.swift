@@ -37,6 +37,55 @@ final class SettingsUITests: CarelogueUITestCase {
         XCTAssertEqual(app.switches["settings.aiToggle"].value as? String, "0")
     }
 
+    /// T25 ②: 清空所有数据 removes every journey, record and attachment, and
+    /// the store stays empty after a relaunch.
+    func testEraseAllData() {
+        launch(["-uitest-reset", "-uitest-seed-measurements", "-uitest-seed-attachments"])
+        waitFor(app.staticTexts["UITest 孕期"])
+
+        // Profile content counts as data too, and this page stays in the
+        // stack under Settings while the wipe runs.
+        button(containing: "档案与设置").tap()
+        let allergyField = app.textViews.element(boundBy: 0)
+        waitFor(allergyField)
+        allergyField.tap()
+        allergyField.typeText("花生")
+        app.buttons["profile.settings"].tap()
+        waitFor(app.staticTexts["设置 Settings"])
+
+        let erase = app.buttons["settings.eraseAll"]
+        waitFor(erase)
+        if !erase.isHittable { app.swipeUp() }
+        erase.tap()
+
+        // The dialog names what is about to go. (The row's own label is the
+        // whole card, so an exact match only hits the dialog's button.)
+        let confirm = app.buttons["清空所有数据"]
+        waitFor(confirm)
+        XCTAssertTrue(element(containing: "段旅程").exists, "Dialog does not say what will be deleted")
+        screenshot("T25-erase-confirm")
+        confirm.tap()
+
+        let result = app.descendants(matching: .any)["settings.eraseResult"]
+        waitFor(result)
+        XCTAssertTrue(result.label.contains("已清空"), "Unexpected summary: \(result.label)")
+        screenshot("T25-erase-done")
+
+        // Nothing left behind, before or after a relaunch — including the
+        // profile text this page is still holding in memory.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        waitFor(app.navigationBars["档案 · Profile"])
+        XCTAssertEqual(app.textViews.element(boundBy: 0).value as? String, "")
+        tapFirstExisting([app.navigationBars.buttons["完成"], app.buttons["完成"]])
+        XCTAssertFalse(app.staticTexts["UITest 孕期"].exists)
+        relaunch()
+        waitFor(app.navigationBars["Journeys"])
+        XCTAssertFalse(app.staticTexts["UITest 孕期"].waitForExistence(timeout: 3))
+        button(containing: "档案与设置").tap()
+        waitFor(app.navigationBars["档案 · Profile"])
+        XCTAssertEqual(app.textViews.element(boundBy: 0).value as? String, "")
+    }
+
     /// Real DeepSeek round trip. Runs only when scripts/ui-test.sh is given
     /// DEEPSEEK_API_KEY (passed to the runner as TEST_RUNNER_DEEPSEEK_API_KEY).
     func testRealConnection() throws {

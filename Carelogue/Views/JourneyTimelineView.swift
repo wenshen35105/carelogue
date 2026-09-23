@@ -233,28 +233,36 @@ struct JourneyTimelineView: View {
         }
     }
 
+    /// 图表 sits on its own row above the chips: sharing one row hid the
+    /// fourth chip behind the button (m2-bugs #12).
     private var measurementControls: some View {
-        HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                if measurementTypes.count >= 2 {
+                    Text("筛选 Filter")
+                        .font(.caption)
+                        .foregroundStyle(Theme.inkSecondary)
+                }
+                Spacer(minLength: 0)
+                Button {
+                    showingChart = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chart.xyaxis.line")
+                        Text("图表")
+                    }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.accent)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(Theme.accentTint))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("查看图表")
+            }
             if measurementTypes.count >= 2 {
                 measurementFilterChips
-            } else {
-                Spacer(minLength: 0)
             }
-            Button {
-                showingChart = true
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "chart.xyaxis.line")
-                    Text("图表")
-                }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Theme.accent)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Capsule().fill(Theme.accentTint))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("查看图表")
         }
         .padding(.leading, 16)
     }
@@ -381,6 +389,10 @@ private struct LogCard: View {
                     .font(.caption.weight(.medium))
                     .foregroundStyle(Theme.accent)
             }
+
+            if let summary = log.aiSummaryLine {
+                AISummaryLine(text: summary)
+            }
         }
         .cardSurface()
     }
@@ -444,6 +456,40 @@ private struct LogCard: View {
         if !log.type.isEmpty {
             TagPill(text: "# \(log.typeDisplayName)")
         }
+    }
+}
+
+/// Inline AI summary strip at the bottom of a timeline card (Stitch
+/// journey_timeline_with_ai_summary): one muted line so the conclusion can be
+/// read without opening the record. The whole card is already a link to the
+/// record, so this row only has to look tappable.
+private struct AISummaryLine: View {
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "sparkles")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(Theme.accent)
+            Text("AI 摘要")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Theme.accent)
+            Text(text)
+                .font(.caption)
+                .foregroundStyle(Theme.inkSecondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            Spacer(minLength: 4)
+            Image(systemName: "chevron.right")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(Theme.inkSecondary)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 9)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.inset).fill(Theme.insetFill))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("timeline.aiSummary")
     }
 }
 

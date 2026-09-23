@@ -23,6 +23,27 @@ final class ExplainUITests: CarelogueUITestCase {
         if accept.waitForExistence(timeout: 1.5) { accept.tap() }
     }
 
+    /// T25 ③: once an attachment is explained, the timeline card carries the
+    /// one-line AI summary (Stitch journey_timeline_with_ai_summary).
+    func testTimelineShowsAISummaryLine() {
+        launch(["-uitest-reset", "-uitest-seed-attachments", "-uitest-fake-ai", "success"])
+        openSeededEncounter()
+        tapExplain(app.buttons["explain.button"])
+        waitFor(id("explain.summary"), timeout: 10)
+
+        tapFirstExisting([app.navigationBars.buttons[journeyName], app.navigationBars.buttons.element(boundBy: 0)])
+        let summary = id("timeline.aiSummary")
+        waitFor(summary)
+        XCTAssertTrue(summary.label.contains("AI 摘要"), "Unexpected label: \(summary.label)")
+        XCTAssertTrue(summary.label.contains("血红蛋白"), "Summary text missing: \(summary.label)")
+        screenshot("T25-timeline-ai-summary")
+
+        // Cached explanation: the line is still there with no provider at all.
+        relaunch()
+        openJourney(journeyName)
+        waitFor(id("timeline.aiSummary"))
+    }
+
     func testStatesActionsAndPersistence() {
         launch(["-uitest-reset", "-uitest-seed-attachments", "-uitest-fake-ai", "slow"])
         openSeededEncounter()

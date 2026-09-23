@@ -331,6 +331,57 @@
         }
       }
     },
+    "AI 摘要" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Summary"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 摘要"
+          }
+        }
+      }
+    },
+    "AI 服务由我们挑选" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We choose the AI service"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 服务由我们挑选"
+          }
+        }
+      }
+    },
+    "AI 服务账户余额不足" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The AI service account is out of credit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 服务账户余额不足"
+          }
+        }
+      }
+    },
     "AI 解释仅帮助理解报告，不能替代医生的诊断。" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -501,19 +552,36 @@
         }
       }
     },
-    "DeepSeek 账户余额不足" : {
+    "Data Management" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your DeepSeek balance is too low"
+            "value" : "Data Management"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "DeepSeek 账户余额不足"
+            "value" : "Data Management"
+          }
+        }
+      }
+    },
+    "Erase all data" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase all data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase all data"
           }
         }
       }
@@ -586,23 +654,6 @@
         }
       }
     },
-    "No storage, no training" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No storage, no training"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No storage, no training"
-          }
-        }
-      }
-    },
     "On-device only" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -616,6 +667,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "On-device only"
+          }
+        }
+      }
+    },
+    "Our responsibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Our responsibility"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Our responsibility"
           }
         }
       }
@@ -854,23 +922,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No report text will be sent"
-          }
-        }
-      }
-    },
-    "不存储、不用于训练" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No storage, no training"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不存储、不用于训练"
           }
         }
       }
@@ -1164,6 +1215,23 @@
         }
       }
     },
+    "删除这台设备上的全部旅程、记录、附件与档案。此操作不可撤销。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deletes every journey, record, attachment and profile stored on this device. This cannot be undone."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除这台设备上的全部旅程、记录、附件与档案。此操作不可撤销。"
+          }
+        }
+      }
+    },
     "删除这条记录？" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1351,23 +1419,6 @@
         }
       }
     },
-    "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sent once over an encrypted connection, only when you tap Explain. Carelogue has no server and keeps none of your data."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。"
-          }
-        }
-      }
-    },
     "只在你的 iPhone 上识别报告文字，照片和 PDF 原件不会上传。" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1419,19 +1470,19 @@
         }
       }
     },
-    "只有文字经 HTTPS 加密通道发送给 DeepSeek；Carelogue 没有自己的服务器。" : {
+    "只有文字经 HTTPS 加密通道发送；Carelogue 自己不留存报告文字。" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "只有文字经 HTTPS 加密通道发送给 DeepSeek；Carelogue 没有自己的服务器。"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Only the text is sent to DeepSeek over encrypted HTTPS; Carelogue has no server of its own."
+            "value" : "Only text is sent, over an encrypted HTTPS connection; Carelogue itself keeps no copy of your report text."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只有文字经 HTTPS 加密通道发送；Carelogue 自己不留存报告文字。"
           }
         }
       }
@@ -1606,19 +1657,19 @@
         }
       }
     },
-    "在本机识别文字后发送给 DeepSeek · 通常几秒内完成" : {
+    "在本机识别文字后只发送文字 · 通常几秒内完成" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text is recognized on this device and sent to DeepSeek · usually a few seconds"
+            "value" : "Text is recognized on device, and only text is sent · usually a few seconds"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在本机识别文字后发送给 DeepSeek · 通常几秒内完成"
+            "value" : "在本机识别文字后只发送文字 · 通常几秒内完成"
           }
         }
       }
@@ -1827,6 +1878,23 @@
         }
       }
     },
+    "将删除 %lld 段旅程、%lld 条记录、%lld 份附件，以及档案内容。删除后无法恢复，也不会留下备份。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This deletes %lld journeys, %lld records and %lld attachments, plus your profile. There is no backup and no way to undo it."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将删除 %lld 段旅程、%lld 条记录、%lld 份附件，以及档案内容。删除后无法恢复，也不会留下备份。"
+          }
+        }
+      }
+    },
     "就诊" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1861,19 +1929,19 @@
         }
       }
     },
-    "左滑可移除 · 图片会自动压缩后保存" : {
+    "左滑可移除 · 图片会自动压缩后保存 · PDF 最大 %lld MB" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Swipe left to remove · Images are compressed when saved"
+            "value" : "Swipe left to remove · images are compressed when saved · PDFs up to %lld MB"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "左滑可移除 · 图片会自动压缩后保存"
+            "value" : "左滑可移除 · 图片会自动压缩后保存 · PDF 最大 %lld MB"
           }
         }
       }
@@ -1963,6 +2031,23 @@
         }
       }
     },
+    "已清空 %lld 段旅程、%lld 条记录、%lld 份附件" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erased %lld journeys, %lld records and %lld attachments"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已清空 %lld 段旅程、%lld 条记录、%lld 份附件"
+          }
+        }
+      }
+    },
     "已解释" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2048,6 +2133,23 @@
         }
       }
     },
+    "我们只选用在条款层面承诺不把 API 数据用于模型训练、并写明保留期限的 AI 服务；服务商条款变化就更换，发布后更换会通知你。Carelogue 自己不留存你的报告文字。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We only use AI services whose terms commit to not training models on API data and state a clear retention period. If those terms change, we switch providers — and once Carelogue is published, we will tell you when we do. Carelogue itself keeps no copy of your report text."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们只选用在条款层面承诺不把 API 数据用于模型训练、并写明保留期限的 AI 服务；服务商条款变化就更换，发布后更换会通知你。Carelogue 自己不留存你的报告文字。"
+          }
+        }
+      }
+    },
     "把检验报告里的医学术语，解释成家人都能看懂的话" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2065,19 +2167,19 @@
         }
       }
     },
-    "报告文字在本机识别，只有文字会发给 DeepSeek；照片和 PDF 原件不离开设备。" : {
+    "报告文字在本机识别，只有文字会经加密通道发给我们选用的 AI 服务；照片和 PDF 原件不离开设备。" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Report text is recognized on this device and only that text is sent to DeepSeek; photos and original PDFs never leave it."
+            "value" : "Report text is recognized on this device. Only the text is sent, over an encrypted connection, to the AI service we use; photos and PDFs never leave your device."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "报告文字在本机识别，只有文字会发给 DeepSeek；照片和 PDF 原件不离开设备。"
+            "value" : "报告文字在本机识别，只有文字会经加密通道发给我们选用的 AI 服务；照片和 PDF 原件不离开设备。"
           }
         }
       }
@@ -2231,6 +2333,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "数据只存本机"
+          }
+        }
+      }
+    },
+    "数据管理" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Management"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据管理"
           }
         }
       }
@@ -2592,6 +2711,23 @@
         }
       }
     },
+    "本机已经没有可清空的数据" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There was no data left to erase"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本机已经没有可清空的数据"
+          }
+        }
+      }
+    },
     "术语速查 · Key Terms" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2842,6 +2978,40 @@
         }
       }
     },
+    "清空所有数据" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase all data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清空所有数据"
+          }
+        }
+      }
+    },
+    "清空所有数据？" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase all data?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清空所有数据？"
+          }
+        }
+      }
+    },
     "清空所有档案内容？" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2991,6 +3161,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "移除 API Key"
+          }
+        }
+      }
+    },
+    "筛选 Filter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "筛选 Filter"
           }
         }
       }
@@ -3182,36 +3369,36 @@
         }
       }
     },
-    "解释时，Carelogue 会在这台设备上提取报告文字，仅把文字发送给 DeepSeek 用于生成白话说明；不发送图像，不存储、不用于训练。你可以随时在设置中撤回同意。" : {
+    "解释时，Carelogue 会在这台设备上提取报告文字，仅把文字发送给我们选用的 AI 服务用于生成白话说明；照片和 PDF 原件不会离开设备。你可以随时在设置中撤回同意。" : {
       "extractionState" : "manual",
       "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "解释时，Carelogue 会在这台设备上提取报告文字，仅把文字发送给 DeepSeek 用于生成白话说明；不发送图像，不存储、不用于训练。你可以随时在设置中撤回同意。"
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "When you ask for an explanation, Carelogue recognizes the report's text on this device and sends only that text to DeepSeek to write a plain-language explanation. No images are sent, nothing is stored or used for training. You can withdraw consent in Settings at any time."
+            "value" : "When you ask for an explanation, Carelogue extracts the report text on this device and sends only that text to the AI service we use. Photos and PDFs never leave your device. You can withdraw consent at any time in Settings."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解释时，Carelogue 会在这台设备上提取报告文字，仅把文字发送给我们选用的 AI 服务用于生成白话说明；照片和 PDF 原件不会离开设备。你可以随时在设置中撤回同意。"
           }
         }
       }
     },
-    "解释服务 · DeepSeek" : {
+    "解释服务 · %@" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Provider · DeepSeek"
+            "value" : "AI service · %@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "解释服务 · DeepSeek"
+            "value" : "解释服务 · %@"
           }
         }
       }
@@ -3432,19 +3619,19 @@
         }
       }
     },
-    "还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请 DeepSeek 用白话讲给你听。" : {
+    "还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请我们选用的 AI 服务用白话讲给你听。" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not explained yet. Tap below: the report's text is recognized on this device, then DeepSeek explains it in plain words."
+            "value" : "This attachment has not been explained yet. Tap below: the report text is recognized on this device first, then the AI service we use explains it in plain language."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请 DeepSeek 用白话讲给你听。"
+            "value" : "还没有解释这份附件。点击下方按钮，会先在本机识别报告文字，再请我们选用的 AI 服务用白话讲给你听。"
           }
         }
       }
@@ -3462,6 +3649,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "还没有记录，点右下角 ＋ 开始"
+          }
+        }
+      }
+    },
+    "这份文件超过 %lld MB，请先压缩或拆分后再导入" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This file is larger than %lld MB. Compress or split it before importing."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这份文件超过 %lld MB，请先压缩或拆分后再导入"
           }
         }
       }

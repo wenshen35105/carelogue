@@ -27,7 +27,7 @@ enum AIServiceError: LocalizedError, Equatable {
         case .offline: return String(localized: "网络未连接，请检查网络后重试")
         case .timeout: return String(localized: "请求超时，请稍后重试")
         case .unauthorized: return String(localized: "API Key 无效，请到设置里检查")
-        case .insufficientBalance: return String(localized: "DeepSeek 账户余额不足")
+        case .insufficientBalance: return String(localized: "AI 服务账户余额不足")
         case .rateLimited: return String(localized: "请求太频繁，请稍后再试")
         case .server(let code): return String(localized: "模型服务暂时不可用（\(code)）")
         case .invalidResponse: return String(localized: "模型返回的内容无法识别")

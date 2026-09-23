@@ -102,6 +102,16 @@ extension View {
         modifier(CardSurface(padding: padding))
     }
 
+    /// Warm canvas for a system `Form`: left alone it renders the system
+    /// grey-black in dark mode, which clashes with the Nocturne palette used
+    /// everywhere else (m2-bugs #2). Row fills are separate — a
+    /// `listRowBackground` set here does not reach the rows, so each Form
+    /// wraps its sections in a `Group { … }.listRowBackground(Theme.card)`.
+    func warmFormChrome() -> some View {
+        scrollContentBackground(.hidden)
+            .background(Theme.background)
+    }
+
     /// Strips List chrome so a row can host a free-standing card on the canvas
     /// while keeping List-only behaviour such as swipe actions.
     func canvasListRow(top: CGFloat = 0, bottom: CGFloat = Theme.Spacing.cardGap) -> some View {

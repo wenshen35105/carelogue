@@ -1,13 +1,18 @@
 import SwiftUI
+import SwiftData
 
-/// 设置 Settings (Stitch "settings"): calm card page pushed from 档案与设置.
-/// Only settings backed by a shipped feature appear here (design-review):
-/// the AI switch, the DeepSeek key and the privacy notes.
+/// 设置 Settings (Stitch "settings" / "settings_subscribed"): calm card page
+/// pushed from 档案与设置. Only settings backed by a shipped feature appear
+/// here (design-review): the AI switch, the API key, the privacy notes and
+/// 数据管理.
 struct SettingsView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage(AISettings.enabledKey) private var aiEnabled = true
     @AppStorage(AISettings.includeProfileKey) private var includeProfile = true
     @AppStorage(AISettings.consentKey) private var consentRaw = ""
     @State private var showingRevokeConfirm = false
+    @State private var showingEraseConfirm = false
+    @State private var eraseResult: ModelContext.EraseSummary?
 
     @State private var apiKey: String? = AISettings.apiKey
     @State private var showingKeyEditor = false
@@ -24,6 +29,7 @@ struct SettingsView: View {
                 header
                 aiSection
                 privacySection
+                dataSection
                 footer
             }
             .padding(.horizontal, Theme.Spacing.margin)
@@ -101,7 +107,7 @@ struct SettingsView: View {
 
                 HStack(alignment: .top, spacing: 10) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("解释服务 · DeepSeek")
+                        Text("解释服务 · \(AIDisclosure.serviceName)")
                             .font(.body.weight(.semibold))
                             .foregroundStyle(Theme.inkPrimary)
                         Text(verbatim: "deepseek-chat")
@@ -223,12 +229,12 @@ struct SettingsView: View {
                 PrivacyRow(icon: "text.viewfinder",
                            title: String(localized: "仅发送提取文本"),
                            gloss: AppLanguage.gloss(String(localized: "Extracted text only")),
-                           detail: String(localized: "报告文字在本机识别，只有文字会发给 DeepSeek；照片和 PDF 原件不离开设备。"))
+                           detail: AIDisclosure.textOnlyDetail)
                 SettingsDivider()
-                PrivacyRow(icon: "icloud.slash",
-                           title: String(localized: "不存储、不用于训练"),
-                           gloss: AppLanguage.gloss(String(localized: "No storage, no training")),
-                           detail: String(localized: "只在你点「解释」时经加密通道发送一次；Carelogue 没有服务器，不留存你的数据。"))
+                PrivacyRow(icon: "checkmark.seal",
+                           title: AIDisclosure.responsibilityTitle,
+                           gloss: AppLanguage.gloss(AIDisclosure.responsibilityGloss),
+                           detail: AIDisclosure.responsibilityDetail)
                 consentFooter
                     .padding(.bottom, 16)
             }
@@ -272,6 +278,95 @@ struct SettingsView: View {
         case .undecided:
             EmptyView()
         }
+    }
+
+    // MARK: - 数据管理
+
+    /// Stitch settings_subscribed "数据管理 · DATA MANAGEMENT": one destructive
+    /// row on its own card, kept away from the switches above it.
+    private var dataSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SettingsSectionHeader(icon: "externaldrive", title: String(localized: "数据管理"),
+                                  gloss: AppLanguage.gloss(String(localized: "Data Management")))
+
+            VStack(alignment: .leading, spacing: 12) {
+                Button {
+                    showingEraseConfirm = true
+                } label: {
+                    HStack(alignment: .top, spacing: 14) {
+                        Image(systemName: "trash")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(Theme.warning)
+                            .frame(width: 40, height: 40)
+                            .background(RoundedRectangle(cornerRadius: 10).fill(Theme.warning.opacity(0.12)))
+                        VStack(alignment: .leading, spacing: 4) {
+                            // Not BilingualTitle: this row's title is
+                            // destructive-red, and that helper pins its own
+                            // ink colour.
+                            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                Text("清空所有数据")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(Theme.warning)
+                                if let gloss = AppLanguage.gloss(String(localized: "Erase all data")) {
+                                    Text(gloss)
+                                        .font(.caption)
+                                        .foregroundStyle(Theme.warning.opacity(0.7))
+                                }
+                            }
+                            .lineLimit(1)
+                            Text("删除这台设备上的全部旅程、记录、附件与档案。此操作不可撤销。")
+                                .font(.footnote)
+                                .foregroundStyle(Theme.inkSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer(minLength: 8)
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(Theme.warning)
+                            .padding(.top, 12)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("settings.eraseAll")
+
+                if let eraseResult {
+                    Label(eraseSummaryText(eraseResult), systemImage: "checkmark.circle")
+                        .font(.footnote)
+                        .foregroundStyle(Theme.success)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("settings.eraseResult")
+                }
+            }
+            .cardSurface()
+            .confirmationDialog("清空所有数据？", isPresented: $showingEraseConfirm, titleVisibility: .visible) {
+                Button("清空所有数据", role: .destructive) {
+                    let summary = modelContext.eraseAllData()
+                    eraseResult = summary
+                    Task {
+                        try? await Task.sleep(for: .seconds(6))
+                        eraseResult = nil
+                    }
+                }
+                Button("取消", role: .cancel) {}
+            } message: {
+                Text(erasePreviewText)
+            }
+        }
+    }
+
+    /// Counted just before the dialog opens, so the warning names real numbers.
+    private var erasePreviewText: String {
+        let journeys = (try? modelContext.fetchCount(FetchDescriptor<Journey>())) ?? 0
+        let logs = (try? modelContext.fetchCount(FetchDescriptor<Log>())) ?? 0
+        let artifacts = (try? modelContext.fetchCount(FetchDescriptor<Artifact>())) ?? 0
+        return String(localized: "将删除 \(journeys) 段旅程、\(logs) 条记录、\(artifacts) 份附件，以及档案内容。删除后无法恢复，也不会留下备份。")
+    }
+
+    private func eraseSummaryText(_ summary: ModelContext.EraseSummary) -> String {
+        summary.isEmpty
+            ? String(localized: "本机已经没有可清空的数据")
+            : String(localized: "已清空 \(summary.journeys) 段旅程、\(summary.logs) 条记录、\(summary.artifacts) 份附件")
     }
 
     private var footer: some View {
@@ -365,24 +460,28 @@ private struct APIKeyEditor: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    SecureField(String(localized: "粘贴 DeepSeek API Key（sk-…）"), text: $draft)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .focused($focused)
-                        .accessibilityIdentifier("settings.keyField")
-                } footer: {
-                    Text("在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。")
-                }
-                if hasKey {
+                Group {
                     Section {
-                        Button("移除 API Key", role: .destructive) {
-                            onSave(nil)
-                            dismiss()
+                        SecureField(String(localized: "粘贴 DeepSeek API Key（sk-…）"), text: $draft)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .focused($focused)
+                            .accessibilityIdentifier("settings.keyField")
+                    } footer: {
+                        Text("在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。")
+                    }
+                    if hasKey {
+                        Section {
+                            Button("移除 API Key", role: .destructive) {
+                                onSave(nil)
+                                dismiss()
+                            }
                         }
                     }
                 }
+                .listRowBackground(Theme.card)
             }
+            .warmFormChrome()
             .navigationTitle("API Key")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -54,6 +54,45 @@ final class AttachmentUITests: CarelogueUITestCase {
         XCTAssertEqual(files.count, 0)
     }
 
+    /// m2-bugs #3 / T25 ④: a PDF over the 20 MB cap is refused with a clear
+    /// message and nothing is added. scripts/ui-test.sh generates the
+    /// oversized file next to the other fixtures.
+    func testOversizePDFIsRejected() {
+        launch(["-uitest-reset", "-uitest-seed-measurements"])
+        openJourney(journeyName)
+        startNewLog("就诊")
+        selectChip("面诊")
+
+        let editorRows = app.descendants(matching: .any).matching(identifier: "editor.attachment")
+        let filesButton = app.buttons["从文件添加（PDF / 图片）"]
+        filesButton.swipeUp()
+        waitFor(filesButton)
+        filesButton.tap()
+
+        let oversize = app.cells["report_oversize, pdf"]
+        if !oversize.waitForExistence(timeout: 5) {
+            app.tabBars.buttons["Browse"].firstMatch.tap()
+            app.tabBars.buttons["Browse"].firstMatch.tap()
+            let onMyIPhone = app.cells["DOC.sidebar.item.On My iPhone"]
+            waitFor(onMyIPhone, timeout: 10)
+            onMyIPhone.tap()
+        }
+        waitFor(oversize, timeout: 10)
+        let settled = expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: oversize)
+        wait(for: [settled], timeout: 10)
+        sleep(1)
+        oversize.tap()
+        tapFirstExisting([app.buttons["Open"], app.buttons["打开"]])
+
+        let alert = app.alerts["附件导入失败"]
+        waitFor(alert, timeout: 15)
+        XCTAssertTrue(alert.staticTexts.element(matching: NSPredicate(format: "label CONTAINS %@", "20 MB")).exists,
+                      "Size limit not explained: \(alert.staticTexts.allElementsBoundByIndex.map(\.label))")
+        screenshot("T25-attachment-too-large")
+        alert.buttons["好"].tap()
+        XCTAssertEqual(editorRows.count, 0)
+    }
+
     /// Full import through the system pickers. Needs photos in the library and
     /// PDFs under Files > On My iPhone (scripts/ui-test.sh provisions both).
     func testImportFromPhotosAndFiles() throws {
