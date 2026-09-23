@@ -21,7 +21,7 @@
 
 ## C. 现在就能做（不等认证）
 
-- [ ] **部署 server 到 Cloudflare**（在 Mac 上；可整体交给 CC 执行）
+- [ ] **部署 server 到 Cloudflare**（在 Mac 上；可整体交给 CC 执行）——**含法律页**：`/privacy`、`/terms` 复用同一个 Worker（加两条路由 + 页面直出即可，不需要单独建项目）
   - 前提（一次性）：`cd server && npx wrangler login`
   - 两个值已替备好：
     - `DEEPINFRA_MODEL` = `deepseek-ai/DeepSeek-V4-Flash`
@@ -42,5 +42,4 @@
 
 ## D. 发布前（M5，内测之后）
 
-- [ ] 隐私政策 / 条款的网页版上线（carelogue.ca/privacy、/terms）
 - [ ] 其余见 `docs/appstore-checklist.md` 的 ⏳ 项（截图素材、描述、审核备注、`ALLOW_SANDBOX` 改回 0 等）
