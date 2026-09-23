@@ -1,0 +1,53 @@
+{
+  "identifier" : "C4A5E1F0-1B2C-4D3E-9F80-0A1B2C3D4E5F",
+  "nonRenewingSubscriptions" : [],
+  "products" : [],
+  "settings" : {
+    "_applicationInternalID" : "0",
+    "_developerTeamID" : "A7Z9M6N48N",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 0,
+    "_locale" : "en_CA",
+    "_storefront" : "CAN",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21500001",
+      "localizations" : [],
+      "name" : "Carelogue Plus",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "21500002",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock plain-language explanations and every AI feature.",
+              "displayName" : "Carelogue Plus",
+              "locale" : "en_CA"
+            },
+            {
+              "description" : "解锁白话解释与全部 AI 功能。",
+              "displayName" : "Carelogue Plus",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.jiajinlinpersonalteam.Carelogue.plus.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Carelogue Plus Monthly",
+          "subscriptionGroupID" : "21500001",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

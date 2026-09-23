@@ -4,6 +4,13 @@ import XCTest
 final class ConsentUITests: CarelogueUITestCase {
     private let journeyName = "UITest 孕期"
 
+    // AI is a Carelogue Plus feature (T27); these tests are about the
+    // explanation flow, so the subscription is pinned active.
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        stickyArguments = ["-uitest-subscription", "active"]
+    }
+
     private func id(_ identifier: String) -> XCUIElement {
         app.descendants(matching: .any)[identifier]
     }

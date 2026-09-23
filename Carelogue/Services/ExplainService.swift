@@ -133,9 +133,12 @@ enum ExplainService {
         inFlight.insert(artifact.id)
         defer { inFlight.remove(artifact.id) }
 
+        // The signed transaction travels with the request; without one the
+        // relay would refuse it anyway, so this fails fast and locally (T27).
+        let entitlement = await SubscriptionService.shared.entitlementToken()
         let service: any AIService
         do {
-            service = try AISettings.makeService()
+            service = try AISettings.makeService(entitlement: entitlement)
         } catch let error as AIServiceError {
             throw ExplainError.service(error)
         }

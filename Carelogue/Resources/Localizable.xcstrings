@@ -246,6 +246,23 @@
         }
       }
     },
+    "/ 月 · month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/ month"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/ 月 · month"
+          }
+        }
+      }
+    },
     "5 分钟内刚解释过，先显示上次的结果" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -416,6 +433,23 @@
         }
       }
     },
+    "AI 解释已经解锁，去报告页试试吧。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI explanations are unlocked — try one on a report."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 解释已经解锁，去报告页试试吧。"
+          }
+        }
+      }
+    },
     "AI 解释服务与隐私 · AI Services & Privacy" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -433,19 +467,36 @@
         }
       }
     },
-    "API Key" : {
+    "AI 解释需要 Carelogue Plus 订阅" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "API Key"
+            "value" : "AI explanations need a Carelogue Plus subscription"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "API Key"
+            "value" : "AI 解释需要 Carelogue Plus 订阅"
+          }
+        }
+      }
+    },
+    "AI 解释需要 Carelogue Plus 订阅；关闭开关后，报告页不再显示解释入口" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI explanations need a Carelogue Plus subscription. With the switch off, reports show no explanation entry."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 解释需要 Carelogue Plus 订阅；关闭开关后，报告页不再显示解释入口"
           }
         }
       }
@@ -480,6 +531,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "About AI Explanations"
+          }
+        }
+      }
+    },
+    "All AI features" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All AI features"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All AI features"
           }
         }
       }
@@ -637,23 +705,6 @@
         }
       }
     },
-    "Key 只保存在本机钥匙串（iOS Keychain），不上传" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The key stays in this device's Keychain and is never uploaded"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Key 只保存在本机钥匙串（iOS Keychain），不上传"
-          }
-        }
-      }
-    },
     "On-device only" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -701,6 +752,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "PREGNANCY"
+          }
+        }
+      }
+    },
+    "Plain summaries" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plain summaries"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plain summaries"
           }
         }
       }
@@ -769,6 +837,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quick Note"
+          }
+        }
+      }
+    },
+    "Same privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same privacy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same privacy"
+          }
+        }
+      }
+    },
+    "Subscription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription"
           }
         }
       }
@@ -926,6 +1028,23 @@
         }
       }
     },
+    "下次续费 · Next renewal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next renewal"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次续费 · Next renewal"
+          }
+        }
+      }
+    },
     "不会再发送任何报告文字" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -939,6 +1058,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No report text will be sent"
+          }
+        }
+      }
+    },
+    "了解 Carelogue Plus" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About Carelogue Plus"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "了解 Carelogue Plus"
           }
         }
       }
@@ -1011,6 +1147,40 @@
         }
       }
     },
+    "以后新增的 AI 能力都包含在内，不额外加价。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every AI feature added later is included, at no extra cost."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以后新增的 AI 能力都包含在内，不额外加价。"
+          }
+        }
+      }
+    },
+    "价格加载中" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading price"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "价格加载中"
+          }
+        }
+      }
+    },
     "体检" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1079,6 +1249,23 @@
         }
       }
     },
+    "使用条款 · Terms" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terms"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用条款 · Terms"
+          }
+        }
+      }
+    },
     "保存" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1109,6 +1296,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全部 %lld"
+          }
+        }
+      }
+    },
+    "全部 AI 功能" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All AI features"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部 AI 功能"
           }
         }
       }
@@ -1657,19 +1861,19 @@
         }
       }
     },
-    "在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。" : {
+    "在 App Store 账户里更改或取消" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Get one at platform.deepseek.com. The key is stored only in this device's Keychain."
+            "value" : "Change or cancel in your App Store account"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。"
+            "value" : "在 App Store 账户里更改或取消"
           }
         }
       }
@@ -1687,6 +1891,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Turn it off or withdraw consent anytime under Profile & Settings › Settings › Privacy & Data Flow."
+          }
+        }
+      }
+    },
+    "在别的设备上订阅过？点这里同步" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribed on another device? Sync it here"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在别的设备上订阅过？点这里同步"
           }
         }
       }
@@ -1755,23 +1976,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "基线"
-          }
-        }
-      }
-    },
-    "填写 Add" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "填写 Add"
           }
         }
       }
@@ -1963,6 +2167,23 @@
         }
       }
     },
+    "属于 Carelogue Plus" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Part of Carelogue Plus"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "属于 Carelogue Plus"
+          }
+        }
+      }
+    },
     "左滑可移除 · 图片会自动压缩后保存 · PDF 最大 %lld MB" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2031,6 +2252,40 @@
         }
       }
     },
+    "已恢复订阅，AI 解释可以用了。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription restored — AI explanations are available."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已恢复订阅，AI 解释可以用了。"
+          }
+        }
+      }
+    },
+    "已恢复订阅，可以生成解释了" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription restored — you can generate explanations"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已恢复订阅，可以生成解释了"
+          }
+        }
+      }
+    },
     "已撤回 AI 解释同意" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2061,6 +2316,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Consent withdrawn — AI explanations are disabled. You can agree again from a report page."
+          }
+        }
+      }
+    },
+    "已有订阅？恢复购买" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Already subscribed? Restore purchase"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已有订阅？恢复购买"
           }
         }
       }
@@ -2099,19 +2371,19 @@
         }
       }
     },
-    "已配置 Connected" : {
+    "开始订阅 · Subscribe" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connected"
+            "value" : "Subscribe"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已配置 Connected"
+            "value" : "开始订阅 · Subscribe"
           }
         }
       }
@@ -2150,6 +2422,23 @@
         }
       }
     },
+    "恢复购买 · Restore" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore purchase"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复购买 · Restore"
+          }
+        }
+      }
+    },
     "情绪" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2180,6 +2469,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我们只选用在条款层面承诺不把 API 数据用于模型训练、并写明保留期限的 AI 服务；服务商条款变化就更换，发布后更换会通知你。Carelogue 自己不留存你的报告文字。"
+          }
+        }
+      }
+    },
+    "把报告变成白话总结、术语卡和「问问医生」清单。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns a report into a plain-language summary, term cards and a list of questions for your doctor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把报告变成白话总结、术语卡和「问问医生」清单。"
           }
         }
       }
@@ -2248,23 +2554,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拔牙"
-          }
-        }
-      }
-    },
-    "授权密钥 API Key" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "API Key"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "授权密钥 API Key"
           }
         }
       }
@@ -2677,19 +2966,19 @@
         }
       }
     },
-    "更换 Change" : {
+    "暂时拿不到订阅信息，请稍后再试" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Change"
+            "value" : "Subscription details are unavailable right now. Please try again."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "更换 Change"
+            "value" : "暂时拿不到订阅信息，请稍后再试"
           }
         }
       }
@@ -2745,36 +3034,19 @@
         }
       }
     },
-    "未填写" : {
+    "未订阅 · Not subscribed" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not set"
+            "value" : "Not subscribed"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "未填写"
-          }
-        }
-      }
-    },
-    "未配置 Not set" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not set"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未配置 Not set"
+            "value" : "未订阅 · Not subscribed"
           }
         }
       }
@@ -2809,6 +3081,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "本机已经没有可清空的数据"
+          }
+        }
+      }
+    },
+    "术语速查" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key terms"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "术语速查"
           }
         }
       }
@@ -3012,23 +3301,6 @@
         }
       }
     },
-    "测试连接" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test Connection"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "测试连接"
-          }
-        }
-      }
-    },
     "测量" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3165,6 +3437,23 @@
         }
       }
     },
+    "由 Apple ID 账户扣款，确认购买后立即生效；到期前可随时在 App Store 账户里取消。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charged to your Apple ID when you confirm. Cancel any time before renewal in your App Store account."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由 Apple ID 账户扣款，确认购买后立即生效；到期前可随时在 App Store 账户里取消。"
+          }
+        }
+      }
+    },
     "疫苗记录" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3199,6 +3488,40 @@
         }
       }
     },
+    "白话总结" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "白话总结"
+          }
+        }
+      }
+    },
+    "白话解释" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plain-language explanations"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "白话解释"
+          }
+        }
+      }
+    },
     "白话解释 (AI Explained)" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3212,6 +3535,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "白话解释 (AI Explained)"
+          }
+        }
+      }
+    },
+    "白话解释 · AI Explained" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Explained"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "白话解释 · AI Explained"
+          }
+        }
+      }
+    },
+    "白话解释包含在 Carelogue Plus 订阅里；记录、附件和档案始终免费。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plain-language explanations are part of the Carelogue Plus subscription; records, attachments and your profile are always free."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "白话解释包含在 Carelogue Plus 订阅里；记录、附件和档案始终免费。"
           }
         }
       }
@@ -3250,23 +3607,6 @@
         }
       }
     },
-    "移除 API Key" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove API Key"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "移除 API Key"
-          }
-        }
-      }
-    },
     "筛选 Filter" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3284,6 +3624,23 @@
         }
       }
     },
+    "管理订阅 · Manage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage subscription"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "管理订阅 · Manage"
+          }
+        }
+      }
+    },
     "类型" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3297,23 +3654,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "类型"
-          }
-        }
-      }
-    },
-    "粘贴 DeepSeek API Key（sk-…）" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Paste your DeepSeek API key (sk-…)"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "粘贴 DeepSeek API Key（sk-…）"
           }
         }
       }
@@ -3505,6 +3845,193 @@
         }
       }
     },
+    "解锁全部 AI 功能 · Unlock all AI" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock all AI"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁全部 AI 功能 · Unlock all AI"
+          }
+        }
+      }
+    },
+    "解锁订阅 · Subscribe" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribe"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁订阅 · Subscribe"
+          }
+        }
+      }
+    },
+    "订阅" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅"
+          }
+        }
+      }
+    },
+    "订阅中 · Active" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅中 · Active"
+          }
+        }
+      }
+    },
+    "订阅只解锁 AI；记录、附件和档案依旧只属于你。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribing only unlocks AI; your records, attachments and profile stay yours."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅只解锁 AI；记录、附件和档案依旧只属于你。"
+          }
+        }
+      }
+    },
+    "订阅后解锁全部 AI 功能" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribe to unlock all AI features"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅后解锁全部 AI 功能"
+          }
+        }
+      }
+    },
+    "订阅后解锁报告解读" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscribe to unlock this report"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅后解锁报告解读"
+          }
+        }
+      }
+    },
+    "订阅后，这份报告会变成白话总结、术语卡和「问问医生」清单。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With a subscription this report becomes a plain-language summary, term cards and a list of questions for your doctor."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅后，这份报告会变成白话总结、术语卡和「问问医生」清单。"
+          }
+        }
+      }
+    },
+    "订阅已到期，续订后可以继续使用 AI 解释" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your subscription has expired. Renew to keep using AI explanations."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅已到期，续订后可以继续使用 AI 解释"
+          }
+        }
+      }
+    },
+    "订阅已开通" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription active"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅已开通"
+          }
+        }
+      }
+    },
+    "订阅提示" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "订阅提示"
+          }
+        }
+      }
+    },
     "记录就医、检查与健康历程 · " : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3603,6 +4130,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "请求超时，请稍后重试"
+          }
+        }
+      }
+    },
+    "购买还在等待确认，完成后 AI 解释会自动解锁。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The purchase is waiting for approval. AI explanations unlock as soon as it goes through."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "购买还在等待确认，完成后 AI 解释会自动解锁。"
           }
         }
       }
@@ -3755,6 +4299,40 @@
         }
       }
     },
+    "这个 Apple ID 下没有找到可恢复的订阅。" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No subscription to restore on this Apple ID."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这个 Apple ID 下没有找到可恢复的订阅。"
+          }
+        }
+      }
+    },
+    "这份报告的文字太长，试试只解释其中一页" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This report's text is too long — try explaining a single page."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这份报告的文字太长，试试只解释其中一页"
+          }
+        }
+      }
+    },
     "这份文件超过 %lld MB，请先压缩或拆分后再导入" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3785,6 +4363,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这次没有得到可用的解释"
+          }
+        }
+      }
+    },
+    "这笔交易无法验证，请联系 App Store 支持" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This purchase could not be verified. Please contact App Store support."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这笔交易无法验证，请联系 App Store 支持"
           }
         }
       }
@@ -3823,23 +4418,6 @@
         }
       }
     },
-    "连接正常" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connected"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "连接正常"
-          }
-        }
-      }
-    },
     "选一个模板，马上开始" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3870,6 +4448,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "选择模板 · Template"
+          }
+        }
+      }
+    },
+    "通过 App Store 订阅，随时可以取消" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Billed through the App Store, cancel any time"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通过 App Store 订阅，随时可以取消"
           }
         }
       }
@@ -3989,6 +4584,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "长期用药"
+          }
+        }
+      }
+    },
+    "问问医生" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask your doctor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "问问医生"
           }
         }
       }
@@ -4141,6 +4753,23 @@
         }
       }
     },
+    "隐私不变" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same privacy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私不变"
+          }
+        }
+      }
+    },
     "隐私与数据流向" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4154,6 +4783,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隐私与数据流向"
+          }
+        }
+      }
+    },
+    "隐私政策 · Privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Policy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私政策 · Privacy"
           }
         }
       }

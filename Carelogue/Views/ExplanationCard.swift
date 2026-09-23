@@ -21,6 +21,8 @@ struct ExplanationCard: View {
     @State private var copied = false
     /// Artifact waiting on the consent sheet's answer.
     @State private var pendingConsent: Artifact?
+    @State private var subscriptions = SubscriptionService.shared
+    @State private var showingPaywall = false
 
     enum Phase: Equatable {
         case running
@@ -41,9 +43,17 @@ struct ExplanationCard: View {
                 DisabledLine()
             } else if consent == .revoked {
                 RevokedLine { pendingConsent = selected }
+            } else if subscriptions.status == .notSubscribed, selected?.explanation == nil {
+                // The lock is only on generating new explanations: anything
+                // already explained stays readable, and attachments and records
+                // were never behind it (T27).
+                LockedCard(onSubscribe: { showingPaywall = true }, onRestore: { Task { await restore() } })
             } else if let artifact = selected {
                 card(for: artifact)
             }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
         .sheet(item: $pendingConsent) { artifact in
             ConsentSheet(
@@ -66,7 +76,7 @@ struct ExplanationCard: View {
         let isIdle = explanation == nil && phase == nil
 
         VStack(alignment: .leading, spacing: 14) {
-            header(explained: explanation != nil && phase != .running)
+            header(model: phase == .running ? nil : explanation?.model)
 
             if artifacts.count > 1 {
                 attachmentPicker
@@ -104,7 +114,7 @@ struct ExplanationCard: View {
         .accessibilityIdentifier("explain.card")
     }
 
-    private func header(explained: Bool) -> some View {
+    private func header(model: String?) -> some View {
         HStack(spacing: 10) {
             Image(systemName: "sparkles")
                 .font(.system(size: 15, weight: .semibold))
@@ -114,11 +124,13 @@ struct ExplanationCard: View {
             // Explained: the provider pill takes the gloss's place so the
             // title never truncates.
             BilingualTitle(primary: String(localized: "白话解释（AI 生成）"),
-                           secondary: explained ? nil : AppLanguage.gloss(String(localized: "AI Explained")))
+                           secondary: model == nil ? AppLanguage.gloss(String(localized: "AI Explained")) : nil)
                 .layoutPriority(1)
             Spacer(minLength: 6)
-            if explained {
-                Text(verbatim: AIDisclosure.serviceName)
+            if let model {
+                // The model id as the relay reported it ("vendor/name" -> name),
+                // so the card says what actually answered.
+                Text(verbatim: model.split(separator: "/").last.map(String.init) ?? model)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(Theme.accent)
                     .padding(.horizontal, 9)
@@ -275,6 +287,13 @@ struct ExplanationCard: View {
 
     // MARK: - Actions
 
+    private func restore() async {
+        try? await subscriptions.restore()
+        notice = subscriptions.isSubscribed
+            ? String(localized: "已恢复订阅，可以生成解释了")
+            : String(localized: "这个 Apple ID 下没有找到可恢复的订阅。")
+    }
+
     private func start(_ artifact: Artifact) {
         guard phases[artifact.id] != .running else { return }
         guard consent == .granted else {
@@ -408,6 +427,109 @@ private struct FailedBody: View {
             .font(.footnote)
             .foregroundStyle(Theme.inkSecondary)
         }
+    }
+}
+
+/// Replaces the card when there is no subscription (Stitch
+/// report_view_not_subscribed): says what subscribing would produce for *this*
+/// report, and nothing else on the page is locked.
+private struct LockedCard: View {
+    let onSubscribe: () -> Void
+    let onRestore: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                HStack(spacing: 6) {
+                    Image(systemName: "sparkles")
+                        .font(.caption.weight(.semibold))
+                    Text("白话解释 · AI Explained")
+                        .font(.caption.weight(.semibold))
+                }
+                .foregroundStyle(Theme.accent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Capsule().fill(Theme.accentTint))
+
+                Spacer(minLength: 8)
+
+                Image(systemName: "lock")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.accent)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("订阅后解锁报告解读")
+                    .font(.headline)
+                    .foregroundStyle(Theme.inkPrimary)
+                Text("订阅后，这份报告会变成白话总结、术语卡和「问问医生」清单。")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(spacing: 8) {
+                LockedFeature(icon: "text.alignleft", title: String(localized: "白话总结"))
+                LockedFeature(icon: "character.book.closed", title: String(localized: "术语速查"))
+                LockedFeature(icon: "questionmark.bubble", title: String(localized: "问问医生"))
+            }
+
+            Button(action: onSubscribe) {
+                Label("解锁订阅 · Subscribe", systemImage: "sparkles")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(Theme.onAccent)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(RoundedRectangle(cornerRadius: 14).fill(Theme.accent))
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(PressableStyle())
+            .accessibilityIdentifier("explain.subscribe")
+
+            Button(action: onRestore) {
+                Text("已有订阅？恢复购买")
+                    .font(.caption)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("explain.restore")
+        }
+        .padding(Theme.Spacing.cardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.Radius.card).fill(Theme.accentTint.opacity(0.5))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.Radius.card).stroke(Theme.accent.opacity(0.45), lineWidth: 1)
+        )
+        // .contain keeps the buttons inside addressable: an identifier on a
+        // plain container would otherwise be inherited by every child.
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("explain.locked")
+    }
+}
+
+/// One of the three small "this is what you'd get" tiles on the locked card.
+private struct LockedFeature: View {
+    let icon: String
+    let title: String
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(Theme.accent)
+            Text(title)
+                .font(.caption2.weight(.medium))
+                .foregroundStyle(Theme.inkSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(RoundedRectangle(cornerRadius: Theme.Radius.inset).fill(Theme.card))
+        .overlay(RoundedRectangle(cornerRadius: Theme.Radius.inset).stroke(Theme.border, lineWidth: 1))
     }
 }
 

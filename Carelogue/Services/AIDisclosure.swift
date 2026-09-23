@@ -10,9 +10,10 @@ import Foundation
 /// to"), so T26 — which moves the call behind Carelogue's own server — has to
 /// change `serviceName` and nothing else.
 enum AIDisclosure {
-    /// The service this build sends extracted report text to. T26 replaces
-    /// the direct call with Carelogue's server in front of DeepInfra.
-    static let serviceName = "DeepSeek"
+    /// Who the device sends extracted report text to. Since T26/T27 that is
+    /// Carelogue's own relay, which forwards to the AI service we selected;
+    /// the explanation records the model that actually answered.
+    static let serviceName = "Carelogue"
 
     /// What leaves the device (Settings privacy card, consent sheet).
     static var textOnlyDetail: String {

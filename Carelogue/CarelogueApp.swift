@@ -19,6 +19,9 @@ struct CarelogueApp: App {
             JourneyListView()
                 .environment(\.locale, AppLanguage.locale)
                 .tint(Theme.accent)
+                // Loads the product and the current entitlement, and keeps
+                // watching for renewals and purchases from other devices (T27).
+                .task { SubscriptionService.shared.start() }
         }
         .modelContainer(container)
     }

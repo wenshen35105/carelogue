@@ -11,6 +11,9 @@ import UIKit
 ///   -uitest-seed-attachments      add a Journey with an encounter holding
 ///                                 2 images (a zh/en lab report + a textless
 ///                                 photo) + 1 two-page PDF
+///   -uitest-subscription <state>  pin Carelogue Plus to active | none, so the
+///                                 paywall and the locked card can be driven
+///                                 without the App Store
 ///   -uitest-fake-ai <mode>        explain through a scripted provider instead
 ///                                 of DeepSeek: success | slow | fail | invalid
 ///   env UITEST_API_KEY=<key>      store this key in the Keychain at launch
@@ -61,8 +64,25 @@ enum UITestSupport {
         }
     }
 
-    /// Set by -uitest-fake-ai; AISettings.makeService() prefers it.
+    /// Set by -uitest-fake-ai; AISettings.makeService(entitlement:) prefers it.
     static var fakeAIService: FakeAIService?
+
+    /// -uitest-subscription active | none. Nil when the flag is absent, and
+    /// then SubscriptionService talks to StoreKit as usual.
+    @MainActor
+    static var forcedSubscriptionStatus: SubscriptionService.Status? {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-uitest-subscription"),
+              index + 1 < arguments.count else { return nil }
+        switch arguments[index + 1] {
+        case "active":
+            return .subscribed(expires: Calendar.current.date(byAdding: .month, value: 1, to: .now))
+        case "none":
+            return .notSubscribed
+        default:
+            return nil
+        }
+    }
 
     private static func runExplainSelfTest(_ context: ModelContext) async {
         var report = ""

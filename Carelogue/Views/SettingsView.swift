@@ -14,19 +14,15 @@ struct SettingsView: View {
     @State private var showingEraseConfirm = false
     @State private var eraseResult: ModelContext.EraseSummary?
 
-    @State private var apiKey: String? = AISettings.apiKey
-    @State private var showingKeyEditor = false
-    @State private var testState: TestState = .idle
-
-    private enum TestState: Equatable {
-        case idle, running, ok
-        case failed(String)
-    }
+    @State private var subscriptions = SubscriptionService.shared
+    @State private var showingPaywall = false
+    @State private var restoreNotice: String?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
                 header
+                subscriptionSection
                 aiSection
                 privacySection
                 dataSection
@@ -39,12 +35,8 @@ struct SettingsView: View {
         .background(Theme.background)
         .navigationTitle("设置")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingKeyEditor) {
-            APIKeyEditor(hasKey: apiKey != nil) { newKey in
-                AISettings.setAPIKey(newKey)
-                apiKey = AISettings.apiKey
-                testState = .idle
-            }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
         }
     }
 
@@ -103,113 +95,103 @@ struct SettingsView: View {
                 .padding(.vertical, 14)
                 .disabled(!aiEnabled)
                 .accessibilityIdentifier("settings.profileToggle")
-                SettingsDivider()
-
-                HStack(alignment: .top, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("解释服务 · \(AIDisclosure.serviceName)")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(Theme.inkPrimary)
-                        Text(verbatim: "deepseek-chat")
-                            .font(.footnote)
-                            .foregroundStyle(Theme.inkSecondary)
-                    }
-                    Spacer(minLength: 8)
-                    ConfiguredPill(configured: apiKey != nil)
-                }
-                .padding(.vertical, 14)
-
-                SettingsDivider()
-
-                HStack(spacing: 10) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("授权密钥 API Key")
-                            .font(.footnote)
-                            .foregroundStyle(Theme.inkSecondary)
-                        Text(apiKey.map { AISettings.masked($0) } ?? String(localized: "未填写"))
-                            .font(.body.monospaced())
-                            .foregroundStyle(apiKey == nil ? Theme.inkSecondary : Theme.inkPrimary)
-                            .accessibilityIdentifier("settings.maskedKey")
-                    }
-                    Spacer(minLength: 8)
-                    Button {
-                        showingKeyEditor = true
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(apiKey == nil ? String(localized: "填写 Add") : String(localized: "更换 Change"))
-                            Image(systemName: "chevron.right").font(.caption.weight(.semibold))
-                        }
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Theme.accent)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 9)
-                        .background(Capsule().fill(Theme.accentTint))
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("settings.changeKey")
-                }
-                .padding(.vertical, 14)
-
-                if apiKey != nil {
-                    SettingsDivider()
-                    connectionTestRow
-                        .padding(.vertical, 12)
-                }
             }
             .padding(.horizontal, Theme.Spacing.cardPadding)
             .cardSurface(padding: 0)
 
-            Label("Key 只保存在本机钥匙串（iOS Keychain），不上传", systemImage: "lock")
+            Label("AI 解释需要 Carelogue Plus 订阅；关闭开关后，报告页不再显示解释入口", systemImage: "info.circle")
                 .font(.caption)
                 .foregroundStyle(Theme.inkSecondary)
                 .padding(.horizontal, 4)
         }
     }
 
-    /// Minimal round trip to prove the key works (T18 acceptance).
-    private var connectionTestRow: some View {
-        HStack(spacing: 8) {
-            Button {
-                Task { await runConnectionTest() }
-            } label: {
-                Label("测试连接", systemImage: "bolt.horizontal")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Theme.accent)
-            }
-            .buttonStyle(.plain)
-            .disabled(testState == .running)
-            .accessibilityIdentifier("settings.testConnection")
+    // MARK: - 订阅
 
-            Spacer(minLength: 8)
+    /// Stitch settings_subscribed "订阅 · SUBSCRIPTION": status, renewal, and
+    /// the two things the user can act on — manage and restore (T28).
+    private var subscriptionSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SettingsSectionHeader(icon: "sparkles.rectangle.stack", title: String(localized: "订阅"),
+                                  gloss: AppLanguage.gloss(String(localized: "Subscription")))
 
-            Group {
-                switch testState {
-                case .idle:
-                    EmptyView()
-                case .running:
-                    ProgressView().controlSize(.small)
-                case .ok:
-                    Label("连接正常", systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(Theme.success)
-                case .failed(let message):
-                    Text(message)
-                        .foregroundStyle(Theme.warning)
-                        .multilineTextAlignment(.trailing)
+            VStack(spacing: 0) {
+                HStack(spacing: 10) {
+                    Text(verbatim: "Carelogue Plus")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Theme.inkPrimary)
+                    Spacer(minLength: 8)
+                    SubscriptionPill(subscribed: subscriptions.isSubscribed)
                 }
+                .padding(.vertical, 14)
+                .accessibilityIdentifier("settings.subscriptionStatus")
+
+                if let renewal = subscriptions.renewalDate {
+                    SettingsDivider()
+                    HStack {
+                        Label("下次续费 · Next renewal", systemImage: "calendar")
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.inkSecondary)
+                        Spacer(minLength: 8)
+                        Text(renewal.numericDate)
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Theme.inkPrimary)
+                    }
+                    .padding(.vertical, 14)
+                }
+
+                SettingsDivider()
+
+                if subscriptions.isSubscribed {
+                    Link(destination: LegalLinks.manageSubscriptions) {
+                        SettingsRowLabel(title: String(localized: "管理订阅 · Manage"),
+                                         detail: String(localized: "在 App Store 账户里更改或取消"))
+                    }
+                    .accessibilityIdentifier("settings.manageSubscription")
+                } else {
+                    Button {
+                        showingPaywall = true
+                    } label: {
+                        SettingsRowLabel(title: String(localized: "了解 Carelogue Plus"),
+                                         detail: String(localized: "订阅后解锁全部 AI 功能"))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("settings.openPaywall")
+                }
+
+                SettingsDivider()
+
+                Button {
+                    Task { await restore() }
+                } label: {
+                    SettingsRowLabel(title: String(localized: "恢复购买 · Restore"),
+                                     detail: String(localized: "在别的设备上订阅过？点这里同步"))
+                }
+                .buttonStyle(.plain)
+                .disabled(subscriptions.isWorking)
+                .accessibilityIdentifier("settings.restore")
             }
-            .font(.footnote)
-            .accessibilityIdentifier("settings.testResult")
+            .padding(.horizontal, Theme.Spacing.cardPadding)
+            .cardSurface(padding: 0)
+
+            if let restoreNotice {
+                Label(restoreNotice, systemImage: "checkmark.circle")
+                    .font(.caption)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .padding(.horizontal, 4)
+                    .accessibilityIdentifier("settings.restoreResult")
+            }
         }
     }
 
-    private func runConnectionTest() async {
-        testState = .running
+    private func restore() async {
         do {
-            let service = try AISettings.makeService()
-            _ = try await service.complete(system: "Reply with the single word: ok", user: "ping", json: false)
-            testState = .ok
+            try await subscriptions.restore()
+            restoreNotice = subscriptions.isSubscribed
+                ? String(localized: "已恢复订阅，AI 解释可以用了。")
+                : String(localized: "这个 Apple ID 下没有找到可恢复的订阅。")
         } catch {
-            testState = .failed(error.localizedDescription)
+            restoreNotice = error.localizedDescription
         }
     }
 
@@ -386,13 +368,25 @@ struct SettingsView: View {
     }
 
     private var footer: some View {
-        VStack(spacing: 6) {
-            Label("Carelogue iOS v\(Bundle.main.shortVersion)", systemImage: "leaf")
-                .font(.caption)
-            Text("温和记录，陪你走好每一步")
-                .font(.caption)
+        VStack(spacing: 10) {
+            // App Store review expects both reachable from inside the app.
+            HStack(spacing: 16) {
+                Link("隐私政策 · Privacy", destination: LegalLinks.privacy)
+                    .accessibilityIdentifier("settings.privacyPolicy")
+                Link("使用条款 · Terms", destination: LegalLinks.terms)
+                    .accessibilityIdentifier("settings.terms")
+            }
+            .font(.footnote.weight(.medium))
+            .tint(Theme.accent)
+
+            VStack(spacing: 6) {
+                Label("Carelogue iOS v\(Bundle.main.shortVersion)", systemImage: "leaf")
+                    .font(.caption)
+                Text("温和记录，陪你走好每一步")
+                    .font(.caption)
+            }
+            .foregroundStyle(Theme.inkSecondary)
         }
-        .foregroundStyle(Theme.inkSecondary)
         .frame(maxWidth: .infinity)
     }
 }
@@ -418,22 +412,50 @@ private struct SettingsDivider: View {
     }
 }
 
-/// "● 已配置 Connected" / "● 未配置 Not set".
-private struct ConfiguredPill: View {
-    let configured: Bool
+/// "● 订阅中 · Active" / "● 未订阅 · Not subscribed".
+private struct SubscriptionPill: View {
+    let subscribed: Bool
 
     var body: some View {
         HStack(spacing: 5) {
             Circle()
-                .fill(configured ? Theme.success : Theme.inkSecondary)
+                .fill(subscribed ? Theme.success : Theme.inkSecondary)
                 .frame(width: 6, height: 6)
-            Text(configured ? String(localized: "已配置 Connected") : String(localized: "未配置 Not set"))
+            Text(subscribed ? String(localized: "订阅中 · Active") : String(localized: "未订阅 · Not subscribed"))
         }
         .font(.caption.weight(.medium))
-        .foregroundStyle(configured ? Theme.success : Theme.inkSecondary)
+        .foregroundStyle(subscribed ? Theme.success : Theme.inkSecondary)
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .background(Capsule().fill(configured ? Theme.success.opacity(0.12) : Theme.insetFill))
+        .background(Capsule().fill(subscribed ? Theme.success.opacity(0.12) : Theme.insetFill))
+    }
+}
+
+/// Title + one muted line + chevron, the shape of every actionable row on
+/// this page.
+private struct SettingsRowLabel: View {
+    let title: String
+    let detail: String
+
+    var body: some View {
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(Theme.accent)
+                Text(detail)
+                    .font(.footnote)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Theme.inkSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 14)
+        .contentShape(Rectangle())
     }
 }
 
@@ -460,61 +482,6 @@ private struct PrivacyRow: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 14)
-    }
-}
-
-/// SecureField sheet for entering / replacing / removing the key.
-private struct APIKeyEditor: View {
-    @Environment(\.dismiss) private var dismiss
-
-    let hasKey: Bool
-    let onSave: (String?) -> Void
-
-    @State private var draft = ""
-    @FocusState private var focused: Bool
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Group {
-                    Section {
-                        SecureField(String(localized: "粘贴 DeepSeek API Key（sk-…）"), text: $draft)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                            .focused($focused)
-                            .accessibilityIdentifier("settings.keyField")
-                    } footer: {
-                        Text("在 platform.deepseek.com 申请。Key 只保存在本机钥匙串。")
-                    }
-                    if hasKey {
-                        Section {
-                            Button("移除 API Key", role: .destructive) {
-                                onSave(nil)
-                                dismiss()
-                            }
-                        }
-                    }
-                }
-                .listRowBackground(Theme.card)
-            }
-            .warmFormChrome()
-            .navigationTitle("API Key")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
-                        onSave(draft)
-                        dismiss()
-                    }
-                    .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                }
-            }
-            .onAppear { focused = true }
-        }
-        .presentationDetents([.medium])
     }
 }
 

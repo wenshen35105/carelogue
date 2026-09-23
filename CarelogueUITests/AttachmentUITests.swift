@@ -4,6 +4,13 @@ import XCTest
 final class AttachmentUITests: CarelogueUITestCase {
     private let journeyName = "UITest 孕期"
 
+    // These tests are about attachments, not the paywall; a pinned
+    // subscription keeps the report page in its normal layout.
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        stickyArguments = ["-uitest-subscription", "active"]
+    }
+
     private var images: XCUIElementQuery { app.buttons.matching(identifier: "attachment.image") }
     private var files: XCUIElementQuery { app.buttons.matching(identifier: "attachment.file") }
 

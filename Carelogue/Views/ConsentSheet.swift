@@ -46,12 +46,22 @@ struct ConsentSheet: View {
                         point(icon: "checkmark.seal",
                               title: AIDisclosure.responsibilityTitle,
                               detail: AIDisclosure.responsibilityDetail)
+                        point(icon: "sparkles.rectangle.stack",
+                              title: String(localized: "属于 Carelogue Plus"),
+                              detail: String(localized: "白话解释包含在 Carelogue Plus 订阅里；记录、附件和档案始终免费。"))
                         point(icon: "slider.horizontal.3",
                               title: String(localized: "随时撤回"),
                               detail: String(localized: "在「档案与设置 › 设置 › 隐私与数据流向」里可以随时关闭或撤回同意。"))
                     }
 
-                    Label("AI 解释仅帮助理解报告，不能替代医生的诊断。", systemImage: "checkmark.shield")
+                    HStack(spacing: 14) {
+                    Link("隐私政策 · Privacy", destination: LegalLinks.privacy)
+                    Link("使用条款 · Terms", destination: LegalLinks.terms)
+                }
+                .font(.footnote.weight(.medium))
+                .tint(Theme.accent)
+
+                Label("AI 解释仅帮助理解报告，不能替代医生的诊断。", systemImage: "checkmark.shield")
                         .font(.footnote)
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)

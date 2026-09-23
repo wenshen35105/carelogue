@@ -1,6 +1,6 @@
 import XCTest
 
-/// M3 T18: settings page, Keychain-backed API key, AI switch.
+/// Settings page: the AI switch, the subscription card (T28) and 数据管理.
 final class SettingsUITests: CarelogueUITestCase {
     func openSettings() {
         waitFor(app.navigationBars["Journeys"])
@@ -11,30 +11,66 @@ final class SettingsUITests: CarelogueUITestCase {
         waitFor(app.staticTexts["设置 Settings"])
     }
 
-    func testKeyPersistsAndSwitchTurnsOff() {
+    /// T28: the AI switch still persists, and the API-key rows are gone for
+    /// good — a subscription is what unlocks AI now.
+    func testAISwitchPersistsAndKeyRowsAreGone() {
         launch(["-uitest-reset"])
         openSettings()
-        waitFor(element(containing: "未配置 Not set"))
 
-        app.buttons["settings.changeKey"].tap()
-        let field = app.secureTextFields["settings.keyField"]
-        waitFor(field)
-        field.typeText("sk-uitest-00001234abcd")
-        app.buttons["保存"].tap()
-        waitFor(app.staticTexts["sk-••••••••abcd"])
-        waitFor(element(containing: "已配置 Connected"))
+        XCTAssertFalse(app.buttons["settings.changeKey"].exists, "BYOK key row should be gone")
+        XCTAssertFalse(app.descendants(matching: .any)["settings.maskedKey"].exists)
+        XCTAssertFalse(app.buttons["settings.testConnection"].exists)
 
         let toggle = app.switches["settings.aiToggle"]
         XCTAssertEqual(toggle.value as? String, "1")
         toggle.switches.firstMatch.tap()
         XCTAssertEqual(toggle.value as? String, "0")
-        screenshot("T18-settings")
+        screenshot("T28-settings")
 
-        // Keychain + preference survive a kill / relaunch.
         relaunch()
         openSettings()
-        waitFor(app.staticTexts["sk-••••••••abcd"])
         XCTAssertEqual(app.switches["settings.aiToggle"].value as? String, "0")
+    }
+
+    /// T28: subscribed — status, renewal date, manage and restore.
+    func testSubscriptionCardWhenSubscribed() {
+        stickyArguments = ["-uitest-subscription", "active"]
+        launch(["-uitest-reset"])
+        openSettings()
+
+        waitFor(element(containing: "订阅中 · Active"))
+        XCTAssertTrue(element(containing: "下次续费").exists)
+        XCTAssertTrue(app.links["settings.manageSubscription"].exists
+                      || app.buttons["settings.manageSubscription"].exists)
+        XCTAssertTrue(app.buttons["settings.restore"].exists)
+        XCTAssertFalse(app.buttons["settings.openPaywall"].exists)
+        screenshot("T28-settings-subscribed")
+
+        // Both policies are reachable from inside the app (App Store review).
+        // A SwiftUI Link surfaces as a link or a button depending on the run,
+        // so accept either — the point is that it is on the page.
+        app.swipeUp()
+        app.swipeUp()
+        for identifier in ["settings.privacyPolicy", "settings.terms"] {
+            let link = app.links[identifier]
+            let button = app.buttons[identifier]
+            XCTAssertTrue(link.waitForExistence(timeout: 3) || button.exists,
+                          "Missing legal link: \(identifier)")
+        }
+    }
+
+    /// T28: not subscribed — the card offers the paywall instead of Manage.
+    func testSubscriptionCardWhenNotSubscribed() {
+        stickyArguments = ["-uitest-subscription", "none"]
+        launch(["-uitest-reset"])
+        openSettings()
+
+        waitFor(element(containing: "未订阅 · Not subscribed"))
+        let openPaywall = app.buttons["settings.openPaywall"]
+        waitFor(openPaywall)
+        openPaywall.tap()
+        waitFor(app.descendants(matching: .any)["paywall"])
+        screenshot("T28-settings-paywall")
     }
 
     /// T25 ②: 清空所有数据 removes every journey, record and attachment, and
@@ -86,18 +122,4 @@ final class SettingsUITests: CarelogueUITestCase {
         XCTAssertEqual(app.textViews.element(boundBy: 0).value as? String, "")
     }
 
-    /// Real DeepSeek round trip. Runs only when scripts/ui-test.sh is given
-    /// DEEPSEEK_API_KEY (passed to the runner as TEST_RUNNER_DEEPSEEK_API_KEY).
-    func testRealConnection() throws {
-        guard let key = ProcessInfo.processInfo.environment["DEEPSEEK_API_KEY"], !key.isEmpty else {
-            throw XCTSkip("DEEPSEEK_API_KEY not set")
-        }
-        app.launchEnvironment["UITEST_API_KEY"] = key
-        launch(["-uitest-reset"])
-        openSettings()
-        waitFor(element(containing: "已配置 Connected"))
-        app.buttons["settings.testConnection"].tap()
-        let ok = element(containing: "连接正常")
-        XCTAssertTrue(ok.waitForExistence(timeout: 60), "Connection test failed: \(app.descendants(matching: .any)["settings.testResult"].label)")
-    }
 }

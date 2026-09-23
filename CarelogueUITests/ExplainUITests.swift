@@ -5,6 +5,13 @@ import XCTest
 final class ExplainUITests: CarelogueUITestCase {
     private let journeyName = "UITest 孕期"
 
+    // AI is a Carelogue Plus feature (T27); these tests are about the
+    // explanation flow, so the subscription is pinned active.
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        stickyArguments = ["-uitest-subscription", "active"]
+    }
+
     private func id(_ identifier: String) -> XCUIElement {
         app.descendants(matching: .any)[identifier]
     }
@@ -139,12 +146,17 @@ final class ExplainUITests: CarelogueUITestCase {
         XCTAssertFalse(element(containing: "[#2]").exists)
     }
 
-    func testMissingKeyShowsFriendlyError() {
-        launch(["-uitest-reset", "-uitest-seed-attachments"])
+    /// T27: with a subscription but no reachable relay, the card explains
+    /// itself instead of hanging or crashing (the key-based variant of this
+    /// test went away with BYOK).
+    func testUnreachableServiceShowsFriendlyError() {
+        launch(["-uitest-reset", "-uitest-seed-attachments",
+                "-ai.serverURL", "http://127.0.0.1:9"])
         openSeededEncounter()
         tapExplain(app.buttons["explain.button"])
-        waitFor(id("explain.error"), timeout: 10)
-        XCTAssertTrue(element(containing: "还没有填写 API Key").exists)
+        waitFor(id("explain.error"), timeout: 20)
+        XCTAssertTrue(app.buttons["explain.retry"].exists)
+        XCTAssertTrue(element(containing: "附件和记录都不受影响").exists)
     }
 
     func testAIOffReplacesCard() {

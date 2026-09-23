@@ -18,9 +18,14 @@ class CarelogueUITestCase: XCTestCase {
     /// labels, so tests pin zh-Hans unless they opt into English.
     var language = "zh-Hans"
 
+    /// Flags every launch in this test keeps, including relaunches — e.g. the
+    /// pinned subscription state, which is not data and must survive the kill.
+    var stickyArguments: [String] = []
+
     func launch(_ arguments: [String] = []) {
         let locale = language.hasPrefix("zh") ? "zh_CN" : "en_CA"
-        app.launchArguments = ["-AppleLanguages", "(\(language))", "-AppleLocale", locale] + arguments
+        app.launchArguments = ["-AppleLanguages", "(\(language))", "-AppleLocale", locale]
+            + stickyArguments + arguments
         app.launch()
     }
 
