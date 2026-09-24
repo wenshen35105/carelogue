@@ -4,7 +4,7 @@
 
 ## 已定案，待实施
 
-- [ ] **跨 Apple ID 共享（重点 · 产品级）**：SwiftData 至今（iOS 26）不支持共享数据库——同 ID 自动同步 ≠ 跨 ID 共享；目标用户（夫妻/家庭）大量是不同 ID（老板家即例）。调研卡（先做）：读社区参考实现（framara/CloudKitSharing：SwiftData + CKShare 并存）→ 评估路线 ① Core Data + CloudKit Sharing（正式、需数据层改造）② 原生 CloudKit + SwiftData 并存（hack 风险）→ 出实施计划与工程量。内测过渡：主库单边（太太手机为主）+ 土法分享。
+- [ ] **跨 Apple ID 共享（重点 · 产品级）**：SwiftData 至今（iOS 26）不支持共享数据库——同 ID 自动同步 ≠ 跨 ID 共享；目标用户（夫妻/家庭）大量是不同 ID（老板家即例）。调研卡（先做）：读社区参考实现（framara/CloudKitSharing：SwiftData + CKShare 并存）→ 评估路线 ① Core Data + CloudKit Sharing（正式、需数据层改造）② 原生 CloudKit + SwiftData 并存（hack 风险）→ 出实施计划与工程量。内测过渡：主库单边（太太手机为主）+ 土法分享（截图/当面看）；如做 app 内支持 → 最小导出（系统分享面板发只读 PDF/图片快照，约半天，不动数据层）。
 - [ ] **定价实施**：App Store Connect 配 **$3.99/月**（国际区；paywall UI 动态读 StoreKit，改价零代码）；配 **首周免费试用**（Introductory Offer）
 - [ ] **开发者内部解锁通道**（你和太太在订阅形态下自用；替代真买/沙盒重购）：
   - 客户端：Debug 构建跳过订阅检查、携带内部凭据（不编译进 Release）
