@@ -11,10 +11,12 @@
   - **发布前双保险**：`wrangler secret delete` + 确认 Release 包无相关代码
 - [ ] **中国区评估**：目标 ¥5.99/月；上架手续特殊（备案/主体资质等）——单独排卡
 - [ ] **家庭共享（Family Sharing）**：App Store Connect → 订阅产品 → 打开 **Family Sharing 开关**（家庭组最多 6 人共用一份订阅）。server 端已天然兼容（验签不判 `inAppOwnershipType`，无需改动）。备注：限流按 `originalTransactionId` 计——家庭共享时全家共享同一 40/h 预算，正常低频使用够用，真撞到再调
+- [ ] **LLM prompts 移至服务端**：现状——prompt 完整拼装在客户端（`ExplainService`），Worker 纯透传 `{system, user}`。改为：客户端只发「动作 + 内容 + 结构化上下文」，由 Worker 组装 prompt 调 DeepInfra。动机：改 prompt 免 App 发版、prompt 不进客户端（资产保护）、护栏与注入检查集中一处。注意：护栏逻辑随迁；请求需带 **locale**（中英模板分套）；「附带档案」开关仍由客户端控制发不发字段（不发 = server 无该数据）。
 
 ## M5 候选（待排）
 
 - 面诊录音 + 疑问翻译（先用产检土法验证一轮再定）
+- **用药计划 + 服药提醒（评审后定）**：现状——"长期用药"仅是档案里的一段文本（供 AI 解释当上下文），没有"什么时候吃什么药"的记录，也没有提醒。起步建议：先用「随手记」土法记录（今天就能用），真别扭再升级为正式形态；服药提醒用**本地通知**即可（不需要服务端，贴合 local-first）。注意：v1 曾明确排除"通知"，若做归 v1.1+。
 - 发布前清单见 `docs/appstore-checklist.md` ⏳ 项
 
 ## 记录
