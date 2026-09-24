@@ -21,7 +21,7 @@ A calm, focused full-screen page (may be presented as a sheet), single column.
   1. "白话解释 — 把报告变成白话总结、术语卡和「问问医生」清单"
   2. "全部 AI 功能 — 未来新增的 AI 能力都会包含，不加价"
   3. "隐私不变 — 订阅只解锁 AI；你的数据始终只存在你的设备"
-- Price block: prominent "$4.99 / 月", caption "通过 App Store 订阅，随时取消"
+- Price block: prominent "$3.99 / 月", caption "通过 App Store 订阅，随时取消"
 - Primary CTA (filled apricot, full width): "开始订阅 · Subscribe"
 - Footer links (small, muted, one row): "恢复购买 · Restore" ·
   "使用条款 · Terms" · "隐私政策 · Privacy"
