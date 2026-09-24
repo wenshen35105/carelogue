@@ -10,6 +10,7 @@
   - 服务端：内部凭据 secret 匹配则跳过 JWS 验签（限流保留）
   - **发布前双保险**：`wrangler secret delete` + 确认 Release 包无相关代码
 - [ ] **中国区评估**：目标 ¥5.99/月；上架手续特殊（备案/主体资质等）——单独排卡
+- [ ] **家庭共享（Family Sharing）**：App Store Connect → 订阅产品 → 打开 **Family Sharing 开关**（家庭组最多 6 人共用一份订阅）。server 端已天然兼容（验签不判 `inAppOwnershipType`，无需改动）。备注：限流按 `originalTransactionId` 计——家庭共享时全家共享同一 40/h 预算，正常低频使用够用，真撞到再调
 
 ## M5 候选（待排）
 
