@@ -22,11 +22,8 @@
 ## C. 现在就能做（不等认证）
 
 - [x] **部署 server 到 Cloudflare** ✅（2026-09-23 完成；法律页已并入同一 Worker）
-- [x] **补 DNS 记录**（⚠️ 最后一厘米：Workers route 不会自动建 DNS 记录，现在域名还没解析）
-  - Cloudflare → carelogue.ca → DNS → Add record：
-    - `A` | 名称 `@` | IPv4 `192.0.2.1` | **Proxied**（法律页用；以后官网也复用）
-    - `A` | 名称 `api` | IPv4 `192.0.2.1` | **Proxied**（API 子域）
-  - 保存后 1–2 分钟验证：`curl https://api.carelogue.ca/v1/health` 应返回 `{"ok":true}`；浏览器开 `https://carelogue.ca/privacy` 应出页面
+- [x] **DNS 记录 · api 子域** ✅（`api.carelogue.ca` 已解析，`/v1/health` 返回 `{"ok":true}`；2026-09-23 验证）
+- [ ] **DNS 记录 · 根域**（⚠️ 还差这一条）：Cloudflare → carelogue.ca → DNS → Add record：`A` | 名称 `@` | IPv4 `192.0.2.1` | **Proxied**。加好后 `https://carelogue.ca/privacy` 即出页面（Worker 侧已提前验证：绕过 DNS 直打边缘返回 200）
 - [x] **确认密钥**：`cd server && npx wrangler secret list`（应列出 `DEEPINFRA_API_KEY`；没有就 `npx wrangler secret put DEEPINFRA_API_KEY`）
 - [x] **（建议）Email Routing**：把 `support@carelogue.ca` 转发到你的邮箱（Cloudflare → Email → Email Routing，2 分钟；法律文本的联系邮箱就用它）
   - 前提（一次性）：`cd server && npx wrangler login`
