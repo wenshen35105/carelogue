@@ -58,7 +58,7 @@ AI「白话解释」用通俗语言转述报告上写了什么。
 
 ### 8. 适用法律
 
-本条款适用加拿大不列颠哥伦比亚省法律，不考虑其法律冲突规则。
+本条款适用加拿大安大略省法律，不考虑其法律冲突规则。
 
 ### 9. 联系
 
@@ -132,8 +132,8 @@ protection rights in Canada and in your jurisdiction.
 
 ### 8. Governing law
 
-These terms are governed by the laws of British Columbia, Canada, without regard
-to conflict-of-laws rules.
+These terms are governed by the laws of Ontario, Canada, without regard to
+conflict-of-laws rules.
 
 ### 9. Contact
 
