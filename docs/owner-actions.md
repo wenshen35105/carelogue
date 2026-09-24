@@ -13,7 +13,7 @@
 2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）
 3. [ ] 和 CC 一起验证 CloudKit 双机同步（一台建记录 → 另一台可见、含附件；细则见 docs/m4-tasks.md T23）
 4. [ ] App Store Connect：
-   - [ ] 建 app 记录 + 订阅产品（id 已定：`…Carelogue.plus.monthly`，$4.99/月，中英本地化）
+   - [ ] 建 app 记录 + 订阅产品（id 已定：`…Carelogue.plus.monthly`，$3.99/月，中英本地化）
    - [ ] 签 Paid Apps 协议；填银行账户 + 税表
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
    - [ ] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）

@@ -36,7 +36,7 @@ final class SubscriptionService {
         return nil
     }
 
-    /// "$4.99" in the store's own currency and formatting.
+    /// Formatted by the store itself, in the user's own currency.
     var displayPrice: String? { product?.displayPrice }
 
     private var updates: Task<Void, Never>?

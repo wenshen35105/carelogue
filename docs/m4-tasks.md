@@ -3,7 +3,7 @@
 > 目标：① 真机化（CloudKit + 两台 iPhone，T23–T25）；② 做出 Subscription 版 → 以订阅形态内部自用、打磨 → 公开发布。
 > 前置（你手动）：① Apple Developer Program（$99/年，见 T23 第 1 步）；② 两台 iPhone + Mac。
 > 讨论结论（2026-09-22）：账号已买；AI 文案走"责任版"（服务商遴选纪律见 spec §11)；"暂不使用"保持现状；商业模型=订阅（见 spec §11）。
-> **Subscription 定案（2026-09-22）**：AI 服务商 = **DeepInfra**（DeepSeek-V4-Flash 开源版，$0.09/$0.18 每 M tokens，默认不落盘；备选 Fireworks）；Server = **Cloudflare Workers**（serverless，仅 CPU 计费）；**无账号系统**——订阅校验走 StoreKit Transaction JWS 无状态验签（server 零用户库）；定价 $4.99/月；BYOK 在订阅版上线时自用户界面移除（服务层抽象保留，供内部调试）。
+> **Subscription 定案（2026-09-22）**：AI 服务商 = **DeepInfra**（DeepSeek-V4-Flash 开源版，$0.09/$0.18 每 M tokens，默认不落盘；备选 Fireworks）；Server = **Cloudflare Workers**（serverless，仅 CPU 计费）；**无账号系统**——订阅校验走 StoreKit Transaction JWS 无状态验签（server 零用户库）；定价 $3.99/月（2026-09-23 修订）；BYOK 在订阅版上线时自用户界面移除（服务层抽象保留，供内部调试）。
 > 总预估：~24h + 内测期。
 
 ---
@@ -41,7 +41,7 @@
 - **学习点**：边缘函数、流式代理、secrets 管理
 
 ## T27 · iOS 订阅接入（StoreKit 2，~4h）
-- **做**：订阅页（$4.99/月，产品建在 App Store Connect）；购买/恢复/管理入口；Transaction JWS 随解释请求附带；AI 功能门控（未订阅 → 引导订阅；订阅 → 全开）；StoreKit Testing 本地跑通 + 沙盒
+- **做**：订阅页（$3.99/月，产品建在 App Store Connect）；购买/恢复/管理入口；Transaction JWS 随解释请求附带；AI 功能门控（未订阅 → 引导订阅；订阅 → 全开）；StoreKit Testing 本地跑通 + 沙盒
 - **设计参照**：`docs/design/stitch/carelogue_plus_paywall/`、`report_view_not_subscribed/`——注意：**锁只作用于解释卡**，附件/记录本身保持免费；权益文案用通用表述（**不点名未规划功能**——设计稿里的"双语病历梳理/随访助理"删）；"DIGNIFIED CARE" pill 可略
 - **验收**：沙盒购买 → 解释全流程；退款/过期降级不崩
 - **学习点**：StoreKit 2、订阅生命周期
