@@ -14,6 +14,7 @@
 2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）
 3. [ ] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23
 4. [ ] App Store Connect：
+   - [ ] **（先决定）bundle id**：现为 `com.jiajinlinpersonalteam.Carelogue`——"jiajinlinpersonalteam" 是免费账号时代的遗留字样，功能无坑；**建 ASC 记录即锁定**，此刻是最后的低成本改动窗口（要换建议 `ca.carelolgue.app`）。不换则一直沿用
    - [ ] 建 app 记录 + 订阅产品（id 已定：`…Carelogue.plus.monthly`，$3.99/月，中英本地化；**Family Sharing 开关一并打开——你们各自 Apple ID 但太太在家庭组里：这是她共享你订阅的必经路径**）
    - [ ] 签 Paid Apps 协议；填银行账户 + 税表
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
