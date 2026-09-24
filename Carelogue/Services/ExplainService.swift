@@ -152,12 +152,12 @@ enum ExplainService {
 
         let reply: String
         do {
-            reply = try await service.complete(
-                system: ExplainPrompt.system(language: AppLanguage.code),
-                user: ExplainPrompt.user(reportText: String(text.prefix(maxInputCharacters)),
-                                         context: promptContext(for: artifact, in: context)),
-                json: true
-            )
+            reply = try await service.run(AIRequest(
+                action: AIRequest.explainReport,
+                locale: AppLanguage.code,
+                content: .init(reportText: String(text.prefix(maxInputCharacters))),
+                context: requestContext(for: artifact, in: context)
+            ))
         } catch let error as AIServiceError {
             throw ExplainError.service(error)
         }
@@ -187,66 +187,19 @@ enum ExplainService {
     }
 
     /// Journey name + Profile allergies / medications (spec §5b), unless
-    /// switched off in Settings.
-    private static func promptContext(for artifact: Artifact, in context: ModelContext) -> ExplainPrompt.Context {
-        var result = ExplainPrompt.Context(journeyName: artifact.log?.journey?.name)
+    /// switched off in Settings. A field left nil is not encoded at all, so
+    /// with the switch off the relay never receives it.
+    private static func requestContext(for artifact: Artifact, in context: ModelContext) -> AIRequest.Context {
+        var result = AIRequest.Context(journeyName: nonEmpty(artifact.log?.journey?.name))
         if AISettings.includesProfile, let profile = try? context.fetch(FetchDescriptor<Profile>()).first {
-            result.allergies = profile.allergies
-            result.medications = profile.medications
+            result.allergies = nonEmpty(profile.allergies)
+            result.medications = nonEmpty(profile.medications)
         }
         return result
     }
-}
 
-/// The guard-railed prompt. Kept separate so it can be reviewed on its own.
-enum ExplainPrompt {
-    struct Context {
-        var journeyName: String?
-        var allergies: String = ""
-        var medications: String = ""
-    }
-
-    static func system(language: String) -> String {
-        let outputLanguage = language.hasPrefix("zh") ? "Simplified Chinese (简体中文)" : "English"
-        return """
-        You help a patient and their family understand a medical report they received \
-        (lab results, imaging, checkup summaries). You explain in plain, calm, everyday \
-        language, like a knowledgeable friend — never alarmist.
-
-        Hard rules:
-        - Do NOT diagnose. Do not say what condition the patient has or does not have.
-        - Do NOT give treatment advice, and never suggest starting, stopping or changing \
-        any medication or dose.
-        - Only describe what the report itself says: what each item measures, whether a \
-        value is inside or outside the reference range printed on the report, and what \
-        that generally means. If the report gives no range, say so rather than guessing.
-        - Anything that needs a medical judgement becomes a question for the doctor.
-        - If the text is not a medical report or is unreadable, say that briefly in \
-        summary_plain and leave terms and questions empty.
-
-        Reply with ONE JSON object and nothing else:
-        {"summary_plain": string, "terms": [{"original": string, "plain": string}], "questions": [string]}
-        - summary_plain: 3–6 sentences, the overall picture first, then notable values.
-        - terms: up to 8 medical terms or abbreviations from the report (never units such \
-        as g/L, mm or ×10^9/L, and never generic words such as "reference range"). "original" is the \
-        term as printed (abbreviation plus a short name, e.g. "Hb · 血红蛋白" or \
-        "Hb · Hemoglobin"); "plain" is a one-line plain explanation.
-        - questions: 2–5 short, specific questions the patient could ask their doctor.
-        Write every string in \(outputLanguage).
-        """
-    }
-
-    static func user(reportText: String, context: Context) -> String {
-        var lines: [String] = []
-        if let journey = context.journeyName?.trimmingCharacters(in: .whitespacesAndNewlines), !journey.isEmpty {
-            lines.append("Care journey: \(journey)")
-        }
-        let allergies = context.allergies.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !allergies.isEmpty { lines.append("Known allergies: \(allergies)") }
-        let medications = context.medications.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !medications.isEmpty { lines.append("Current medications: \(medications)") }
-        lines.append("Report text (extracted on device by OCR, may contain recognition errors):")
-        lines.append("<<<\n\(reportText)\n>>>")
-        return lines.joined(separator: "\n")
+    private static func nonEmpty(_ value: String?) -> String? {
+        let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmed.isEmpty ? nil : trimmed
     }
 }

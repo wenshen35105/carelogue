@@ -6,6 +6,15 @@
 
 const ENDPOINT = 'https://api.deepinfra.com/v1/openai/chat/completions';
 
+/**
+ * Any OpenAI-compatible endpoint can stand in during development — that is
+ * how the whole chain gets exercised against `wrangler dev` without spending
+ * production credit. Nothing sets it in the deployed Worker.
+ */
+function endpointFor(config) {
+  return typeof config.endpoint === 'string' && config.endpoint ? config.endpoint : ENDPOINT;
+}
+
 export class UpstreamError extends Error {
   /**
    * @param {string} reason machine-readable reason the app maps to a message
@@ -28,7 +37,7 @@ export class UpstreamError extends Error {
 
 /**
  * @param {ExplainRequest} request
- * @param {{apiKey: string, model: string, timeoutMs?: number}} config
+ * @param {{apiKey: string, model: string, endpoint?: string, timeoutMs?: number}} config
  * @returns {Promise<Response>} the upstream response, for the caller to pass through
  */
 export async function complete(request, config) {
@@ -48,7 +57,7 @@ export async function complete(request, config) {
 
   let response;
   try {
-    response = await fetch(ENDPOINT, {
+    response = await fetch(endpointFor(config), {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

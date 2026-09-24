@@ -13,6 +13,11 @@ final class Artifact {
     /// {summary_plain, terms[], questions[], model, created_at}. Wired up in M3.
     var aiExplainJSON: String? = nil
 
+    /// Audio attachments only (T32): what the phone heard, transcribed on
+    /// device. The audio itself never leaves for the AI — this text is what
+    /// the visit summary is built from.
+    var transcript: String? = nil
+
     var log: Log? = nil
 
     init(
@@ -22,6 +27,7 @@ final class Artifact {
         mime: String = "",
         createdAt: Date = .now,
         aiExplainJSON: String? = nil,
+        transcript: String? = nil,
         log: Log? = nil
     ) {
         self.id = id
@@ -30,6 +36,7 @@ final class Artifact {
         self.mime = mime
         self.createdAt = createdAt
         self.aiExplainJSON = aiExplainJSON
+        self.transcript = transcript
         self.log = log
     }
 }

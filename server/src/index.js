@@ -18,11 +18,26 @@ import { verifyJws } from './jws.js';
 import { checkEntitlement, EntitlementError } from './subscription.js';
 import { consumeAll } from './ratelimit.js';
 import { complete, contentOf, UpstreamError } from './upstream.js';
+import { buildPrompt, PromptError } from './prompt.js';
 import { LEGAL_ROUTES, legalResponse } from './legal.js';
 
-/** Bounds the prompt so one caller cannot run up a bill on a single request. */
-const MAX_SYSTEM_CHARACTERS = 8_000;
-const MAX_USER_CHARACTERS = 16_000;
+/**
+ * Shortest credential the internal channel will accept — a typo'd or
+ * half-filled secret must never open the relay to everyone.
+ */
+const MIN_INTERNAL_KEY_LENGTH = 24;
+
+/**
+ * What the internal channel counts as. One identity on purpose: every
+ * internal device shares a single rate-limit bucket, so the ceiling applies
+ * to the channel as a whole.
+ */
+const INTERNAL_ENTITLEMENT = {
+  productId: 'internal',
+  expiresDate: null,
+  environment: 'Internal',
+  originalTransactionId: 'internal-access',
+};
 
 const DEFAULTS = {
   PER_DEVICE_LIMIT: '40',
@@ -73,22 +88,28 @@ async function handle(request, env, documents) {
   if (path !== '/v1/explain') return problem('not_found', 404);
   if (request.method !== 'POST') return problem('method_not_allowed', 405);
 
-  // 1. Who is asking: a signed App Store transaction, verified here.
+  // 1. Who is asking: a signed App Store transaction, verified here — or,
+  // for the internal channel (T30), the shared credential that stands in for
+  // one while the app is not on sale yet.
   const token = bearer(request.headers.get('authorization'));
   if (!token) return problem('missing_subscription', 401);
 
   let entitlement;
-  try {
-    const payload = await verifyJws(token, env.APPLE_ROOT_CA_G3_SHA256);
-    entitlement = checkEntitlement(payload, {
-      bundleId: env.BUNDLE_ID,
-      productIds: (env.PRODUCT_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean),
-      allowSandbox: env.ALLOW_SANDBOX === '1',
-      graceMs: Number(env.GRACE_MS ?? DEFAULTS.GRACE_MS),
-    });
-  } catch (error) {
-    if (error instanceof EntitlementError) return problem(error.reason, 402);
-    return problem('invalid_subscription', 401);
+  if (await isInternalCredential(token, env.INTERNAL_ACCESS_KEY)) {
+    entitlement = INTERNAL_ENTITLEMENT;
+  } else {
+    try {
+      const payload = await verifyJws(token, env.APPLE_ROOT_CA_G3_SHA256);
+      entitlement = checkEntitlement(payload, {
+        bundleId: env.BUNDLE_ID,
+        productIds: (env.PRODUCT_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean),
+        allowSandbox: env.ALLOW_SANDBOX === '1',
+        graceMs: Number(env.GRACE_MS ?? DEFAULTS.GRACE_MS),
+      });
+    } catch (error) {
+      if (error instanceof EntitlementError) return problem(error.reason, 402);
+      return problem('invalid_subscription', 401);
+    }
   }
 
   // 2. How much: a ceiling per subscriber and per address.
@@ -105,7 +126,8 @@ async function handle(request, env, documents) {
     });
   }
 
-  // 3. What: the prompt the device built, forwarded as-is.
+  // 3. What: an action plus its content and context. The prompt itself is
+  // built here (T31) — the device never sends prose.
   if (!env.DEEPINFRA_API_KEY || !env.DEEPINFRA_MODEL) return problem('not_configured', 500);
 
   let body;
@@ -114,17 +136,21 @@ async function handle(request, env, documents) {
   } catch {
     return problem('bad_request', 400);
   }
-  if (typeof body?.system !== 'string' || typeof body?.user !== 'string') {
+
+  let prompt;
+  try {
+    prompt = buildPrompt(body);
+  } catch (error) {
+    if (error instanceof PromptError) {
+      return problem(error.reason, error.reason === 'too_long' ? 413 : 400);
+    }
     return problem('bad_request', 400);
-  }
-  if (body.system.length > MAX_SYSTEM_CHARACTERS || body.user.length > MAX_USER_CHARACTERS) {
-    return problem('too_long', 413);
   }
 
   try {
     const response = await complete(
-      { system: body.system, user: body.user, json: body.json === true, stream: body.stream === true },
-      { apiKey: env.DEEPINFRA_API_KEY, model: env.DEEPINFRA_MODEL },
+      { ...prompt, stream: body.stream === true },
+      { apiKey: env.DEEPINFRA_API_KEY, model: env.DEEPINFRA_MODEL, endpoint: env.PROVIDER_ENDPOINT },
     );
 
     if (body.stream === true) {
@@ -142,6 +168,23 @@ async function handle(request, env, documents) {
     if (error instanceof UpstreamError) return problem(error.reason, error.status);
     return problem('server_error', 500);
   }
+}
+
+/**
+ * The internal channel (T30): Debug builds of the app carry a shared
+ * credential instead of an App Store transaction, so the whole chain can be
+ * exercised before the subscription exists. Off unless INTERNAL_ACCESS_KEY is
+ * set, and deleted before the public launch (`wrangler secret delete`).
+ *
+ * Digests are compared rather than the strings themselves: both sides are
+ * hashed first, so how far the comparison gets says nothing about the secret.
+ * @param {string} token
+ * @param {unknown} secret
+ */
+async function isInternalCredential(token, secret) {
+  if (typeof secret !== 'string' || secret.length < MIN_INTERNAL_KEY_LENGTH) return false;
+  const [offered, expected] = await Promise.all([hash(token), hash(secret)]);
+  return offered === expected;
 }
 
 /** @param {string | null} header */

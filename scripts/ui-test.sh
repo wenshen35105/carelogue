@@ -5,7 +5,8 @@
 #   scripts/ui-test.sh -only-testing:CarelogueUITests/SmokeUITests
 #   APPEARANCE=dark scripts/ui-test.sh                   # run in dark mode
 #   SIM_ID=<udid> scripts/ui-test.sh                     # pick a simulator
-#   DEEPSEEK_API_KEY=sk-... scripts/ui-test.sh           # also run real-API tests
+#   INTERNAL_ACCESS_KEY=... scripts/ui-test.sh           # also run real-relay tests
+#   CARELOGUE_RELAY_URL=http://127.0.0.1:8787 ...        # ... against a local Worker
 #
 # Before testing it provisions the simulator once: fixture photos go into the
 # Photos library and fixture PDFs into Files > On My iPhone, so the picker
@@ -68,10 +69,12 @@ if [[ -n "${APPEARANCE:-}" ]]; then
   xcrun simctl ui "$SIM_ID" appearance "$APPEARANCE"
 fi
 
-# Real-provider tests (SettingsUITests.testRealConnection, explain) only
-# run when a DeepSeek key is in the environment; otherwise they skip.
-if [[ -n "${DEEPSEEK_API_KEY:-}" ]]; then
-  export TEST_RUNNER_DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
+# The real round trip (ExplainUITests.testRealExplain) goes through the relay
+# since T31 — the prompt only exists there. It runs when the internal
+# credential (T30) is in the environment, and otherwise skips.
+if [[ -n "${INTERNAL_ACCESS_KEY:-}" ]]; then
+  export TEST_RUNNER_INTERNAL_ACCESS_KEY="$INTERNAL_ACCESS_KEY"
+  export TEST_RUNNER_CARELOGUE_RELAY_URL="${CARELOGUE_RELAY_URL:-}"
 fi
 
 rm -rf "$OUT" "$RESULT"

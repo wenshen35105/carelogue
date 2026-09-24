@@ -69,7 +69,9 @@ final class ConsentUITests: CarelogueUITestCase {
         XCTAssertFalse(id("explain.loading").exists)
 
         // Local features unaffected: preview an attachment, add a quick note.
-        app.buttons.matching(identifier: "attachment.image").firstMatch.tap()
+        let thumbnail = app.buttons.matching(identifier: "attachment.image").firstMatch
+        scrollTo(thumbnail)
+        thumbnail.tap()
         waitFor(id("attachment.preview"))
         app.buttons["关闭"].tap()
         app.navigationBars.buttons.element(boundBy: 0).tap()

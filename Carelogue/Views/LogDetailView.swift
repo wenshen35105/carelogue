@@ -17,8 +17,10 @@ struct LogDetailView: View {
     /// re-evaluated against an already-deleted Artifact.
     @State private var artifactDeletedInViewer: Artifact?
 
+    /// Attachments the gallery and the explanation card work with. The
+    /// recording is not one of them — it has a card of its own (T32).
     private var sortedArtifacts: [Artifact] {
-        log.allArtifacts.sorted { $0.createdAt < $1.createdAt }
+        log.fileAttachments.sorted { $0.createdAt < $1.createdAt }
     }
 
     var body: some View {
@@ -54,7 +56,13 @@ struct LogDetailView: View {
                     }
                 }
 
-                if !log.allArtifacts.isEmpty {
+                // 面诊录音 + 我的疑问 (T32): visits only — there is nothing to
+                // record at a weigh-in, and questions belong to an appointment.
+                if log.kind == .encounter {
+                    VisitRecordingCard(log: log)
+                }
+
+                if !sortedArtifacts.isEmpty {
                     ExplanationCard(artifacts: sortedArtifacts)
 
                     AttachmentGalleryCard(

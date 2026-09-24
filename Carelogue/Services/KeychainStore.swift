@@ -1,7 +1,8 @@
 import Foundation
 import Security
 
-/// Minimal generic-password Keychain wrapper for the AI provider's API key.
+/// Minimal generic-password Keychain wrapper for the app's few secrets (since
+/// T31 that is the internal channel's credential, Debug builds only).
 /// Items are device-only (not synced to iCloud Keychain, not in backups
 /// restored to other devices) and readable after first unlock.
 enum KeychainStore {

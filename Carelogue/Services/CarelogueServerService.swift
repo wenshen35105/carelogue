@@ -1,11 +1,13 @@
 import Foundation
 
 /// Talks to Carelogue's own relay (server/, T26) instead of a model provider
-/// directly: the device sends extracted report text plus the App Store
-/// transaction that proves the subscription, and gets the model's reply back.
+/// directly: the device sends the task — action, content, structured context —
+/// plus the App Store transaction that proves the subscription, and gets the
+/// model's reply back.
 ///
-/// Same `AIService` shape as before, so everything above this layer — the
-/// prompt, the guard rails, the explanation card — is unchanged (spec §11).
+/// Since T31 the request carries no prompt text: the relay assembles it from
+/// the action and the locale (`server/src/prompt.js`), so the guard rails can
+/// be corrected without an app update (spec §11).
 struct CarelogueServerService: AIService {
     /// Overridable so `wrangler dev` can be pointed at during development.
     static let baseURL: URL = {
@@ -39,12 +41,6 @@ struct CarelogueServerService: AIService {
         return URLSession(configuration: configuration)
     }()
 
-    private struct RequestBody: Encodable {
-        let system: String
-        let user: String
-        let json: Bool
-    }
-
     private struct ReplyBody: Decodable {
         let content: String
         let model: String?
@@ -54,12 +50,12 @@ struct CarelogueServerService: AIService {
         let error: String
     }
 
-    func complete(system: String, user: String, json: Bool) async throws -> String {
+    func run(_ body: AIRequest) async throws -> String {
         var request = URLRequest(url: Self.baseURL.appendingPathComponent("v1/explain"))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(entitlementToken)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try JSONEncoder().encode(RequestBody(system: system, user: user, json: json))
+        request.httpBody = try JSONEncoder().encode(body)
 
         let data: Data
         let response: URLResponse

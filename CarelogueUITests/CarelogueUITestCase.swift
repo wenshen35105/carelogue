@@ -47,6 +47,41 @@ class CarelogueUITestCase: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
     }
 
+    /// Scrolls the page down until `element` is on screen and tappable.
+    ///
+    /// SwiftUI stops vending accessibility for content far below the fold, so
+    /// an element that exists in the view tree can be invisible to a query
+    /// until it is scrolled near. Pages grow (the visit detail gained the
+    /// recording card in T32), so tests scroll rather than assume a position.
+    @discardableResult
+    func scrollTo(_ element: XCUIElement, maxSwipes: Int = 6, timeout: TimeInterval = 3,
+                  file: StaticString = #filePath, line: UInt = #line) -> Bool {
+        for _ in 0..<maxSwipes {
+            if isComfortablyVisible(element) { return true }
+            app.swipeUp()
+        }
+        // Swiping is coarse, so a short page can be scrolled straight past
+        // the target; walk back up before giving up.
+        for _ in 0..<maxSwipes {
+            if isComfortablyVisible(element) { return true }
+            app.swipeDown()
+        }
+        let found = element.waitForExistence(timeout: timeout) && element.isHittable
+        XCTAssertTrue(found, "Never scrolled to: \(element)", file: file, line: line)
+        return found
+    }
+
+    /// Not just on screen: clear of the edges. A row sitting half under the
+    /// home indicator reports as hittable, and tapping it does nothing.
+    private func isComfortablyVisible(_ element: XCUIElement, margin: CGFloat = 60) -> Bool {
+        guard element.exists, element.isHittable else { return false }
+        let window = app.windows.firstMatch.frame
+        let frame = element.frame
+        // An element taller than the window can never clear both edges.
+        guard frame.height < window.height - 2 * margin else { return true }
+        return frame.minY >= window.minY + margin && frame.maxY <= window.maxY - margin
+    }
+
     func waitFor(_ element: XCUIElement, timeout: TimeInterval = 5, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertTrue(element.waitForExistence(timeout: timeout), "Missing element: \(element)", file: file, line: line)
     }
@@ -75,11 +110,17 @@ class CarelogueUITestCase: XCTestCase {
 
     // MARK: - Common flows
 
+    /// Picks the label for the language this test runs in. Seeded data keeps
+    /// its own wording; only the UI's own strings change.
+    func t(_ zh: String, _ en: String) -> String {
+        language.hasPrefix("zh") ? zh : en
+    }
+
     func openJourney(_ name: String) {
         let row = app.staticTexts[name]
         waitFor(row)
         row.tap()
-        waitFor(app.buttons["新建记录"])
+        waitFor(app.buttons[t("新建记录", "New Entry")])
     }
 
     /// Timeline FAB -> Menu item (就诊 / 随手记 / 测量).

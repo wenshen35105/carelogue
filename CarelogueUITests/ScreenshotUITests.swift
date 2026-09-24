@@ -178,15 +178,14 @@ final class ScreenshotUITests: CarelogueUITestCase {
         waitFor(app.navigationBars["详情"])
         waitFor(app.descendants(matching: .any)["explain.summary"])
         let gallery = app.buttons.matching(identifier: "attachment.image").firstMatch
-        for _ in 0..<6 where !gallery.isHittable {
-            app.swipeUp()
-        }
-        waitFor(gallery)
+        scrollTo(gallery)
         settle()
         screenshot("T11-detail-attachments")
 
         // T11 · PDF 预览.
-        app.buttons.matching(identifier: "attachment.file").firstMatch.tap()
+        let fileRow = app.buttons.matching(identifier: "attachment.file").firstMatch
+        scrollTo(fileRow)
+        fileRow.tap()
         waitFor(app.descendants(matching: .any)["attachment.preview"])
         settle()
         screenshot("T11-pdf-preview")
@@ -230,6 +229,55 @@ final class ScreenshotUITests: CarelogueUITestCase {
 
     // MARK: - T14（深色模式，需 APPEARANCE=dark）
 
+    /// T32 · 面诊录音 / 面诊总结 / 我的疑问 / 给医生看.
+    ///
+    /// The demo store's 面诊 visit already has a recording, a transcript, a
+    /// summary and translated questions, so these show real content rather
+    /// than an empty card.
+    func testVisitRecordingScreens() {
+        launchDemo()
+        openJourney(journeyName)
+        openRecordedVisit()
+
+        let card = app.descendants(matching: .any)["recording.card"]
+        scrollTo(card)
+        settle()
+        screenshot("T32-visit-recording")
+
+        // 面诊总结.
+        let summaryLine = app.buttons["recording.summaryLine"]
+        scrollTo(summaryLine)
+        summaryLine.tap()
+        waitFor(app.descendants(matching: .any)["summary.said"])
+        settle()
+        screenshot("T32-visit-summary")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        waitFor(app.navigationBars["详情"])
+
+        // 我的疑问 + 给医生看.
+        let questions = app.buttons["recording.questions"]
+        scrollTo(questions)
+        questions.tap()
+        waitFor(app.descendants(matching: .any)["questions.page"])
+        settle()
+        screenshot("T32-my-questions")
+
+        let present = app.buttons["questions.present"]
+        scrollTo(present)
+        present.tap()
+        waitFor(app.descendants(matching: .any)["handoff.page"])
+        settle()
+        screenshot("T32-doctor-handoff")
+        app.buttons["handoff.close"].tap()
+    }
+
+    /// The demo store's recorded 面诊 (T32). Its timeline card is the one with
+    /// the doctor's own words in the note.
+    private func openRecordedVisit() {
+        element(containing: "胎心音正常 152 bpm").tap()
+        waitFor(app.navigationBars["详情"])
+    }
+
     func testDarkModeScreens() {
         launchDemo()
 
@@ -243,5 +291,14 @@ final class ScreenshotUITests: CarelogueUITestCase {
         waitFor(app.descendants(matching: .any)["explain.summary"])
         settle()
         screenshot("T14-detail-dark")
+
+        // Back to the timeline, then into the recorded visit.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        waitFor(app.buttons["新建记录"])
+        openRecordedVisit()
+        let card = app.descendants(matching: .any)["recording.card"]
+        scrollTo(card)
+        settle()
+        screenshot("T32-visit-recording-dark")
     }
 }

@@ -27,8 +27,20 @@ final class SubscriptionService {
     private(set) var isWorking = false
 
     var isSubscribed: Bool {
+        if isInternallyUnlocked { return true }
         if case .subscribed = status { return true }
         return false
+    }
+
+    /// T30: a Debug build holding the internal credential behaves as
+    /// subscribed without asking the App Store. Always false in Release —
+    /// the whole channel is compiled out.
+    var isInternallyUnlocked: Bool {
+        #if DEBUG
+        return InternalAccess.isUnlocked
+        #else
+        return false
+        #endif
     }
 
     var renewalDate: Date? {
@@ -135,6 +147,9 @@ final class SubscriptionService {
         if UITestSupport.forcedSubscriptionStatus != nil {
             return isSubscribed ? "uitest-entitlement" : nil
         }
+        // The internal channel's credential goes where the signed transaction
+        // would (T30); the relay recognises it and skips verification.
+        if let credential = InternalAccess.credential { return credential }
         #endif
         for await entitlement in Transaction.currentEntitlements {
             guard case .verified(let transaction) = entitlement,

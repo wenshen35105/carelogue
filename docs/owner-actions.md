@@ -46,6 +46,21 @@
 - [x] **法律文本填空**（正文 CC 已写好；3 个占位符 × 2 份文档）
   - 生效日期 / 法律主体（如：你的姓名 · 加拿大安省）/ 联系邮箱（建议 `support@carelogue.ca`）
   - 文件：`docs/legal/privacy-policy.md`、`docs/legal/terms-of-service.md`
+- [ ] **重新部署 server**（T31 改了 API 契约：prompt 从 app 搬到了 Worker）：`cd server && npm run deploy`。
+  **先部署，再装新的 Debug 构建**——新旧契约不兼容，装反了解释会报 400。
+- [ ] **开通内部通道**（T30，2 分钟）：订阅还没上线，这是你自己装 Debug 构建就能跑通 AI 解释的唯一通道。
+  ```sh
+  cd server
+  KEY=$(openssl rand -hex 24)        # 至少 24 位；记到密码管理器里
+  echo "$KEY"                        # 待会儿粘到 app 的设置页
+  npx wrangler secret put INTERNAL_ACCESS_KEY   # 粘贴同一串
+  npx wrangler deploy
+  ```
+  然后在 Debug 构建的 **设置 → 内部通道 · Internal Access** 里粘贴同一串 → 显示「已解锁」即可免订阅用 AI 解释。
+  凭据只落在那台设备的 Keychain 里，不进代码库、不进安装包；**公开发布前 `npx wrangler secret delete INTERNAL_ACCESS_KEY`**（已写进 T37 核对项）。
+- [ ] **真机验一次面诊录音**（T32，只有真机能验）：装上 Debug 构建 → 任一「就诊」记录 → 开始录音 → 说两分钟 → 完成 → 看本地转写出不出文字 → 整理成总结。
+  重点看两件事：① 中英混着说（"胎心 152，NT ultrasound"）转写准不准 ② 一小时录音的体积（预期 ≈ 11MB）。
+  **按卡内验收**：最好就是下次产检真录一次，太太一起看看总结和「我的疑问」大字版能不能用。
 - [ ] **拍一个小项**：解释可"附带档案信息"（过敏/长期用药，默认开启；隐私政策已披露、设置可关）——① 同意弹窗要不要也补一句透明说明？（建议：补）② 默认值"开"还是"关"？（建议：开）回一句即可
 
 ## D. 发布前（M5，内测之后）

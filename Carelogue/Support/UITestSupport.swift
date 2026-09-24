@@ -1,4 +1,5 @@
 #if DEBUG
+import AVFoundation
 import Foundation
 import SwiftData
 import UIKit
@@ -22,11 +23,22 @@ import UIKit
 ///                                 paywall and the locked card can be driven
 ///                                 without the App Store
 ///   -uitest-fake-ai <mode>        explain through a scripted provider instead
-///                                 of DeepSeek: success | slow | fail | invalid
-///   env UITEST_API_KEY=<key>      store this key in the Keychain at launch
+///                                 of the relay: success | slow | fail | invalid
+///   -uitest-seed-visit            add a bare 面诊 Log (T32: the recording card
+///                                 and 我的疑问 with nothing in them yet)
+///   -uitest-seed-recording        the same visit, with a short silent
+///                                 recording already attached and transcribed,
+///                                 so the summarize step can be driven without
+///                                 a microphone
+///   -uitest-fake-transcript <m>   transcribe with a scripted recognizer
+///                                 instead of the on-device one (T32):
+///                                 success | slow | fail | empty
+///   env INTERNAL_ACCESS_KEY=<key> unlock the internal channel at launch (T30),
+///                                 so the relay chain can be driven unattended
 ///   -selftest-explain             explain the seeded report photo twice (needs
-///                                 -uitest-seed-attachments, a key and
-///                                 -ai.consent granted) and
+///                                 -uitest-seed-attachments, a way through the
+///                                 relay — INTERNAL_ACCESS_KEY or a
+///                                 subscription — and -ai.consent granted) and
 ///                                 write Documents/selftest-explain.txt
 ///   -selftest-extract             run TextExtractor on generated samples and
 ///                                 write the results to
@@ -41,21 +53,25 @@ enum UITestSupport {
             try? context.delete(model: Log.self)
             try? context.delete(model: Journey.self)
             try? context.delete(model: Profile.self)
-            AISettings.setAPIKey(nil)
+            InternalAccess.setCredential(nil)
             for key in UserDefaults.standard.dictionaryRepresentation().keys where key.hasPrefix("ai.") {
                 UserDefaults.standard.removeObject(forKey: key)
             }
         }
-        if let key = ProcessInfo.processInfo.environment["UITEST_API_KEY"], !key.isEmpty {
-            AISettings.setAPIKey(key)
+        if let key = ProcessInfo.processInfo.environment["INTERNAL_ACCESS_KEY"], !key.isEmpty {
+            InternalAccess.setCredential(key)
         }
         if let index = arguments.firstIndex(of: "-uitest-fake-ai"), index + 1 < arguments.count {
             fakeAIService = FakeAIService(mode: arguments[index + 1])
         }
+        if let index = arguments.firstIndex(of: "-uitest-fake-transcript"), index + 1 < arguments.count {
+            fakeTranscriber = FakeTranscriber(mode: arguments[index + 1])
+        }
         if arguments.contains("-uitest-seed-demo") {
             seedDemo(context)
         }
-        if arguments.contains("-uitest-seed-measurements") || arguments.contains("-uitest-seed-attachments") {
+        if arguments.contains("-uitest-seed-measurements") || arguments.contains("-uitest-seed-attachments")
+            || arguments.contains("-uitest-seed-recording") || arguments.contains("-uitest-seed-visit") {
             let journey = Journey(name: seededJourneyName, template: .pregnancy)
             context.insert(journey)
             if arguments.contains("-uitest-seed-measurements") {
@@ -63,6 +79,10 @@ enum UITestSupport {
             }
             if arguments.contains("-uitest-seed-attachments") {
                 seedAttachments(in: journey, context: context)
+            }
+            if arguments.contains("-uitest-seed-recording") || arguments.contains("-uitest-seed-visit") {
+                seedVisit(in: journey, context: context,
+                          withRecording: arguments.contains("-uitest-seed-recording"))
             }
         }
         try? context.save()
@@ -73,6 +93,11 @@ enum UITestSupport {
             Task { await runExplainSelfTest(context) }
         }
     }
+
+    /// Set by -uitest-fake-transcript; VisitTranscription prefers it, so the
+    /// recording flow can be driven on a simulator that has no speech model
+    /// and no microphone worth listening to.
+    static var fakeTranscriber: FakeTranscriber?
 
     /// Set by -uitest-fake-ai; AISettings.makeService(entitlement:) prefers it.
     static var fakeAIService: FakeAIService?
@@ -189,10 +214,24 @@ enum UITestSupport {
             artifact.log = report
         }
 
-        add(Log(kind: .encounter, type: "面诊", occurredAt: day(-7),
-                note: "胎心音正常 152 bpm。下次做 NT 超声 + 血检筛查，已开具 Requisition 检查单。",
-                location: "BC Women's Hospital", doctor: "Dr. Chen"),
-            to: pregnancy, context: context)
+        // The recorded visit (T32). The recording, its transcript, the summary
+        // and the questions are all in place, because that is the state the
+        // documentation screenshots need to show.
+        let recordedVisit = Log(kind: .encounter, type: "面诊", occurredAt: day(-7),
+                                note: "胎心音正常 152 bpm。下次做 NT 超声 + 血检筛查，已开具 Requisition 检查单。",
+                                location: "BC Women's Hospital", doctor: "Dr. Chen")
+        add(recordedVisit, to: pregnancy, context: context)
+        // 32:14 on the card, the way the design sheet shows it.
+        if let audio = silentRecording(seconds: 32 * 60 + 14) {
+            let recording = Artifact(fileData: audio, fileName: "visit-20260916-1030.m4a",
+                                     mime: Artifact.audioMime,
+                                     createdAt: day(-7, hour: 10, minute: 30),
+                                     transcript: FakeTranscriber.sampleTranscript)
+            context.insert(recording)
+            recordedVisit.add(recording)
+        }
+        recordedVisit.visitSummaryJSON = demoVisitSummaryJSON(createdAt: day(-7, hour: 11))
+        recordedVisit.questionsJSON = demoQuestionsJSON(updatedAt: day(-7, hour: 9))
 
         add(Log(kind: .quick, type: "情绪", occurredAt: day(-12, hour: 16, minute: 40),
                 note: "第一次听到胎心，走出诊室在车里坐了十分钟才缓过来。"),
@@ -252,6 +291,42 @@ enum UITestSupport {
     /// A cached explanation for the seeded lab report: the same shape
     /// ExplainService writes, so the card and the timeline summary line
     /// render without a provider.
+    /// T32: what a finished 面诊总结 looks like on a real visit.
+    private static func demoVisitSummaryJSON(createdAt: Date) -> String? {
+        let summary = VisitSummary(
+            saidPlain: "这次产科面诊整体顺利。医生听诊胎心 152 次/分，说处于正常范围；宫高与腹围都符合 14 周的生长曲线。聊到最近的轻微腰酸，医生说是韧带拉伸引起的常见反应，建议避免久坐、侧睡时使用孕妇枕。血常规里血红蛋白偏低一点，医生让按现在的方式继续补充，两周后复查。下次产检会做 NT 超声与血检筛查，检查单当场开具。",
+            keyPoints: [
+                "两周后复查血常规，看血红蛋白有没有回升",
+                "下次产检带上 Lab Health BC 出具的纸质 NT 超声报告",
+                "腰酸时避免久坐，侧睡垫孕妇枕",
+                "出现持续腹痛或水肿加重，随时联系诊所护士",
+            ],
+            followUps: [
+                "复查血常规需要空腹吗？",
+                "下次大排畸超声的预约时间窗口是什么时候？",
+            ],
+            model: "carelogue-relay",
+            createdAt: createdAt
+        )
+        return (try? ExplainService.encoder.encode(summary)).flatMap { String(data: $0, encoding: .utf8) }
+    }
+
+    /// T32: 我的疑问, already translated — the state the hand-off screen shows.
+    private static func demoQuestionsJSON(updatedAt: Date) -> String? {
+        let questions = VisitQuestions(
+            items: [
+                .init(text: "血糖偏高需要控制饮食吗？",
+                      translated: "Do I need to watch my diet given the higher blood sugar levels?"),
+                .init(text: "目前的轻微腰酸需要物理治疗还是卧床休息？",
+                      translated: "Is the lower back pain normal at 14 weeks, or should I see a pelvic physiotherapist?"),
+                .init(text: "下次大排畸超声检查需要空腹或憋尿吗？",
+                      translated: "Does the 20-week anatomy scan require fasting or a full bladder?"),
+            ],
+            updatedAt: updatedAt
+        )
+        return (try? ExplainService.encoder.encode(questions)).flatMap { String(data: $0, encoding: .utf8) }
+    }
+
     private static func demoExplanationJSON(createdAt: Date) -> String? {
         let explanation = Explanation(
             summaryPlain: "这次检查整体平稳。血红蛋白 112 g/L，略低于参考范围（115–150），孕中期常见，多是生理性血液稀释；白细胞和血小板都在正常范围内。NT 颈项透明层 1.4 mm，低于 2.5 mm 的参考上限。",
@@ -357,6 +432,52 @@ enum UITestSupport {
                 value: 36.7, unit: "°C"), to: journey, context: context)
     }
 
+    static let seededVisitNote = "UITest 面诊录音"
+
+    /// T32: a visit to hang the recording card off. With `withRecording`, the
+    /// audio is a real (silent) m4a written here — small, valid, and enough
+    /// for AVAudioPlayer to report a duration — with the transcript already
+    /// filled in, which is the state the simulator cannot reach on its own.
+    private static func seedVisit(in journey: Journey, context: ModelContext, withRecording: Bool) {
+        let visit = Log(kind: .encounter, type: "面诊",
+                        occurredAt: Calendar.current.date(byAdding: .day, value: -1, to: .now)!,
+                        note: seededVisitNote, location: "BC Women's Hospital", doctor: "Dr. Chen")
+        add(visit, to: journey, context: context)
+        guard withRecording, let audio = silentRecording() else { return }
+        let artifact = Artifact(fileData: audio, fileName: "visit-uitest.m4a",
+                                mime: Artifact.audioMime,
+                                transcript: FakeTranscriber.sampleTranscript)
+        context.insert(artifact)
+        visit.add(artifact)
+    }
+
+    /// Silence, encoded as the app's own recording format — a real, valid
+    /// m4a, just with nothing in it to hear.
+    private static func silentRecording(seconds: Int = 2) -> Data? {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("uitest-silence-\(UUID().uuidString).m4a")
+        let settings: [String: Any] = [
+            AVFormatIDKey: kAudioFormatMPEG4AAC,
+            AVSampleRateKey: VisitRecorder.sampleRate,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderBitRateKey: VisitRecorder.bitRate,
+        ]
+        guard let format = AVAudioFormat(standardFormatWithSampleRate: VisitRecorder.sampleRate, channels: 1),
+              let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(VisitRecorder.sampleRate)) else {
+            return nil
+        }
+        buffer.frameLength = buffer.frameCapacity
+        // The writer has to go out of scope before the file is read: an m4a
+        // is only finalised (and its duration readable) when it closes.
+        do {
+            guard let file = try? AVAudioFile(forWriting: url, settings: settings) else { return nil }
+            for _ in 0..<seconds { try? file.write(from: buffer) }
+        }
+        let data = try? Data(contentsOf: url)
+        try? FileManager.default.removeItem(at: url)
+        return data
+    }
+
     private static func seedAttachments(in journey: Journey, context: ModelContext) {
         let visit = Log(kind: .encounter, type: "验血",
                         occurredAt: Calendar.current.date(byAdding: .day, value: -1, to: .now)!,
@@ -459,7 +580,7 @@ struct FakeAIService: AIService {
     /// Every request the app sent, so tests can check what left the device.
     static var requestCount = 0
 
-    func complete(system: String, user: String, json: Bool) async throws -> String {
+    func run(_ request: AIRequest) async throws -> String {
         FakeAIService.requestCount += 1
         switch mode {
         case "fail":
@@ -483,7 +604,15 @@ struct FakeAIService: AIService {
         default:
             try await Task.sleep(for: .milliseconds(800))
         }
-        return Self.sampleJSON
+        return Self.sample(for: request.action)
+    }
+
+    static func sample(for action: String) -> String {
+        switch action {
+        case AIRequest.summarizeVisit: return visitSummaryJSON
+        case AIRequest.translateQuestions: return translationsJSON
+        default: return sampleJSON
+        }
     }
 
     static let sampleJSON = """
@@ -501,6 +630,72 @@ struct FakeAIService: AIService {
         "NT 结果正常，后续还需要做哪些筛查？"
       ]
     }
+    """
+
+    /// T32: what summarize_visit comes back with.
+    static let visitSummaryJSON = """
+    {
+      "said_plain": "这次产检整体顺利。医生听到胎心 152 次/分，说在正常范围；宫高和腹围都符合孕周。说到最近的腰酸，医生认为是韧带拉伸引起的常见反应，建议少久坐、侧睡时垫孕妇枕。血常规里血红蛋白偏低，医生让继续按现在的补充方式，两周后复查。",
+      "key_points": [
+        "两周后复查血常规，看血红蛋白有没有回升",
+        "下次产检带上 Lab Health BC 出具的纸质 NT 超声报告",
+        "腰酸时少久坐，侧睡垫孕妇枕",
+        "出现持续腹痛或水肿加重，随时联系诊所护士"
+      ],
+      "follow_ups": [
+        "复查血常规需要空腹吗？",
+        "下次大排畸超声的预约时间窗口是什么时候？"
+      ]
+    }
+    """
+
+    /// T32: what translate_questions comes back with, for the seeded questions.
+    static let translationsJSON = """
+    {
+      "translations": [
+        {"original": "血糖偏高需要控制饮食吗？",
+         "translated": "Do I need to watch my diet given the higher blood sugar levels?"},
+        {"original": "目前的轻微腰酸需要物理治疗还是卧床休息？",
+         "translated": "Is the lower back pain normal at 14 weeks, or should I see a pelvic physiotherapist?"},
+        {"original": "下次大排畸超声检查需要空腹或憋尿吗？",
+         "translated": "Does the 20-week anatomy scan require fasting or a full bladder?"}
+      ]
+    }
+    """
+}
+
+/// Scripted stand-in for the on-device transcriber (T32). The simulator has
+/// neither a microphone worth listening to nor a speech model, so the flow is
+/// driven with a fixed transcript instead.
+struct FakeTranscriber: VisitTranscribing {
+    let mode: String
+
+    func transcribe(fileURL: URL, locale: Locale) async throws -> String {
+        switch mode {
+        case "fail":
+            try await Task.sleep(for: .milliseconds(600))
+            throw TranscriptionError.modelUnavailable
+        case "empty":
+            try await Task.sleep(for: .milliseconds(400))
+            throw TranscriptionError.nothingRecognized
+        case "slow":
+            try await Task.sleep(for: .seconds(4))
+        default:
+            try await Task.sleep(for: .milliseconds(700))
+        }
+        return Self.sampleTranscript
+    }
+
+    static let sampleTranscript = """
+    医生：今天感觉怎么样？胎动有没有规律一些？
+    患者：胎动还好，就是最近腰有点酸，坐久了especially 明显。
+    医生：我先听一下胎心。嗯，152，很好，在正常范围里。宫高和腹围都跟孕周对得上。
+    医生：腰酸这个多半是韧带拉伸，孕期很常见。建议你少久坐，侧睡的时候垫一个孕妇枕。
+    患者：上次抽血的结果怎么样？
+    医生：血常规里血红蛋白偏低一点，你先按现在的方式继续补，两周后我们复查一次血常规看看。
+    医生：还有下次产检记得把 Lab Health BC 出的 NT 超声报告纸质件带过来。
+    患者：好的。
+    医生：如果出现持续的腹痛，或者水肿明显加重，随时打电话给诊所的护士。
     """
 }
 #endif

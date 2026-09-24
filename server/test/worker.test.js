@@ -21,7 +21,17 @@ function baseEnv(overrides = {}) {
   };
 }
 
-function explainRequest(token, body = { system: 'you explain reports', user: 'Hb 112 g/L' }) {
+/** The request shape the app sends since T31: an action, content, context. */
+function explainBody(overrides = {}) {
+  return {
+    action: 'explain_report',
+    locale: 'zh-Hans',
+    content: { report_text: 'Hb 112 g/L' },
+    ...overrides,
+  };
+}
+
+function explainRequest(token, body = explainBody()) {
   return new Request('https://api.carelogue.ca/v1/explain', {
     method: 'POST',
     headers: {
@@ -61,15 +71,13 @@ test('health check needs no subscription', async () => {
   assert.deepEqual(await response.json(), { ok: true });
 });
 
-test('forwards the prompt and returns the model reply', async () => {
+test('builds the prompt here and returns the model reply', async () => {
   const upstream = stubUpstream(() => upstreamReply('血红蛋白略低，属于常见情况。'));
   try {
     const response = await worker.fetch(
-      explainRequest(signTransaction(activePayload()), {
-        system: 'you explain reports',
-        user: 'Hb 112 g/L',
-        json: true,
-      }),
+      explainRequest(signTransaction(activePayload()), explainBody({
+        context: { journey_name: '孕期档案', allergies: '青霉素', medications: '叶酸' },
+      })),
       baseEnv(),
     );
     assert.equal(response.status, 200);
@@ -81,8 +89,13 @@ test('forwards the prompt and returns the model reply', async () => {
     assert.equal(upstream.calls.length, 1);
     const sent = upstream.calls[0].body;
     assert.equal(sent.model, 'test/model');
-    assert.equal(sent.messages[0].content, 'you explain reports');
-    assert.equal(sent.messages[1].content, 'Hb 112 g/L');
+    // The guard rails come from here, not from anything the device sent.
+    assert.match(sent.messages[0].content, /Do NOT diagnose/);
+    assert.match(sent.messages[0].content, /Simplified Chinese/);
+    assert.match(sent.messages[1].content, /Care journey: 孕期档案/);
+    assert.match(sent.messages[1].content, /Known allergies: 青霉素/);
+    assert.match(sent.messages[1].content, /Current medications: 叶酸/);
+    assert.match(sent.messages[1].content, /<<<\nHb 112 g\/L\n>>>/);
     assert.deepEqual(sent.response_format, { type: 'json_object' });
     assert.equal(upstream.calls[0].init.headers.authorization, 'Bearer test-key');
   } finally {
@@ -123,10 +136,9 @@ test('an over-long report is refused before the provider is called', async () =>
   const upstream = stubUpstream(() => upstreamReply('never reached'));
   try {
     const response = await worker.fetch(
-      explainRequest(signTransaction(activePayload()), {
-        system: 'short',
-        user: 'x'.repeat(16_001),
-      }),
+      explainRequest(signTransaction(activePayload()), explainBody({
+        content: { report_text: 'x'.repeat(16_001) },
+      })),
       baseEnv(),
     );
     assert.equal(response.status, 413);
@@ -193,11 +205,7 @@ test('streaming replies pass through untouched', async () => {
   );
   try {
     const response = await worker.fetch(
-      explainRequest(signTransaction(activePayload()), {
-        system: 'short',
-        user: 'Hb 112',
-        stream: true,
-      }),
+      explainRequest(signTransaction(activePayload()), explainBody({ stream: true })),
       baseEnv(),
     );
     assert.equal(response.status, 200);
@@ -216,4 +224,69 @@ test('an unconfigured deployment says so instead of failing oddly', async () => 
   );
   assert.equal(response.status, 500);
   assert.deepEqual(await response.json(), { error: 'not_configured' });
+});
+
+// The internal channel (T30): a shared credential instead of a transaction,
+// so the app can be dogfooded before Carelogue Plus exists. The secret is
+// removed from the deployment before the public launch.
+
+const INTERNAL_KEY = 'internal-access-key-for-tests-0123456789';
+
+test('the internal credential is accepted in place of a transaction', async () => {
+  const upstream = stubUpstream(() => upstreamReply('血红蛋白略低。'));
+  try {
+    const response = await worker.fetch(
+      explainRequest(INTERNAL_KEY),
+      baseEnv({ INTERNAL_ACCESS_KEY: INTERNAL_KEY }),
+    );
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).content, '血红蛋白略低。');
+    assert.equal(upstream.calls.length, 1);
+  } finally {
+    upstream.restore();
+  }
+});
+
+test('the internal channel still obeys the rate limit', async () => {
+  const upstream = stubUpstream(() => upstreamReply('ok'));
+  try {
+    const env = baseEnv({
+      INTERNAL_ACCESS_KEY: INTERNAL_KEY,
+      RATE_LIMIT: fakeKV(),
+      PER_DEVICE_LIMIT: '2',
+      PER_IP_LIMIT: '100',
+    });
+    for (let i = 0; i < 2; i += 1) {
+      assert.equal((await worker.fetch(explainRequest(INTERNAL_KEY), env)).status, 200);
+    }
+    const blocked = await worker.fetch(explainRequest(INTERNAL_KEY), env);
+    assert.equal(blocked.status, 429);
+    assert.deepEqual(await blocked.json(), { error: 'rate_limited' });
+  } finally {
+    upstream.restore();
+  }
+});
+
+test('a wrong internal credential is refused like any other bad token', async () => {
+  const response = await worker.fetch(
+    explainRequest('internal-access-key-for-tests-000000000'),
+    baseEnv({ INTERNAL_ACCESS_KEY: INTERNAL_KEY }),
+  );
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: 'invalid_subscription' });
+});
+
+test('without the secret the internal credential is just a bad token', async () => {
+  const response = await worker.fetch(explainRequest(INTERNAL_KEY), baseEnv());
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: 'invalid_subscription' });
+});
+
+test('a too-short INTERNAL_ACCESS_KEY never opens the channel', async () => {
+  const response = await worker.fetch(
+    explainRequest('short-key'),
+    baseEnv({ INTERNAL_ACCESS_KEY: 'short-key' }),
+  );
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: 'invalid_subscription' });
 });

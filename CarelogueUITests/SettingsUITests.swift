@@ -73,6 +73,36 @@ final class SettingsUITests: CarelogueUITestCase {
         screenshot("T28-settings-paywall")
     }
 
+    /// T30: the internal channel. Pasting the relay credential makes this
+    /// Debug build behave as subscribed without the App Store, and clearing it
+    /// locks it again. The section only exists in Debug builds, which is the
+    /// point — see `InternalAccess`.
+    func testInternalAccessUnlocksWithoutTheAppStore() {
+        launch(["-uitest-reset"])
+        openSettings()
+
+        waitFor(element(containing: "未订阅 · Not subscribed"))
+
+        let field = app.secureTextFields["settings.internalField"]
+        waitFor(field)
+        if !field.isHittable { app.swipeUp() }
+        field.tap()
+        field.typeText("internal-access-key-for-uitests-0123456789\n")
+
+        let save = app.buttons["settings.internalSave"]
+        waitFor(save)
+        save.tap()
+
+        waitFor(app.descendants(matching: .any)["settings.internalUnlocked"])
+        waitFor(element(containing: "订阅中 · Active"))
+        screenshot("T30-settings-internal-access")
+
+        // Clearing it hands the build back to StoreKit.
+        app.buttons["settings.internalClear"].tap()
+        waitFor(field)
+        waitFor(element(containing: "未订阅 · Not subscribed"))
+    }
+
     /// T25 ②: 清空所有数据 removes every journey, record and attachment, and
     /// the store stays empty after a relaunch.
     func testEraseAllData() {

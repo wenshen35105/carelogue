@@ -14,10 +14,13 @@ final class AttachmentUITests: CarelogueUITestCase {
     private var images: XCUIElementQuery { app.buttons.matching(identifier: "attachment.image") }
     private var files: XCUIElementQuery { app.buttons.matching(identifier: "attachment.file") }
 
+    /// Opens the seeded visit and scrolls to the attachment gallery, which
+    /// sits below the recording card (T32).
     private func openSeededEncounter() {
         openJourney(journeyName)
         element(containing: "UITest 附件就诊").tap()
         waitFor(app.navigationBars["详情"])
+        scrollTo(images.firstMatch)
     }
 
     func testPreviewAndDelete() {

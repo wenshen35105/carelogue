@@ -43,10 +43,14 @@ struct ExplanationCard: View {
                 DisabledLine()
             } else if consent == .revoked {
                 RevokedLine { pendingConsent = selected }
-            } else if subscriptions.status == .notSubscribed, selected?.explanation == nil {
+            } else if subscriptions.status == .notSubscribed,
+                      !subscriptions.isInternallyUnlocked,
+                      selected?.explanation == nil {
                 // The lock is only on generating new explanations: anything
                 // already explained stays readable, and attachments and records
-                // were never behind it (T27).
+                // were never behind it (T27). A Debug build on the internal
+                // channel is not subscribed as far as StoreKit is concerned,
+                // but it can explain (T30), so it must not see the lock.
                 LockedCard(onSubscribe: { showingPaywall = true }, onRestore: { Task { await restore() } })
             } else if let artifact = selected {
                 card(for: artifact)

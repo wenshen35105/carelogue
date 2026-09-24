@@ -19,7 +19,7 @@ final class ExplainUITests: CarelogueUITestCase {
     private func openSeededEncounter() {
         openJourney(journeyName)
         element(containing: "UITest 附件就诊").tap()
-        waitFor(app.navigationBars["详情"])
+        waitFor(app.navigationBars[t("详情", "Details")])
         waitFor(id("explain.card"))
     }
 
@@ -179,19 +179,57 @@ final class ExplainUITests: CarelogueUITestCase {
         screenshot("T20-long-text")
     }
 
-    /// Real DeepSeek round trip on the seeded lab-report photo. Runs only
-    /// with DEEPSEEK_API_KEY (see scripts/ui-test.sh).
+    /// Real round trip on the seeded lab-report photo, through the relay —
+    /// which since T31 is the only path there is, prompt included. Runs only
+    /// with INTERNAL_ACCESS_KEY set (T30; see scripts/ui-test.sh), optionally
+    /// against a local `wrangler dev` via CARELOGUE_RELAY_URL.
     func testRealExplain() throws {
-        guard let key = ProcessInfo.processInfo.environment["DEEPSEEK_API_KEY"], !key.isEmpty else {
-            throw XCTSkip("DEEPSEEK_API_KEY not set")
+        guard let key = ProcessInfo.processInfo.environment["INTERNAL_ACCESS_KEY"], !key.isEmpty else {
+            throw XCTSkip("INTERNAL_ACCESS_KEY not set")
         }
-        app.launchEnvironment["UITEST_API_KEY"] = key
-        launch(["-uitest-reset", "-uitest-seed-attachments"])
+        // The pinned fake subscription hands the relay "uitest-entitlement",
+        // which a real relay rightly refuses; here the internal credential is
+        // what unlocks the app and authorises the request.
+        stickyArguments = []
+        app.launchEnvironment["INTERNAL_ACCESS_KEY"] = key
+        var arguments = ["-uitest-reset", "-uitest-seed-attachments"]
+        if let relay = ProcessInfo.processInfo.environment["CARELOGUE_RELAY_URL"], !relay.isEmpty {
+            arguments += ["-ai.serverURL", relay]
+        }
+        launch(arguments)
         openSeededEncounter()
         tapExplain(app.buttons["explain.button"])
         XCTAssertTrue(id("explain.summary").waitForExistence(timeout: 90),
                       "Real explain failed: \(id("explain.errorMessage").label)")
         sleep(1)
         screenshot("T20-real-explained")
+    }
+
+    /// The same round trip in English. Since T31 the output language comes
+    /// from the locale the app sends, not from prompt text it carries, so
+    /// this is what proves the server-side template pair works.
+    func testRealExplainInEnglish() throws {
+        guard let key = ProcessInfo.processInfo.environment["INTERNAL_ACCESS_KEY"], !key.isEmpty else {
+            throw XCTSkip("INTERNAL_ACCESS_KEY not set")
+        }
+        language = "en"
+        // The pinned fake subscription hands the relay "uitest-entitlement",
+        // which a real relay rightly refuses; here the internal credential is
+        // what unlocks the app and authorises the request.
+        stickyArguments = []
+        app.launchEnvironment["INTERNAL_ACCESS_KEY"] = key
+        var arguments = ["-uitest-reset", "-uitest-seed-attachments"]
+        if let relay = ProcessInfo.processInfo.environment["CARELOGUE_RELAY_URL"], !relay.isEmpty {
+            arguments += ["-ai.serverURL", relay]
+        }
+        launch(arguments)
+        openSeededEncounter()
+        tapExplain(app.buttons["explain.button"])
+        XCTAssertTrue(id("explain.summary").waitForExistence(timeout: 90),
+                      "Real explain failed: \(id("explain.errorMessage").label)")
+        XCTAssertFalse(id("explain.summary").label.contains(where: { $0.unicodeScalars.contains { (0x4E00...0x9FFF).contains(Int($0.value)) } }),
+                       "English run came back in Chinese: \(id("explain.summary").label)")
+        sleep(1)
+        screenshot("T31-real-explained-en")
     }
 }

@@ -18,11 +18,21 @@ struct SettingsView: View {
     @State private var showingPaywall = false
     @State private var restoreNotice: String?
 
+    #if DEBUG
+    @State private var internalDraft = ""
+    /// Mirrors the Keychain so the page redraws when the credential changes;
+    /// SubscriptionService cannot observe a Keychain write.
+    @State private var internalCredential = InternalAccess.credential
+    #endif
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
                 header
                 subscriptionSection
+                #if DEBUG
+                internalAccessSection
+                #endif
                 aiSection
                 privacySection
                 dataSection
@@ -194,6 +204,91 @@ struct SettingsView: View {
             restoreNotice = error.localizedDescription
         }
     }
+
+    // MARK: - 内部通道 (T30, Debug only)
+
+    #if DEBUG
+    /// The internal unlock channel: paste the relay's `INTERNAL_ACCESS_KEY`
+    /// once and this build behaves as subscribed, going through the real
+    /// relay. Debug-only in every sense — the section, the copy and the
+    /// credential are absent from a Release archive, which is also why this
+    /// text is deliberately outside the String Catalog — and written in
+    /// English like the code around it, not in the app's bilingual product
+    /// voice: it is developer tooling, not product copy.
+    private var internalAccessSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                IconBadge(systemName: "hammer", size: 30)
+                Text(verbatim: "Internal Access")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(Theme.inkPrimary)
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
+                if let credential = internalCredential {
+                    HStack(spacing: 10) {
+                        Label {
+                            Text(verbatim: "Unlocked · " + InternalAccess.masked(credential))
+                                .font(.subheadline.weight(.medium))
+                        } icon: {
+                            Image(systemName: "lock.open")
+                        }
+                        .foregroundStyle(Theme.success)
+                        .accessibilityIdentifier("settings.internalUnlocked")
+                        Spacer(minLength: 8)
+                        Button {
+                            InternalAccess.setCredential(nil)
+                            internalCredential = nil
+                            internalDraft = ""
+                            Task { await subscriptions.refresh() }
+                        } label: {
+                            Text(verbatim: "Clear")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(Theme.warning)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("settings.internalClear")
+                    }
+                } else {
+                    SecureField(text: $internalDraft) {
+                        Text(verbatim: "Paste INTERNAL_ACCESS_KEY")
+                    }
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .font(.subheadline)
+                    .padding(.horizontal, 12)
+                    .frame(height: 44)
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Theme.insetFill))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.border, lineWidth: 1))
+                    .accessibilityIdentifier("settings.internalField")
+
+                    Button {
+                        guard InternalAccess.setCredential(internalDraft) else { return }
+                        internalCredential = InternalAccess.credential
+                        internalDraft = ""
+                        Task { await subscriptions.refresh() }
+                    } label: {
+                        Text(verbatim: "Save & unlock")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(RoundedRectangle(cornerRadius: 12).fill(Theme.accent))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(internalDraft.trimmingCharacters(in: .whitespacesAndNewlines).count < InternalAccess.minimumLength)
+                    .accessibilityIdentifier("settings.internalSave")
+                }
+
+                Text(verbatim: "Debug builds only. The credential stays in this device's Keychain — never in the repo, never in a build. Requests still go through the Carelogue relay and its rate limit; the matching server secret is deleted before launch.")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .cardSurface()
+        }
+    }
+    #endif
 
     // MARK: - Privacy
 

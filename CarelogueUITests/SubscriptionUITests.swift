@@ -46,10 +46,13 @@ final class SubscriptionUITests: CarelogueUITestCase {
         XCTAssertFalse(app.buttons["explain.button"].exists, "解释 entry should be replaced by the locked card")
         XCTAssertTrue(element(containing: "订阅后解锁报告解读").exists)
         // Records and attachments stay free: the gallery is still usable.
-        XCTAssertTrue(app.buttons.matching(identifier: "attachment.image").firstMatch.exists)
+        // It sits below the recording card (T32), so scroll to it first.
+        scrollTo(app.buttons.matching(identifier: "attachment.image").firstMatch)
         screenshot("T27-report-locked")
 
-        app.buttons["explain.subscribe"].tap()
+        let subscribe = app.buttons["explain.subscribe"]
+        scrollTo(subscribe)
+        subscribe.tap()
         waitFor(id("paywall"))
         XCTAssertTrue(element(containing: "Carelogue Plus").exists)
         XCTAssertTrue(app.buttons["paywall.subscribe"].exists)

@@ -26,6 +26,15 @@ final class Log {
     var value: Double? = nil
     var unit: String? = nil
 
+    /// Encounter-only (T32), both JSON-encoded and both optional so the
+    /// CloudKit schema stays additive:
+    /// - `visitSummaryJSON`: {said_plain, key_points[], follow_ups[], model, created_at}
+    ///   — what the doctor said, built from the recording's transcript.
+    /// - `questionsJSON`: {items: [{id, text, translated}], updated_at}
+    ///   — 我的疑问, which needs no recording and often predates the visit.
+    var visitSummaryJSON: String? = nil
+    var questionsJSON: String? = nil
+
     var createdAt: Date = Date.now
     var updatedAt: Date = Date.now
 
@@ -70,6 +79,8 @@ final class Log {
         doctor: String? = nil,
         value: Double? = nil,
         unit: String? = nil,
+        visitSummaryJSON: String? = nil,
+        questionsJSON: String? = nil,
         createdAt: Date = .now,
         updatedAt: Date = .now,
         journey: Journey? = nil
@@ -83,6 +94,8 @@ final class Log {
         self.doctor = doctor
         self.value = value
         self.unit = unit
+        self.visitSummaryJSON = visitSummaryJSON
+        self.questionsJSON = questionsJSON
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.journey = journey
