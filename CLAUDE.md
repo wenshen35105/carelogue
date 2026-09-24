@@ -46,6 +46,19 @@ Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）
 
 **自动化**：`scripts/ui-test.sh` 一条命令在模拟器跑完上述 Smoke + 已有功能的 UI 测试（`CarelogueUITests/`），截图输出到 `build/ui-screenshots/`；界面有变化时再跑一次 `APPEARANCE=dark scripts/ui-test.sh`。新卡涉及的交互，应在 `CarelogueUITests/` 里补对应用例，自测以跑通测试为准，尽量不交给用户手测。
 
+**文档截图**：`docs/screenshots/` 里的存档图由 `CarelogueUITests/ScreenshotUITests.swift` 生成，数据来自 `-uitest-seed-demo`（UITestSupport 里的示例旅程，按设计稿口径造的真实感内容，不是测试夹具）。重拍：
+
+```
+APPEARANCE=light SCREENSHOT_DIR=$PWD/build/shots-light scripts/ui-test.sh \
+  -only-testing:CarelogueUITests/ScreenshotUITests \
+  -skip-testing:CarelogueUITests/ScreenshotUITests/testDarkModeScreens
+APPEARANCE=dark SCREENSHOT_DIR=$PWD/build/shots-dark scripts/ui-test.sh \
+  -only-testing:CarelogueUITests/ScreenshotUITests/testDarkModeScreens
+cp build/shots-light/*.png build/shots-dark/*.png docs/screenshots/
+```
+
+（`SCREENSHOT_DIR` 必须是绝对路径；脚本每次会清空该目录。）
+
 ## 语言
 
 - 代码、注释、commit message：英文
