@@ -8,9 +8,9 @@ workers_dev = false
 BUNDLE_ID = "com.jiajinlinpersonalteam.Carelogue"
 PRODUCT_IDS = "com.jiajinlinpersonalteam.Carelogue.plus.monthly"
 # The DeepSeek model id exactly as deepinfra.com/models lists it.
-DEEPINFRA_MODEL = ""
+DEEPINFRA_MODEL = "deepseek-ai/DeepSeek-V4-Flash"
 # shasum -a 256 of Apple Root CA G3 in DER form — see README.
-APPLE_ROOT_CA_G3_SHA256 = ""
+APPLE_ROOT_CA_G3_SHA256 = "63343abfb89a6a03ebb57e9b3f5fa7be7c4f5c756f3017b3a8c488c3653e9179"
 # "1" while testing with sandbox purchases; remove before the public launch.
 ALLOW_SANDBOX = "1"
 PER_DEVICE_LIMIT = "40"

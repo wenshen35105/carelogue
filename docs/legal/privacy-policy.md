@@ -1,14 +1,8 @@
 # Carelogue 隐私政策 · Privacy Policy
 
-> **发布前必须替换（托管到 carelogue.ca/privacy 之前）**
-> - `[生效日期]` → 真实日期
-> - `[法律主体]` → 个人或公司名称与所在地
-> - `[联系邮箱]` → 能收信的地址（App Store Connect 里也要填同一个）
-> 这段引用块在托管时删掉。
-
-**生效日期 Effective date**：[生效日期]
-**运营方 Operator**：[法律主体]（加拿大 · Canada）
-**联系方式 Contact**：[联系邮箱]
+**生效日期 Effective date**：2026/09/23
+**运营方 Operator**：Jiajin Lin · Canada · Ontario
+**联系方式 Contact**：support@carelogue.ca
 
 ---
 
@@ -85,7 +79,7 @@ Carelogue 不面向 13 岁以下儿童，也不会有意收集他们的信息。
 
 ### 联系
 
-有任何隐私问题，请邮件联系 [联系邮箱]。
+有任何隐私问题，请邮件联系 support@carelogue.ca。
 
 ---
 
@@ -174,4 +168,4 @@ data goes are explained in the app as well.
 
 ### Contact
 
-Questions about privacy: [联系邮箱].
+Questions about privacy: support@carelogue.ca.

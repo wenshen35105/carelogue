@@ -21,7 +21,7 @@
 
 ## C. 现在就能做（不等认证）
 
-- [ ] **部署 server 到 Cloudflare**（在 Mac 上；可整体交给 CC 执行）——**含法律页**：`/privacy`、`/terms` 复用同一个 Worker（加两条路由 + 页面直出即可，不需要单独建项目）
+- [x] **部署 server 到 Cloudflare**（在 Mac 上；可整体交给 CC 执行）——**含法律页**：`/privacy`、`/terms` 复用同一个 Worker（加两条路由 + 页面直出即可，不需要单独建项目）
   - 前提（一次性）：`cd server && npx wrangler login`
   - 两个值已替备好：
     - `DEEPINFRA_MODEL` = `deepseek-ai/DeepSeek-V4-Flash`
@@ -35,7 +35,7 @@
     npx wrangler deploy
     ```
   - 域名：确认 carelogue.ca 的 zone 已在 Cloudflare → 取消 `wrangler.toml` 里 `[[routes]]` 注释 → 重新 deploy（得到 `api.carelogue.ca`）→ `curl https://api.carelogue.ca/v1/health` 应返回 `{"ok":true}`
-- [ ] **法律文本填空**（正文 CC 已写好；3 个占位符 × 2 份文档）
+- [x] **法律文本填空**（正文 CC 已写好；3 个占位符 × 2 份文档）
   - 生效日期 / 法律主体（如：你的姓名 · 加拿大安省）/ 联系邮箱（建议 `support@carelogue.ca`）
   - 文件：`docs/legal/privacy-policy.md`、`docs/legal/terms-of-service.md`
 - [ ] **拍一个小项**：解释可"附带档案信息"（过敏/长期用药，默认开启；隐私政策已披露、设置可关）——① 同意弹窗要不要也补一句透明说明？（建议：补）② 默认值"开"还是"关"？（建议：开）回一句即可

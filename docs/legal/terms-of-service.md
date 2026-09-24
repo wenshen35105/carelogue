@@ -1,14 +1,8 @@
 # Carelogue 使用条款 · Terms of Use
 
-> **发布前必须替换（托管到 carelogue.ca/terms 之前）**
-> - `[生效日期]` → 真实日期
-> - `[法律主体]` → 个人或公司名称与所在地
-> - `[联系邮箱]` → 能收信的地址
-> 这段引用块在托管时删掉。
-
-**生效日期 Effective date**：[生效日期]
-**运营方 Operator**：[法律主体]（加拿大 · Canada）
-**联系方式 Contact**：[联系邮箱]
+**生效日期 Effective date**：2026/09/23
+**运营方 Operator**：Jiajin Lin · Canada · Ontario
+**联系方式 Contact**：support@carelogue.ca
 
 ---
 
@@ -68,7 +62,7 @@ AI「白话解释」用通俗语言转述报告上写了什么。
 
 ### 9. 联系
 
-[联系邮箱]
+support@carelogue.ca
 
 ---
 
@@ -143,4 +137,4 @@ to conflict-of-laws rules.
 
 ### 9. Contact
 
-[联系邮箱]
+support@carelogue.ca
