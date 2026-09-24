@@ -27,6 +27,7 @@
 - **实现注意**：音频体积（1h ≈ 30MB）→ 低码率压缩；转写后是否提供"保留/删除音频"选项，实现时定
 - **注意**：加拿大刑法 184 条（录制自己参与的对话合法；建议当面知会医生）
 - **验收**：一次真实产检录音 → 总结 + 英文疑问可用；UI 用例覆盖；太太实测可用
+- **设计参照（2026-09-23 评审通过）**：五稿在 `docs/design/stitch/`（visit_detail_with_recording_cards / active_visit_recording_sheet / processing_state_transcribing / visit_summary_what_doctor_said / my_questions_doctor_presentation_mode）。修正点：**隐私文案统一**（"录音保存在你的设备与 iCloud 私有库；音频不进 AI"——替换稿中"仅暂存本机沙盒""不上传第三方"等旧措辞）；忽略 Stitch 自创元素（"标记医嘱重点"打点、"CoreEngine v2"、"N 重点"计数）；录音卡头/卡内标题去重；"存入病历"按钮语义实现时定
 
 ### T33 · 跨 Apple ID 共享调研（~3h，调研卡）
 - **产出**：`docs/ck-share-study.md`——① 路线定案 ② 实施计划 + 工程量 + 迁移风险 ③ 排期建议（v1.1 或更近）+ 非技术版老板摘要
