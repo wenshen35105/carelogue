@@ -99,7 +99,7 @@ Profile（单行）
 ## 9. 技术栈（已定）
 
 - **平台**：iOS 原生（iOS 17+）· SwiftUI + SwiftData
-- **同步**：SwiftData + CloudKit 私有库——夫妻同 Apple ID 零成本自动同步；跨账号（父母）留给 v1.1 的 CKShare / 导出
+- **同步**：SwiftData + CloudKit 私有库（同 Apple ID 多设备自动同步）。**跨 Apple ID 共享（夫妻/家人——目标用户常见形态）= 重要缺口**：SwiftData 至今（iOS 26）不支持共享数据库（CKShare）；可行路线 = ① Core Data + CloudKit Sharing（Apple 正式支持，需数据层改造/迁移）② 原生 CloudKit + SwiftData 并存（社区参考，待评估）→ 调研卡排入 M5
 - **附件**：SwiftData `@Attribute(.externalStorage)`——附件文件自动进 iCloud 同步，不写同步代码
 - **OCR**：iOS Vision（VNRecognizeTextRequest，中英）；PDF：PDFKit 文本提取
 - **AI**：DeepSeek API（客户端直连）；key 存 Keychain；服务层接口封装（可换 OpenAI / Claude）
@@ -110,7 +110,7 @@ Profile（单行）
 - 图像处理：MVP 一律本地 OCR（Vision）成文本再发送；DeepSeek 侧已有 OCR/视觉能力，订阅阶段再评估 provider 端方案
 
 **分发与自用（MVP 阶段，无需发布）：**
-- 完全支持"不发布、先自用"：**付费账号（$99/年）+ Xcode 直连两台 iPhone 安装**（签名 1 年有效）即可；想频繁更新再上 TestFlight（build 90 天轮换；夫妻同 Apple ID，两台机都可装）
+- 完全支持"不发布、先自用"：**付费账号（$99/年）+ Xcode 直连两台 iPhone 安装**（签名 1 年有效）即可；想频繁更新再上 TestFlight（build 90 天轮换；各自 Apple ID 都能装）
 - **$99 购买时点 = 开 CloudKit capability 时**（免费签名不支持 iCloud/CloudKit）——即同步上线前，而不是"上架前"
 - 不上架 = 不需要审核 / 隐私标签 / 隐私政策；将来若想"给亲友用但不公开"，备选 Unlisted App（隐形上架）
 

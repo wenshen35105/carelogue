@@ -11,9 +11,9 @@
 
 1. [ ] Xcode → Settings → Accounts 登录开发者账号
 2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）
-3. [ ] 和 CC 一起验证 CloudKit 双机同步（一台建记录 → 另一台可见、含附件；细则见 docs/m4-tasks.md T23）
+3. [ ] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23
 4. [ ] App Store Connect：
-   - [ ] 建 app 记录 + 订阅产品（id 已定：`…Carelogue.plus.monthly`，$3.99/月，中英本地化；**Family Sharing 开关一并打开**）
+   - [ ] 建 app 记录 + 订阅产品（id 已定：`…Carelogue.plus.monthly`，$3.99/月，中英本地化；**Family Sharing 开关一并打开——你们各自 Apple ID 但太太在家庭组里：这是她共享你订阅的必经路径**）
    - [ ] 签 Paid Apps 协议；填银行账户 + 税表
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
    - [ ] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
