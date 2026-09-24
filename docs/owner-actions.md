@@ -16,6 +16,7 @@
    - [ ] 建 app 记录 + 订阅产品（id 已定：`…Carelogue.plus.monthly`，$4.99/月，中英本地化）
    - [ ] 签 Paid Apps 协议；填银行账户 + 税表
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
+   - [ ] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
 5. [ ] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
 6. [ ] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）
 
@@ -23,7 +24,7 @@
 
 - [x] **部署 server 到 Cloudflare** ✅（2026-09-23 完成；法律页已并入同一 Worker）
 - [x] **DNS 记录 · api 子域** ✅（`api.carelogue.ca` 已解析，`/v1/health` 返回 `{"ok":true}`；2026-09-23 验证）
-- [ ] **DNS 记录 · 根域**（⚠️ 还差这一条）：Cloudflare → carelogue.ca → DNS → Add record：`A` | 名称 `@` | IPv4 `192.0.2.1` | **Proxied**。加好后 `https://carelogue.ca/privacy` 即出页面（Worker 侧已提前验证：绕过 DNS 直打边缘返回 200）
+- [x] **DNS 记录 · 根域** ✅（2026-09-23；`https://carelogue.ca/privacy`、`/terms` 均已上线 200）—— 至此 Cloudflare + 域名 + server + 法律页全链路完成 🎉
 - [x] **确认密钥**：`cd server && npx wrangler secret list`（应列出 `DEEPINFRA_API_KEY`；没有就 `npx wrangler secret put DEEPINFRA_API_KEY`）
 - [x] **（建议）Email Routing**：把 `support@carelogue.ca` 转发到你的邮箱（Cloudflare → Email → Email Routing，2 分钟；法律文本的联系邮箱就用它）
   - 前提（一次性）：`cd server && npx wrangler login`
