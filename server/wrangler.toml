@@ -1,5 +1,5 @@
 name = "carelogue-explain"
-main = "src/index.js"
+main = "src/worker.js"
 compatibility_date = "2026-09-01"
 workers_dev = false
 
@@ -24,9 +24,25 @@ WINDOW_SECONDS = "3600"
 # binding = "RATE_LIMIT"
 # id = ""
 
-# Custom domain, added after the zone is on Cloudflare:
+# The policy pages are bundled as text (docs/legal/*.md) and rendered by the
+# Worker at carelogue.ca/privacy and /terms.
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+# Custom domains, added after the zone is on Cloudflare. One Worker answers
+# both: the API on its own subdomain, the policy pages on the root domain.
 # [[routes]]
 # pattern = "api.carelogue.ca/v1/*"
+# zone_name = "carelogue.ca"
+#
+# [[routes]]
+# pattern = "carelogue.ca/privacy"
+# zone_name = "carelogue.ca"
+#
+# [[routes]]
+# pattern = "carelogue.ca/terms"
 # zone_name = "carelogue.ca"
 
 # Secret, never in this file:

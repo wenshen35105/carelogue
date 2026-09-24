@@ -2,10 +2,14 @@
   "name": "carelogue-explain",
   "private": true,
   "type": "module",
-  "description": "Carelogue's stateless explain relay (Cloudflare Worker)",
+  "description": "Carelogue's stateless explain relay + policy pages (Cloudflare Worker)",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "bundle-check": "wrangler deploy --dry-run",
     "test": "node --test \"test/*.test.js\""
+  },
+  "devDependencies": {
+    "wrangler": "^4.137.0"
   }
 }

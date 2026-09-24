@@ -1,8 +1,8 @@
 # Carelogue 使用条款 · Terms of Use
 
-**生效日期 Effective date**：2026/09/23
-**运营方 Operator**：Jiajin Lin · Canada · Ontario
-**联系方式 Contact**：support@carelogue.ca
+- **生效日期 Effective date**：2026/09/23
+- **运营方 Operator**：Jiajin Lin · Canada · Ontario
+- **联系方式 Contact**：support@carelogue.ca
 
 ---
 

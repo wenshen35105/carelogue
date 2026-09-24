@@ -34,7 +34,9 @@
     npx wrangler secret put DEEPINFRA_API_KEY     # 粘贴 DeepInfra 的 key
     npx wrangler deploy
     ```
-  - 域名：确认 carelogue.ca 的 zone 已在 Cloudflare → 取消 `wrangler.toml` 里 `[[routes]]` 注释 → 重新 deploy（得到 `api.carelogue.ca`）→ `curl https://api.carelogue.ca/v1/health` 应返回 `{"ok":true}`
+  - 域名：确认 carelogue.ca 的 zone 已在 Cloudflare → 取消 `wrangler.toml` 里**三条** `[[routes]]` 注释 → `cd server && npm run deploy` → 验收：
+    - `curl https://api.carelogue.ca/v1/health` 返回 `{"ok":true}`
+    - `curl -I https://carelogue.ca/privacy` 与 `/terms` 返回 200（法律页已内置在同一个 Worker 里，见 `server/README.md`）
 - [x] **法律文本填空**（正文 CC 已写好；3 个占位符 × 2 份文档）
   - 生效日期 / 法律主体（如：你的姓名 · 加拿大安省）/ 联系邮箱（建议 `support@carelogue.ca`）
   - 文件：`docs/legal/privacy-policy.md`、`docs/legal/terms-of-service.md`

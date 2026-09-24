@@ -1,10 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import worker from '../src/index.js';
+import { createWorker } from '../src/index.js';
 import { signTransaction, activePayload, fingerprintOf, fakeKV } from './helpers.js';
 
 const rootFingerprint = await fingerprintOf('root.pem');
+
+// The relay's own routes need no policy documents; legal.test.js covers those.
+const worker = createWorker({});
 
 function baseEnv(overrides = {}) {
   return {

@@ -22,8 +22,8 @@
 | 项 | 状态 | 落点 |
 |---|---|---|
 | 隐私政策链接在 App 内可达 | ✅ | 设置页页脚、同意弹窗、订阅页 |
-| 隐私政策托管在可访问的 URL | ⏳ | `docs/legal/privacy-policy.md` → carelogue.ca/privacy |
-| 使用条款（EULA）可达 | ✅ / ⏳ | 文本见 `docs/legal/terms-of-service.md`；托管待办 |
+| 隐私政策托管在可访问的 URL | ✅ / ⏳ | 页面已由 Worker 直出（`/privacy`，从 `docs/legal/privacy-policy.md` 渲染）；剩域名路由：`wrangler.toml` 三条 `[[routes]]` 取消注释 + redeploy |
+| 使用条款（EULA）可达 | ✅ / ⏳ | 同上（`/terms`，源自 `docs/legal/terms-of-service.md`）|
 | 首次使用前的数据流向说明与同意 | ✅ | `ConsentSheet`（每台设备一次，可撤回）|
 | 相机权限用途说明（双语）| ✅ | `InfoPlist.xcstrings` 的 `NSCameraUsageDescription` |
 | 不收集与功能无关的数据 | ✅ | 无账号、无分析 SDK、无广告标识符 |
@@ -50,6 +50,6 @@
 
 - ⏳ 截图（6.7" / 6.5" 各一组，中英）
 - ⏳ App 描述、关键词、What's New（中英）
-- ⏳ 支持网址、营销网址、联系邮箱（与隐私政策一致）
+- ⏳ 支持网址、营销网址、联系邮箱（与隐私政策一致：`support@carelogue.ca`）
 - ⏳ 审核备注：说明 AI 解释需要订阅，并提供沙盒账号或说明如何用沙盒购买
 - ⏳ `server/wrangler.toml` 的 `ALLOW_SANDBOX` 在正式发布后改回 `"0"`
