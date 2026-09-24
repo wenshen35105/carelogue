@@ -46,9 +46,9 @@
 - [x] **法律文本填空**（正文 CC 已写好；3 个占位符 × 2 份文档）
   - 生效日期 / 法律主体（如：你的姓名 · 加拿大安省）/ 联系邮箱（建议 `support@carelogue.ca`）
   - 文件：`docs/legal/privacy-policy.md`、`docs/legal/terms-of-service.md`
-- [ ] **重新部署 server**（T31 改了 API 契约：prompt 从 app 搬到了 Worker）：`cd server && npm run deploy`。
+- [x] **重新部署 server**（T31 改了 API 契约：prompt 从 app 搬到了 Worker）：`cd server && npm run deploy`。
   **先部署，再装新的 Debug 构建**——新旧契约不兼容，装反了解释会报 400。
-- [ ] **开通内部通道**（T30，2 分钟）：订阅还没上线，这是你自己装 Debug 构建就能跑通 AI 解释的唯一通道。
+- [x] **开通内部通道**（T30，2 分钟）：订阅还没上线，这是你自己装 Debug 构建就能跑通 AI 解释的唯一通道。
   ```sh
   cd server
   KEY=$(openssl rand -hex 24)        # 至少 24 位；记到密码管理器里
