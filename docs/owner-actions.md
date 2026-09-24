@@ -6,6 +6,7 @@
 ## ⏳ 唯一阻塞项
 
 - [ ] **Apple Developer 认证**——还在审。过审后解锁 B 组全部事项。
+  - ⚠️ （2026-09-23）**重复付款跟进**：第一笔（支付宝）与第二笔（Amex $99）疑似重复——① 先查邮箱 "Apple Developer" 收据（两封=真扣两次）；② 重复的那笔 1–2 天常自动撤销，先观察；③ 未退 → `developer.apple.com/contact/` → Membership and Account → Other Memberships/Account Questions → Email：请保留 Amex、退支付宝那笔，附两笔截图
 
 ## B. 认证过审后（按序）
 
