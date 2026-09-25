@@ -173,7 +173,7 @@ INTERNAL_ACCESS_KEY=<同一串> CARELOGUE_RELAY_URL=http://127.0.0.1:8787 \
 
 ## 上线前检查
 
-- [ ] `ALLOW_SANDBOX` 改回 `"0"`（内测期间才需要 `"1"`）
+- [ ] `ALLOW_SANDBOX`：内测与**审核**期间保持 `"1"`（审核员用沙盒购买）；上架后（内测收尾后）再评估改 `"0"`
 - [ ] `DEEPINFRA_MODEL`、`APPLE_ROOT_CA_G3_SHA256`、`PRODUCT_IDS` 都已填
 - [ ] KV 绑定已配（否则没有成本护栏）
 - [ ] `wrangler deploy` 后 `curl https://api.carelogue.ca/v1/health` 返回 `{"ok":true}`

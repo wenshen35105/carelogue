@@ -70,4 +70,4 @@
 ## D. 发布前（M5，内测之后）
 
 - [ ] **CloudKit schema 部署**：CloudKit Console 把 Development 环境 schema 一键 **Deploy 到 Production**——不做的话正式版用户同步全挂（经典坑）
-- [ ] 其余见 `docs/appstore-checklist.md` 的 ⏳ 项（截图素材、描述、审核备注、`ALLOW_SANDBOX` 改回 0 等）
+- [ ] 其余见 `docs/appstore-checklist.md` 的 ⏳ 项（截图素材、描述、审核备注、`ALLOW_SANDBOX` 审核期保持 1 等）

@@ -52,6 +52,6 @@
 - ⏳ App 描述、关键词、What's New（中英）
 - ⏳ 支持网址、营销网址、联系邮箱（与隐私政策一致：`support@carelogue.ca`）
 - ⏳ 审核备注：说明 AI 解释需要订阅，并提供沙盒账号或说明如何用沙盒购买
-- ⏳ `server/wrangler.toml` 的 `ALLOW_SANDBOX` 在正式发布后改回 `"0"`
+- ⏳ `server/wrangler.toml` 的 `ALLOW_SANDBOX`：**审核期间保持 `"1"`**（审核员用沙盒购买，关掉订阅就不解锁）；上架且内测收尾后再评估改 `"0"`（保留的风险仅限自己创建的 ASC 沙盒测试员）
 - ⏳ 内部通道下线（T30 双保险第二道）：`cd server && npx wrangler secret delete INTERNAL_ACCESS_KEY`
   → `npx wrangler secret list` 里不再出现它；客户端那半边本来就只在 Debug 编译路径里，Release 产物 `strings` 查不到
