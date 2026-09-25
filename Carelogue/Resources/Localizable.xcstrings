@@ -606,13 +606,13 @@
     "About AI Explanations": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "About AI Explanations"
           }
         },
-        "en": {
+        "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "About AI Explanations"
@@ -671,6 +671,7 @@
         }
       }
     },
+    "Carelogue Plus": {},
     "Carelogue iOS v%@": {
       "extractionState": "manual",
       "localizations": {
@@ -790,6 +791,7 @@
         }
       }
     },
+    "Follow-ups": {},
     "Journeys": {
       "extractionState": "manual",
       "localizations": {
@@ -807,6 +809,8 @@
         }
       }
     },
+    "Key Points": {},
+    "My Questions": {},
     "On-device only": {
       "extractionState": "manual",
       "localizations": {
@@ -1011,6 +1015,7 @@
         }
       }
     },
+    "Visit Recording": {},
     "Vitals": {
       "extractionState": "manual",
       "localizations": {
@@ -1028,6 +1033,7 @@
         }
       }
     },
+    "What the doctor said": {},
     "Your devices & iCloud": {
       "extractionState": "manual",
       "localizations": {
@@ -1167,16 +1173,33 @@
     "不会再发送任何报告文字": {
       "extractionState": "manual",
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No report text will be sent"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "不会再发送任何报告文字"
           }
-        },
+        }
+      }
+    },
+    "丢掉": {
+      "extractionState": "manual",
+      "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No report text will be sent"
+            "value": "Discard"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "丢掉"
           }
         }
       }
@@ -1473,16 +1496,16 @@
     "关于 AI 白话解释": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关于 AI 白话解释"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "About AI Explanations"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关于 AI 白话解释"
           }
         }
       }
@@ -1728,16 +1751,16 @@
     "加密传输 · Encrypted in transit": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "加密传输 · Encrypted in transit"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Encrypted in transit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加密传输 · Encrypted in transit"
           }
         }
       }
@@ -1881,16 +1904,16 @@
     "只在你的 iPhone 上识别报告文字，照片和 PDF 原件不会上传。": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "只在你的 iPhone 上识别报告文字，照片和 PDF 原件不会上传。"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Report text is recognized on your iPhone; photos and original PDFs are never uploaded."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只在你的 iPhone 上识别报告文字，照片和 PDF 原件不会上传。"
           }
         }
       }
@@ -2017,16 +2040,16 @@
     "同意并继续 · Continue": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "同意并继续 · Continue"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Agree & Continue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同意并继续 · Continue"
           }
         }
       }
@@ -2136,16 +2159,16 @@
     "在「档案与设置 › 设置 › 隐私与数据流向」里可以随时关闭或撤回同意。": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在「档案与设置 › 设置 › 隐私与数据流向」里可以随时关闭或撤回同意。"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Turn it off or withdraw consent anytime under Profile & Settings › Settings › Privacy & Data Flow."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「档案与设置 › 设置 › 隐私与数据流向」里可以随时关闭或撤回同意。"
           }
         }
       }
@@ -2595,16 +2618,16 @@
     "已撤回 AI 解释同意": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已撤回 AI 解释同意"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "AI consent withdrawn"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已撤回 AI 解释同意"
           }
         }
       }
@@ -2612,16 +2635,16 @@
     "已撤回同意，AI 解释入口已停用。在报告页可重新同意。": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已撤回同意，AI 解释入口已停用。在报告页可重新同意。"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Consent withdrawn — AI explanations are disabled. You can agree again from a report page."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已撤回同意，AI 解释入口已停用。在报告页可重新同意。"
           }
         }
       }
@@ -3071,16 +3094,16 @@
     "撤回 AI 同意 · Revoke Consent": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "撤回 AI 同意 · Revoke Consent"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Revoke AI Consent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撤回 AI 同意 · Revoke Consent"
           }
         }
       }
@@ -3088,16 +3111,16 @@
     "撤回 AI 解释同意？": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "撤回 AI 解释同意？"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Withdraw AI consent?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撤回 AI 解释同意？"
           }
         }
       }
@@ -3105,16 +3128,16 @@
     "撤回同意": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "撤回同意"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Withdraw Consent"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撤回同意"
           }
         }
       }
@@ -3122,16 +3145,16 @@
     "撤回后不会再发送任何报告文字，报告页的 AI 解释入口会停用；已有的解释结果仍保留在本机。": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "撤回后不会再发送任何报告文字，报告页的 AI 解释入口会停用；已有的解释结果仍保留在本机。"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "No report text will be sent anymore and the Explain button on report pages is disabled. Existing explanations stay on this device."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "撤回后不会再发送任何报告文字，报告页的 AI 解释入口会停用；已有的解释结果仍保留在本机。"
           }
         }
       }
@@ -3479,16 +3502,16 @@
     "暂不使用 · Not now": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂不使用 · Not now"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Not Now"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂不使用 · Not now"
           }
         }
       }
@@ -3598,16 +3621,16 @@
     "本地提取文字": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本地提取文字"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Text recognized on device"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地提取文字"
           }
         }
       }
@@ -4368,6 +4391,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "继续 · Resume"
+          }
+        }
+      }
+    },
+    "继续录音": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep Recording"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续录音"
           }
         }
       }
@@ -5441,16 +5481,16 @@
     "重新同意": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "重新同意"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Agree Again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新同意"
           }
         }
       }
@@ -5691,16 +5731,16 @@
     "随时撤回": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "随时撤回"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Withdraw anytime"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "随时撤回"
           }
         }
       }
@@ -5759,16 +5799,16 @@
     "需要先同意 AI 解释说明": {
       "extractionState": "manual",
       "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "需要先同意 AI 解释说明"
-          }
-        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Please agree to the AI explanation notice first"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要先同意 AI 解释说明"
           }
         }
       }

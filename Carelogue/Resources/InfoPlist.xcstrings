@@ -1,24 +1,84 @@
 {
-  "sourceLanguage" : "zh-Hans",
-  "strings" : {
-    "NSCameraUsageDescription" : {
-      "comment" : "Camera permission prompt shown when adding a photo to a visit record",
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take a photo of a lab report or record to attach it. Photos stay on this device."
+  "sourceLanguage": "zh-Hans",
+  "strings": {
+    "CFBundleDisplayName": {
+      "comment": "Bundle display name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Carelogue"
+          }
+        }
+      }
+    },
+    "CFBundleName": {
+      "comment": "Bundle name",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Carelogue"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription": {
+      "comment": "Camera permission prompt shown when adding a photo to a visit record",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take a photo of a lab report or record to attach it. Photos stay on this device."
           }
         },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "拍照添加化验单或病历附件，照片只保存在这台设备上。"
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "拍照添加化验单或病历附件，照片只保存在这台设备上。"
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription": {
+      "comment": "Microphone permission prompt shown before recording a visit",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record your own appointment so you can review it at home. Recordings stay on this device and in your private iCloud."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录下你自己的就诊过程，回家后可以再听一遍。录音只保存在这台设备和你的私人 iCloud 里。"
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription": {
+      "comment": "Speech recognition permission prompt shown before transcribing a visit recording",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn your recording into text on this device, so the notes can be tidied up without the audio ever leaving."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在这台设备上把录音转成文字，方便整理成笔记，音频不会离开这台设备。"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }
