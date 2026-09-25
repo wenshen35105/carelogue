@@ -14,7 +14,7 @@
 2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）
 3. [ ] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23
 4. [ ] App Store Connect：
-   - [ ] **bundle id 迁移**（✅ 已定：换为 `ca.carelolgue.app`）——顺序：① developer.apple.com 接受待签协议（新账号必做）② Identifiers → 注册新 App ID `ca.carelolgue.app`（勾 iCloud + CloudKit）→ Containers 新建 `iCloud.ca.carelolgue.app` ③ CC 改 repo（开工 prompt 已发）④ Xcode Run 验证（报错兜底：账号移除重加 / 清 DerivedData）⑤ 之后才给太太和各设备装
+   - [ ] **bundle id 迁移**（✅ 已定：换为 `ca.carelolgue.app`）——顺序：① developer.apple.com 接受待签协议（新账号必做）② Identifiers 页面把列表切到 **iCloud Containers**（独立分类，不在 App ID 里）先建 `iCloud.ca.carelolgue.app`（Description: Carelogue）→ 回 App IDs 新建 `ca.carelolgue.app`（勾 iCloud + CloudKit，Configure 里勾上刚建的容器） ③ CC 改 repo（开工 prompt 已发）④ Xcode Run 验证（报错兜底：账号移除重加 / 清 DerivedData）⑤ 之后才给太太和各设备装
    - [ ] 建 app 记录 + 订阅产品（id 已定：`…Carelogue.plus.monthly`，$3.99/月，中英本地化；**Family Sharing 开关一并打开——你们各自 Apple ID 但太太在家庭组里：这是她共享你订阅的必经路径**）
    - [ ] 签 Paid Apps 协议；填银行账户 + 税表
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
