@@ -20,7 +20,7 @@
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
    - [ ] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
 5. [ ] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
-6. [ ] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）——**卸装之前 bundle id 迁移必须已完成**（换 id = 新 app，旧 id 数据不会跟过去）
+6. [ ] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）——**安装之前 bundle id 迁移必须已完成**（换 id = 新 app，旧 id 数据不会跟过去）；Xcode 直装需她手机**一次性开 Developer Mode**（设置 → 隐私与安全性 → 开发者模式 → 重启），走 TestFlight 则免此步
 
 ## C. 现在就能做（不等认证）
 
