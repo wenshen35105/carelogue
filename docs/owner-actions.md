@@ -18,7 +18,7 @@
      - ⚠️ **拼写以 `carelogue` 为准**（域名 carelogue.ca）——此前文档里的 `ca.carelolgue.app` 是笔误（多一个 `l`），已订正。在 Apple 后台建 identifier 时务必照订正后的拼写填，**建完即锁定**
      - repo 侧已全部对齐：app `ca.carelogue.app`、UI tests `ca.carelogue.app.uitests`、iCloud container `iCloud.ca.carelogue.app`、订阅 product id `ca.carelogue.app.plus.monthly`、server 的 `BUNDLE_ID` / `PRODUCT_IDS`
    - [ ] 建 app 记录（**SKU 填 `ca.carelogue.app`**；名字先试 `Carelogue`，被占则加副题，如 `Carelogue: Care Log`）+ 订阅产品（id：`ca.carelogue.app.plus.monthly`；$3.99/月，中英本地化——文案：Display Name `Carelogue Plus` / EN 描述 `AI explanations for your health records` / 中文描述 `用 AI 看懂你的健康记录`；**Introductory Offer 配法：订阅产品页 → Introductory Offers → Set Up → Type=`Free Trial`、Duration=`1 week`、Eligibility=`New Subscribers`、Countries=`Select All`**；multiseat 选 **No**；**Family Sharing 开关一并打开——你们各自 Apple ID 但太太在家庭组里：这是她共享你订阅的必经路径**）
-   - [ ] 签 Paid Apps 协议；填银行账户 + 税表
+   - [ ] 签 Paid Apps 协议；填银行账户 + 税表（路径：ASC → **Business**（旧名 Agreements, Tax, and Banking）→ Agreements → **Paid Apps** 行 → **View and Agree to Terms**；随后 Contacts / Bank Accounts / Tax Forms 三件套填完才变绿）
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
    - [ ] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
 5. [ ] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
