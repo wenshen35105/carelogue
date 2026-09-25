@@ -59,6 +59,7 @@
   ```
   然后在 Debug 构建的 **设置 → 内部通道 · Internal Access** 里粘贴同一串 → 显示「已解锁」即可免订阅用 AI 解释。
   凭据只落在那台设备的 Keychain 里，不进代码库、不进安装包；**公开发布前 `npx wrangler secret delete INTERNAL_ACCESS_KEY`**（已写进 T37 核对项）。
+- [ ] **旧数据迁移**（你手机上有真实记录；换 id 前处理）——① **保命备份（先做）**：Xcode → Window → Devices and Simulators → 选 iPhone → 选旧 Carelogue → 右键 **Download Container** → 存好 `.xcappdata` ② 装新版（**旧 app 先别删**）③ 试 Upload Container 把备份灌进新版（零代码路径）④ 不行 → CC 写一次性导出/导入（prompt 见 chat 2026-09-24）
 - [ ] **真机验一次面诊录音**（T32，只有真机能验）：装上 Debug 构建 → 任一「就诊」记录 → 开始录音 → 说两分钟 → 完成 → 看本地转写出不出文字 → 整理成总结。
   重点看两件事：① 中英混着说（"胎心 152，NT ultrasound"）转写准不准 ② 一小时录音的体积（预期 ≈ 11MB）。
   **按卡内验收**：最好就是下次产检真录一次，太太一起看看总结和「我的疑问」大字版能不能用。
