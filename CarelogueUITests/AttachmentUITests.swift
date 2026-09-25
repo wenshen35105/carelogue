@@ -80,14 +80,7 @@ final class AttachmentUITests: CarelogueUITestCase {
         filesButton.tap()
 
         let oversize = app.cells["report_oversize, pdf"]
-        if !oversize.waitForExistence(timeout: 5) {
-            app.tabBars.buttons["Browse"].firstMatch.tap()
-            app.tabBars.buttons["Browse"].firstMatch.tap()
-            let onMyIPhone = app.cells["DOC.sidebar.item.On My iPhone"]
-            waitFor(onMyIPhone, timeout: 10)
-            onMyIPhone.tap()
-        }
-        waitFor(oversize, timeout: 10)
+        revealInDocumentPicker(oversize)
         let settled = expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: oversize)
         wait(for: [settled], timeout: 10)
         sleep(1)
@@ -128,20 +121,11 @@ final class AttachmentUITests: CarelogueUITestCase {
         tapFirstExisting([app.buttons["Add"], app.buttons["添加"], app.navigationBars.buttons["Add"]])
         waitForCount(editorRows, 2, timeout: 15)
 
-        // Files: pick two PDFs from On My iPhone. The picker reopens at its
-        // last location, so only navigate there when the files aren't shown.
+        // Files: pick two PDFs from On My iPhone.
         app.buttons["从文件添加（PDF / 图片）"].tap()
         let reportA = app.cells["report_a, pdf"]
         let reportB = app.cells["report_b, pdf"]
-        if !reportA.waitForExistence(timeout: 5) {
-            app.tabBars.buttons["Browse"].firstMatch.tap()
-            app.tabBars.buttons["Browse"].firstMatch.tap() // second tap pops to the root list
-            let onMyIPhone = app.cells["DOC.sidebar.item.On My iPhone"]
-            waitFor(onMyIPhone, timeout: 10)
-            onMyIPhone.tap()
-        }
-        // Wait out the navigation transition: taps during it are dropped.
-        waitFor(reportA, timeout: 10)
+        revealInDocumentPicker(reportA)
         let settled = expectation(for: NSPredicate(format: "isHittable == true"), evaluatedWith: reportB)
         wait(for: [settled], timeout: 10)
         sleep(1)

@@ -108,6 +108,33 @@ class CarelogueUITestCase: XCTestCase {
         XCTFail("None of the candidates appeared: \(candidates)", file: file, line: line)
     }
 
+    /// Steers the system document picker to "On My iPhone" - where
+    /// scripts/ui-test.sh drops the fixture PDFs - and waits for `item`.
+    ///
+    /// The picker reopens wherever it was last left, per bundle id, so it only
+    /// needs steering when it comes up cold: a fresh id lands on Recents,
+    /// which is empty. Its tab labels and even its sidebar item identifiers
+    /// are localized, so pick the tab by position and try both spellings.
+    func revealInDocumentPicker(_ item: XCUIElement, timeout: TimeInterval = 10,
+                                file: StaticString = #filePath, line: UInt = #line) {
+        if item.waitForExistence(timeout: 5) { return }
+
+        let tabBar = app.tabBars["DOC.browsingModeTabBar"]
+        XCTAssertTrue(tabBar.waitForExistence(timeout: timeout),
+                      "Document picker never appeared", file: file, line: line)
+        // Recents / Shared / Browse - Browse is always the last one.
+        let browse = tabBar.buttons.element(boundBy: tabBar.buttons.count - 1)
+        browse.tap()
+        browse.tap() // the second tap pops to the root location list
+
+        let locations = ["On My iPhone", "我的iPhone", "我的 iPhone"]
+            .map { app.cells["DOC.sidebar.item.\($0)"] }
+        tapFirstExisting(locations, timeout: timeout, file: file, line: line)
+
+        // Wait out the navigation transition: taps during it are dropped.
+        waitFor(item, timeout: timeout, file: file, line: line)
+    }
+
     // MARK: - Common flows
 
     /// Picks the label for the language this test runs in. Seeded data keeps
