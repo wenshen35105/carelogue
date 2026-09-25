@@ -20,7 +20,7 @@
         {
           "adHocOffers" : [],
           "codeOffers" : [],
-          "displayPrice" : "4.99",
+          "displayPrice" : "3.99",
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "21500002",
@@ -37,7 +37,7 @@
               "locale" : "zh_CN"
             }
           ],
-          "productID" : "com.jiajinlinpersonalteam.Carelogue.plus.monthly",
+          "productID" : "ca.carelogue.app.plus.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Carelogue Plus Monthly",
           "subscriptionGroupID" : "21500001",

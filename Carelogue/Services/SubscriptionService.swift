@@ -12,7 +12,7 @@ import StoreKit
 final class SubscriptionService {
     static let shared = SubscriptionService()
 
-    static let productID = "com.jiajinlinpersonalteam.Carelogue.plus.monthly"
+    static let productID = "ca.carelogue.app.plus.monthly"
 
     enum Status: Equatable {
         /// Before the first entitlement check finishes.

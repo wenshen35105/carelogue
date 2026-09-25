@@ -11,8 +11,8 @@ const worker = createWorker({});
 
 function baseEnv(overrides = {}) {
   return {
-    BUNDLE_ID: 'com.jiajinlinpersonalteam.Carelogue',
-    PRODUCT_IDS: 'com.jiajinlinpersonalteam.Carelogue.plus.monthly',
+    BUNDLE_ID: 'ca.carelogue.app',
+    PRODUCT_IDS: 'ca.carelogue.app.plus.monthly',
     APPLE_ROOT_CA_G3_SHA256: rootFingerprint,
     ALLOW_SANDBOX: '1',
     DEEPINFRA_API_KEY: 'test-key',

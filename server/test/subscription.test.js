@@ -6,8 +6,8 @@ import { consume, consumeAll } from '../src/ratelimit.js';
 import { activePayload, fakeKV } from './helpers.js';
 
 const rules = {
-  bundleId: 'com.jiajinlinpersonalteam.Carelogue',
-  productIds: ['com.jiajinlinpersonalteam.Carelogue.plus.monthly'],
+  bundleId: 'ca.carelogue.app',
+  productIds: ['ca.carelogue.app.plus.monthly'],
   allowSandbox: true,
 };
 

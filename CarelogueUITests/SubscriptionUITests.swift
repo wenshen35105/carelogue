@@ -72,7 +72,7 @@ final class SubscriptionUITests: CarelogueUITestCase {
 
         let price = id("paywall.price")
         waitFor(price, timeout: 10)
-        XCTAssertTrue(price.label.contains("4.99"), "Unexpected price: \(price.label)")
+        XCTAssertTrue(price.label.contains("3.99"), "Unexpected price: \(price.label)")
     }
 
     /// T27 acceptance: an expired subscription degrades to the locked card
@@ -96,7 +96,7 @@ final class SubscriptionUITests: CarelogueUITestCase {
         waitFor(id("explain.summary"), timeout: 20)
 
         // Expire it behind the app's back, then come back to the report.
-        try? storeKit.expireSubscription(productIdentifier: "com.jiajinlinpersonalteam.Carelogue.plus.monthly")
+        try? storeKit.expireSubscription(productIdentifier: "ca.carelogue.app.plus.monthly")
         relaunch()
         openSeededEncounter()
 

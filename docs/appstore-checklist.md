@@ -14,7 +14,7 @@
 | 提供「恢复购买」 | ✅ | 订阅页页脚、设置页订阅卡、未订阅解释卡各一处 |
 | 提供「管理订阅」入口 | ✅ | 设置页订阅卡 → `apps.apple.com/account/subscriptions` |
 | 订阅只锁增值功能，核心功能免费 | ✅ | 锁只作用于生成新解释：记录 / 附件 / 预览 / 导出 / 已生成的解释都不受影响（`ExplanationCard` 的 locked 分支 + `SubscriptionUITests`）|
-| App Store Connect 建好订阅产品与本地化 | ⏳ | 产品 id `com.jiajinlinpersonalteam.Carelogue.plus.monthly`（与 `wrangler.toml` 的 `PRODUCT_IDS` 一致）|
+| App Store Connect 建好订阅产品与本地化 | ⏳ | 产品 id `ca.carelogue.app.plus.monthly`（与 `wrangler.toml` 的 `PRODUCT_IDS` 一致）|
 | Paid Apps 协议、银行与税表 | ⏳ | App Store Connect |
 
 ## 隐私（Guideline 5.1）

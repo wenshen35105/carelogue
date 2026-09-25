@@ -5,8 +5,8 @@ workers_dev = false
 
 # Fill these in before the first deploy (see README.md).
 [vars]
-BUNDLE_ID = "com.jiajinlinpersonalteam.Carelogue"
-PRODUCT_IDS = "com.jiajinlinpersonalteam.Carelogue.plus.monthly"
+BUNDLE_ID = "ca.carelogue.app"
+PRODUCT_IDS = "ca.carelogue.app.plus.monthly"
 # The DeepSeek model id exactly as deepinfra.com/models lists it.
 DEEPINFRA_MODEL = "deepseek-ai/DeepSeek-V4-Flash"
 # shasum -a 256 of Apple Root CA G3 in DER form — see README.

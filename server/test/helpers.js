@@ -60,8 +60,8 @@ export function activePayload(overrides = {}) {
   return {
     transactionId: '2000000000000001',
     originalTransactionId: '2000000000000001',
-    bundleId: 'com.jiajinlinpersonalteam.Carelogue',
-    productId: 'com.jiajinlinpersonalteam.Carelogue.plus.monthly',
+    bundleId: 'ca.carelogue.app',
+    productId: 'ca.carelogue.app.plus.monthly',
     type: 'Auto-Renewable Subscription',
     purchaseDate: Date.now() - 1_000,
     expiresDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
