@@ -11,7 +11,7 @@ PRODUCT_IDS = "ca.carelogue.app.plus.monthly"
 DEEPINFRA_MODEL = "deepseek-ai/DeepSeek-V4.1-Flash"
 # shasum -a 256 of Apple Root CA G3 in DER form — see README.
 APPLE_ROOT_CA_G3_SHA256 = "63343abfb89a6a03ebb57e9b3f5fa7be7c4f5c756f3017b3a8c488c3653e9179"
-# "1" while testing with sandbox purchases; remove before the public launch.
+# "1" during testing and App Review (reviewers buy via sandbox); revisit after launch — never turn it off before review.
 ALLOW_SANDBOX = "1"
 # Development only: point the provider call at any OpenAI-compatible endpoint
 # (`wrangler dev --var PROVIDER_ENDPOINT:... --var DEEPINFRA_API_KEY:...`), so
