@@ -38,7 +38,10 @@ struct LogDetailView: View {
 
                 if log.kind == .encounter, hasLocationOrDoctor {
                     card {
-                        VStack(alignment: .leading, spacing: 6) {
+                        // A grid so the label column is as wide as its
+                        // longest label: a fixed 40pt fit 地点/医生 but broke
+                        // "Location" into "Loca-tion" (T41 English shots).
+                        Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 6) {
                             if let location = log.location, !location.isEmpty {
                                 labeledRow(label: String(localized: "地点"), value: location)
                             }
@@ -174,11 +177,12 @@ struct LogDetailView: View {
     }
 
     private func labeledRow(label: String, value: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
+        GridRow(alignment: .top) {
             Text(label)
                 .font(.caption)
                 .foregroundStyle(Theme.inkSecondary)
-                .frame(width: 40, alignment: .leading)
+                .fixedSize()
+                .frame(minWidth: 40, alignment: .leading)
             Text(value)
                 .foregroundStyle(Theme.inkPrimary)
         }

@@ -126,22 +126,40 @@ struct ExplanationCard: View {
                 .frame(width: 32, height: 32)
                 .background(Circle().fill(Theme.accentTint))
             // Explained: the provider pill takes the gloss's place so the
-            // title never truncates.
-            BilingualTitle(primary: String(localized: "白话解释（AI 生成）"),
-                           secondary: model == nil ? AppLanguage.gloss(String(localized: "AI Explained")) : nil)
-                .layoutPriority(1)
-            Spacer(minLength: 6)
-            if let model {
-                // The model id as the relay reported it ("vendor/name" -> name),
-                // so the card says what actually answered.
-                Text(verbatim: model.split(separator: "/").last.map(String.init) ?? model)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(Theme.accent)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 4)
-                    .background(Capsule().stroke(Theme.accent.opacity(0.4), lineWidth: 1))
+            // title never truncates. When title and pill don't share a row
+            // (the longer English title), the pill moves under the title
+            // rather than truncating either one.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 10) {
+                    headerTitle(model: model)
+                    Spacer(minLength: 6)
+                    if let model { modelPill(model) }
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    headerTitle(model: model)
+                    if let model { modelPill(model) }
+                }
             }
         }
+    }
+
+    private func headerTitle(model: String?) -> some View {
+        BilingualTitle(primary: String(localized: "白话解释（AI 生成）"),
+                       secondary: model == nil ? AppLanguage.gloss(String(localized: "AI Explained")) : nil)
+            .fixedSize(horizontal: true, vertical: false)
+    }
+
+    /// The model id as the relay reported it ("vendor/name" -> name), so the
+    /// card says what actually answered.
+    private func modelPill(_ model: String) -> some View {
+        Text(verbatim: model.split(separator: "/").last.map(String.init) ?? model)
+            .font(.caption.weight(.medium))
+            .foregroundStyle(Theme.accent)
+            .lineLimit(1)
+            .fixedSize()
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(Capsule().stroke(Theme.accent.opacity(0.4), lineWidth: 1))
     }
 
     /// Mutually exclusive attachment chips (thumbnail + name + ✓ if explained).
