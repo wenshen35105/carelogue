@@ -41,12 +41,35 @@ final class ShareAppDelegate: NSObject, UIApplicationDelegate {
 /// Receives the accepted share when the user taps the invite link, and routes
 /// it into ShareChannel. Import failures post `ShareChannel.didFailImport` so
 /// the list can say so — acceptance itself has no UI of ours on screen.
+///
+/// Two doors, both needed: a running app gets the window-scene callback; an
+/// app launched *by* the tap gets the metadata in the connection options
+/// instead, and the callback never fires. (The callback's Swift name is
+/// `windowScene(_:…)` — a `scene(_:…)` spelling compiles but is never called.)
 final class ShareSceneDelegate: NSObject, UIWindowSceneDelegate {
-    func scene(_ scene: UIScene, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata) {
-        guard let context = CarelogueApp.modelContainer?.mainContext else { return }
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
+        // SwiftUI still builds the window; this only picks up a cold-launch
+        // invite.
+        if let metadata = connectionOptions.cloudKitShareMetadata {
+            accept(metadata)
+        }
+    }
+
+    func windowScene(_ windowScene: UIWindowScene,
+                     userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata) {
+        accept(cloudKitShareMetadata)
+    }
+
+    private func accept(_ metadata: CKShare.Metadata) {
         Task { @MainActor in
+            // On a cold launch the store may be a moment behind the scene.
+            while CarelogueApp.modelContainer == nil {
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            guard let context = CarelogueApp.modelContainer?.mainContext else { return }
             do {
-                try await ShareChannel.accept(metadata: cloudKitShareMetadata, context: context)
+                try await ShareChannel.accept(metadata: metadata, context: context)
             } catch {
                 NotificationCenter.default.post(
                     name: ShareChannel.didFailImport, object: nil,

@@ -267,7 +267,7 @@ enum ShareChannel {
 
         let zoneID = ownZoneID(for: journey)
         let database = container.privateCloudDatabase
-        try await database.modifyRecordZones(saving: [CKRecordZone(zoneID: zoneID)], deleting: [])
+        _ = try await database.modifyRecordZones(saving: [CKRecordZone(zoneID: zoneID)], deleting: [])
 
         var records: [CKRecord] = [makeRecord(for: journey, zoneID: zoneID)]
         for log in journey.allLogs {
