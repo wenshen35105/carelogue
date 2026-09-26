@@ -20,13 +20,13 @@
    - [x] 建 app 记录（**SKU 填 `ca.carelogue.app`**；名字先试 `Carelogue`，被占则加副题，如 `Carelogue: Care Log`）+ 订阅产品（id：`ca.carelogue.app.plus.monthly`；$3.99/月，中英本地化——文案：Display Name `Carelogue Plus` / EN 描述 `AI explanations for your health records` / 中文描述 `用 AI 看懂你的健康记录`；**Introductory Offer 配法：订阅产品页 → Introductory Offers → Set Up → Type=`Free Trial`、Duration=`1 week`、Eligibility=`New Subscribers`、Countries=`Select All`**；multiseat 选 **No**；**Family Sharing 开关一并打开——你们各自 Apple ID 但太太在家庭组里：这是她共享你订阅的必经路径**）
    - [x] 签 Paid Apps 协议；填银行账户 + 税表（路径：ASC → **Business**（旧名 Agreements, Tax, and Banking）→ Agreements → **Paid Apps** 行 → **View and Agree to Terms**；随后 Contacts / Bank Accounts / Tax Forms 三件套填完才变绿）
      - **Canada Tax Form 细节**：要 **BN（9 位数字）+ RT（4 位数字，如 0001）**——**个人无公司也要**（⚠️ 这是 CRA **税务账号**、**不是注册公司**；注册表不问雇主、与 IBM 无关）：CRA 官网搜 **Business Registration Online**（用 SIN 在线免费办；安省用真名经营无需先做省注册）→ 回来填（BN 填 9 位、RT 只填 4 位数字，**别带字母**）→ Preview → **Certify & Submit**；同页 **U.S. Tax Information 人人都要填**（即使不在美国）。注册后按期做 GST/HST 申报（App Store 部分由 Apple 代收代缴——即此表作用；首次申报建议找会计过一遍）
-   - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
-   - [ ] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
+   - [x] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
+   - [x] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
 5. [ ] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
 6. [x] **CloudKit schema 部署到 Production** ✅ 2026-09-25——CloudKit Console → 容器 `iCloud.ca.carelogue.app` → Development 环境 → Deploy Schema Changes → 目标 Production。
    **这是 TestFlight 的前置条件，不是发布前才做的事**：TestFlight / App Store 构建走的是 **Production** 容器（Release 产物的 `com.apple.developer.icloud-container-environment` = `Production`），而 Production 里没有 schema 时**不会自动建记录类型**（自动建只发生在 Development），结果是本地能存、同步静默失败。数据不丢，但同步这块等于没测。
 7. [x] **TestFlight 首个构建** ✅ 2026-09-25 上传 `1.0 (1)`（流程见下方 §E）
-8. [ ] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）。走 TestFlight 免开 Developer Mode（Xcode 直装才需要）。顺序：你自己先装一遍跑通 Smoke + 同步，再邀请她
+8. [x] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）。走 TestFlight 免开 Developer Mode（Xcode 直装才需要）。顺序：你自己先装一遍跑通 Smoke + 同步，再邀请她
 
 ## C. 现在就能做（不等认证）
 

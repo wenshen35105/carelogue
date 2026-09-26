@@ -14,20 +14,20 @@
 | 提供「恢复购买」 | ✅ | 订阅页页脚、设置页订阅卡、未订阅解释卡各一处 |
 | 提供「管理订阅」入口 | ✅ | 设置页订阅卡 → `apps.apple.com/account/subscriptions` |
 | 订阅只锁增值功能，核心功能免费 | ✅ | 锁只作用于生成新解释：记录 / 附件 / 预览 / 导出 / 已生成的解释都不受影响（`ExplanationCard` 的 locked 分支 + `SubscriptionUITests`）|
-| App Store Connect 建好订阅产品与本地化 | ⏳ | 产品 id `ca.carelogue.app.plus.monthly`（与 `wrangler.toml` 的 `PRODUCT_IDS` 一致）|
-| Paid Apps 协议、银行与税表 | ⏳ | App Store Connect |
+| App Store Connect 建好订阅产品与本地化 | ✅ | 产品 id `ca.carelogue.app.plus.monthly`（与 `wrangler.toml` 的 `PRODUCT_IDS` 一致）|
+| Paid Apps 协议、银行与税表 | ✅ | App Store Connect |
 
 ## 隐私（Guideline 5.1）
 
 | 项 | 状态 | 落点 |
 |---|---|---|
 | 隐私政策链接在 App 内可达 | ✅ | 设置页页脚、同意弹窗、订阅页 |
-| 隐私政策托管在可访问的 URL | ✅ / ⏳ | 页面已由 Worker 直出（`/privacy`，从 `docs/legal/privacy-policy.md` 渲染）；剩域名路由：`wrangler.toml` 三条 `[[routes]]` 取消注释 + redeploy |
+| 隐私政策托管在可访问的 URL | ✅ / ✅ | 页面已由 Worker 直出（`/privacy`，从 `docs/legal/privacy-policy.md` 渲染）；剩域名路由：`wrangler.toml` 三条 `[[routes]]` 取消注释 + redeploy |
 | 使用条款（EULA）可达 | ✅ / ⏳ | 同上（`/terms`，源自 `docs/legal/terms-of-service.md`）|
 | 首次使用前的数据流向说明与同意 | ✅ | `ConsentSheet`（每台设备一次，可撤回）|
 | 相机权限用途说明（双语）| ✅ | `InfoPlist.xcstrings` 的 `NSCameraUsageDescription` |
 | 不收集与功能无关的数据 | ✅ | 无账号、无分析 SDK、无广告标识符 |
-| App Store Connect 隐私问卷 | ⏳ | 按隐私政策填：不收集可识别个人的数据；健康数据仅存本机/用户 iCloud |
+| App Store Connect 隐私问卷 | ✅ | 按隐私政策填：不收集可识别个人的数据；健康数据仅存本机/用户 iCloud |
 
 ## AI 相关披露
 
