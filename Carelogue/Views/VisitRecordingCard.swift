@@ -243,13 +243,18 @@ struct VisitRecordingCard: View {
     }
 
     /// One wording everywhere (design-review T32 note 1): the audio syncs with
-    /// the user's own iCloud, and never goes to the AI.
+    /// the user's own iCloud, and never goes to the AI. T39: without an iCloud
+    /// account nothing syncs, so the note must not claim iCloud storage —
+    /// it says "on this device" instead, the same distinction Settings makes.
     private var privacyNote: some View {
-        Label("录音保存在你的设备与 iCloud 私有库；音频不进 AI——在这台设备上转写，只把文字送去整理",
+        Label(CloudSync.isSyncing
+              ? String(localized: "录音保存在你的设备与 iCloud 私有库；音频不进 AI——在这台设备上转写，只把文字送去整理")
+              : String(localized: "录音只保存在这台设备上；音频不进 AI——在这台设备上转写，只把文字送去整理"),
               systemImage: "lock")
             .font(.caption)
             .foregroundStyle(Theme.inkSecondary)
             .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier("recording.privacyNote")
     }
 
     // MARK: - Actions

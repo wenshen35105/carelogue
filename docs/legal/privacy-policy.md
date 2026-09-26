@@ -1,6 +1,6 @@
 # Carelogue 隐私政策 · Privacy Policy
 
-- **生效日期 Effective date**：2026/09/23
+- **生效日期 Effective date**：2026/09/25
 - **运营方 Operator**：Jiajin Lin · Canada · Ontario
 - **联系方式 Contact**：support@carelogue.ca
 
@@ -21,13 +21,25 @@ iCloud 里；只有在你主动点击「白话解释」时，这份报告里**�
 
 | 数据 | 存在哪里 | 谁能看到 |
 |---|---|---|
-| 旅程、记录、测量、备注 | 你的设备；开启 iCloud 后同步到你自己的 iCloud 私有数据库 | 只有你（我们没有访问权限） |
-| 附件（照片、PDF） | 同上 | 只有你 |
+| 旅程、记录、测量、备注 | 你的设备；开启 iCloud 后同步到你自己的 iCloud 私有数据库 | 只有你；你主动共享的旅程，受邀者也能看到（我们没有访问权限） |
+| 附件（照片、PDF、录音） | 同上 | 同上 |
 | 档案（过敏、长期用药等） | 同上 | 只有你 |
 | AI 解释结果 | 同上（缓存在本机记录里） | 只有你 |
 
 iCloud 同步由 Apple 提供，适用 Apple 的隐私政策；数据存放在你个人的 iCloud 私有
 数据库中，我们无法读取。
+
+### 共享功能
+
+你可以把**某一段旅程**通过你自己的 iCloud 共享给家人：在时间线右上角点共享图标，
+邀请对方（对方需要登录 iCloud）。关于共享：
+
+- 共享以「旅程」为单位：这段旅程内的记录、附件与录音都会同步给受邀者；你的其他
+  旅程和档案（过敏、长期用药等）不会共享。
+- 双向同步由 Apple 的 iCloud 完成，不经我们的任何服务器；我们无法读取内容。
+- 受邀者和你一样可以查看与编辑；两边同时改同一条记录时，保留较新的一条。
+- 任何一方都可以停止共享。停止后，对方设备上已有的副本会保留，但不再更新。
+- 你清空或删除本机数据，不影响对方设备上已有的副本。
 
 ### 使用 AI 解释时会发生什么
 
@@ -100,13 +112,31 @@ no account system; there is nothing to sign up for.
 
 | Data | Where it lives | Who can see it |
 |---|---|---|
-| Journeys, records, measurements, notes | Your device; with iCloud on, your own private iCloud database | Only you — we have no access |
-| Attachments (photos, PDFs) | Same | Only you |
+| Journeys, records, measurements, notes | Your device; with iCloud on, your own private iCloud database | Only you — and, for a journey you deliberately share, the person you invited (we have no access) |
+| Attachments (photos, PDFs, recordings) | Same | Same |
 | Profile (allergies, medications, …) | Same | Only you |
 | AI explanations | Same (cached with the record) | Only you |
 
 iCloud syncing is provided by Apple under Apple's privacy policy; the data sits
 in your personal private database, which we cannot read.
+
+### Sharing
+
+You can share **a single journey** with family through your own iCloud: tap the
+share icon at the top right of a timeline and invite someone (they need to be
+signed in to iCloud). Notes:
+
+- Sharing is per journey: the records, attachments and recordings inside that
+  journey sync to the invitee; your other journeys and your profile (allergies,
+  medications, …) are not shared.
+- Two-way sync runs through Apple's iCloud and none of our servers; we cannot
+  read the content.
+- The invitee can view and edit, same as you; if you both edit the same record,
+  the newer one wins.
+- Either side can stop sharing. The copy already on the other device stays
+  there but stops updating.
+- Erasing your local data (or deleting the app) does not remove copies already
+  on the other person's device.
 
 ### What happens when you use an AI explanation
 

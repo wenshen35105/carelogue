@@ -16,11 +16,24 @@ enum CloudSync {
         case local
     }
 
+    #if DEBUG
+    /// -uitest-no-icloud: pin the signed-out state, so the share fallback
+    /// (T39) and the on-device copy paths are testable even on a simulator
+    /// that happens to be signed in.
+    static var forcedNoAccount = false
+    /// -uitest-icloud-account: pin the signed-in state for the flip side.
+    static var forcedAccount = false
+    #endif
+
     /// True when an iCloud account is signed in on this device. Without one,
     /// the CloudKit store still works locally but nothing syncs — which is
     /// exactly what Settings needs to say.
     static var hasICloudAccount: Bool {
-        FileManager.default.ubiquityIdentityToken != nil
+        #if DEBUG
+        if forcedNoAccount { return false }
+        if forcedAccount { return true }
+        #endif
+        return FileManager.default.ubiquityIdentityToken != nil
     }
 
     static var isSyncing: Bool { mode == .cloudKit && hasICloudAccount }

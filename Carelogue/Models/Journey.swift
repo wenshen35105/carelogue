@@ -36,6 +36,28 @@ final class Journey {
     var createdAt: Date = Date.now
     var updatedAt: Date = Date.now
 
+    // MARK: - CKShare metadata (T39, route B)
+    //
+    // All optional-with-defaults so the migration stays additive (schema
+    // freeze: sanctioned by the T39 card itself). They describe the separate
+    // CKShare channel, never the SwiftData/CloudKit store the journey lives
+    // in — see ShareChannel for how they are used.
+    //
+    //   shareRecordID       CKRecord.ID.recordName of the CKShare record
+    //   ownerID             recordName of the share owner's user record
+    //   shareZoneOwnerName  ownerName of the custom zone (== owner's user
+    //                       record name; the participant side needs it to
+    //                       address the zone in the shared database)
+    //   isShared            the channel is open: push and pull are active
+    //   lastSharedUpdatedAt when the last completed sync stamped the journey;
+    //                       a local `updatedAt` newer than this means "dirty,
+    //                       not pushed yet" (the push/pull diff is built on it)
+    var shareRecordID: String? = nil
+    var ownerID: String? = nil
+    var shareZoneOwnerName: String? = nil
+    var isShared: Bool = false
+    var lastSharedUpdatedAt: Date? = nil
+
     /// CloudKit requires every to-many relationship to be optional (T23), so
     /// the stored property is `[Log]?`; read it through `allLogs` and change it
     /// through `add(_:)` / `removeLog(id:)`, which also keep views observing

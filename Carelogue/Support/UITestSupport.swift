@@ -19,6 +19,16 @@ import UIKit
 ///                                 explained lab report and a measurement
 ///                                 series, plus an archived wisdom-tooth
 ///                                 Journey and a filled Profile
+///   -uitest-no-icloud             pin CloudSync to "signed out of iCloud"
+///                                 (T39: the share fallback and the on-device
+///                                 recording note)
+///   -uitest-icloud-account        pin CloudSync to "signed in" for the copy
+///                                 that mentions iCloud
+///   -uitest-fake-share <state>    pin the first active Journey's CKShare
+///                                 metadata without an account (T39): active |
+///                                 ended. ShareChannel.simulated goes on, so
+///                                 no network path runs and the share UI
+///                                 renders purely from model fields
 ///   -uitest-subscription <state>  pin Carelogue Plus to active | none, so the
 ///                                 paywall and the locked card can be driven
 ///                                 without the App Store
@@ -61,6 +71,12 @@ enum UITestSupport {
         if let key = ProcessInfo.processInfo.environment["INTERNAL_ACCESS_KEY"], !key.isEmpty {
             InternalAccess.setCredential(key)
         }
+        if arguments.contains("-uitest-no-icloud") {
+            CloudSync.forcedNoAccount = true
+        }
+        if arguments.contains("-uitest-icloud-account") {
+            CloudSync.forcedAccount = true
+        }
         if let index = arguments.firstIndex(of: "-uitest-fake-ai"), index + 1 < arguments.count {
             fakeAIService = FakeAIService(mode: arguments[index + 1])
         }
@@ -84,6 +100,12 @@ enum UITestSupport {
                 seedVisit(in: journey, context: context,
                           withRecording: arguments.contains("-uitest-seed-recording"))
             }
+        }
+        // After seeding, so the pinned journey exists to pin. (Also after
+        // -uitest-seed-demo, whose first active journey is the one to stamp.)
+        if let index = arguments.firstIndex(of: "-uitest-fake-share"), index + 1 < arguments.count {
+            ShareChannel.simulated = true
+            fakeShare(mode: arguments[index + 1], context: context)
         }
         try? context.save()
         if arguments.contains("-selftest-extract") {
@@ -168,10 +190,19 @@ enum UITestSupport {
     /// Journey in full swing, so the shots need a Journey in full swing too.
     /// Everything here goes through the normal models — no schema additions,
     /// and the app cannot tell this apart from data the user typed.
-    static let demoJourneyName = "孕期档案"
-    static let demoArchivedJourneyName = "拔智齿记录"
+    /// The store follows the launch language (T41: the English App Store
+    /// listing needs English content, not Chinese records under English UI).
+    /// Log types stay the stored Chinese keys — the app localises those.
+    private static func l(_ zh: String, _ en: String) -> String {
+        AppLanguage.isChinese ? zh : en
+    }
+    static var demoJourneyName: String { l("孕期档案", "Our First Baby") }
+    static var demoArchivedJourneyName: String { l("拔智齿记录", "Wisdom Tooth") }
     /// The explained attachment's timeline card, used to open it in tests.
-    static let demoReportNote = "孕早期综合筛查 First Trimester Screen：血检 + NT 超声，报告当天出。"
+    static var demoReportNote: String {
+        l("孕早期综合筛查 First Trimester Screen：血检 + NT 超声，报告当天出。",
+          "First Trimester Screen: blood work + NT ultrasound, results the same day.")
+    }
 
     private static func seedDemo(_ context: ModelContext) {
         let calendar = Calendar.current
@@ -186,12 +217,14 @@ enum UITestSupport {
         context.insert(pregnancy)
 
         add(Log(kind: .encounter, type: "体检", occurredAt: day(11),
-                note: "大排畸超声检查；记得带上 CareCard (PHN) 与 NT 报告纸质件。",
-                location: "妇幼保健院 产科二诊室", doctor: "Dr. Chen"),
+                note: l("大排畸超声检查；记得带上 CareCard (PHN) 与 NT 报告纸质件。",
+                        "20-week anatomy scan. Bring the CareCard (PHN) and the paper NT report."),
+                location: l("妇幼保健院 产科二诊室", "BC Women's Hospital, OB Clinic 2"), doctor: "Dr. Chen"),
             to: pregnancy, context: context)
 
         add(Log(kind: .quick, type: "症状", occurredAt: day(-1, hour: 22, minute: 15),
-                note: "晚上腰又开始酸，坐久了明显。垫了孕妇枕侧睡感觉好一点。"),
+                note: l("晚上腰又开始酸，坐久了明显。垫了孕妇枕侧睡感觉好一点。",
+                        "Lower back ached again tonight, worse after sitting. Side-sleeping with the pregnancy pillow helped.")),
             to: pregnancy, context: context)
 
         let report = Log(kind: .encounter, type: "验血", occurredAt: day(-3, hour: 9, minute: 30),
@@ -218,7 +251,8 @@ enum UITestSupport {
         // and the questions are all in place, because that is the state the
         // documentation screenshots need to show.
         let recordedVisit = Log(kind: .encounter, type: "面诊", occurredAt: day(-7),
-                                note: "胎心音正常 152 bpm。下次做 NT 超声 + 血检筛查，已开具 Requisition 检查单。",
+                                note: l("胎心音正常 152 bpm。下次做 NT 超声 + 血检筛查，已开具 Requisition 检查单。",
+                                        "Fetal heart rate normal, 152 bpm. NT ultrasound + blood screening next; requisition issued."),
                                 location: "BC Women's Hospital", doctor: "Dr. Chen")
         add(recordedVisit, to: pregnancy, context: context)
         // 32:14 on the card, the way the design sheet shows it.
@@ -234,12 +268,14 @@ enum UITestSupport {
         recordedVisit.questionsJSON = demoQuestionsJSON(updatedAt: day(-7, hour: 9))
 
         add(Log(kind: .quick, type: "情绪", occurredAt: day(-12, hour: 16, minute: 40),
-                note: "第一次听到胎心，走出诊室在车里坐了十分钟才缓过来。"),
+                note: l("第一次听到胎心，走出诊室在车里坐了十分钟才缓过来。",
+                        "Heard the heartbeat for the first time. Sat in the car for ten minutes before I could drive.")),
             to: pregnancy, context: context)
 
         add(Log(kind: .encounter, type: "面诊", occurredAt: day(-21),
-                note: "电话预约，等待 12 天。OB 转诊信已由 Family Doctor 诊所确认接收。",
-                location: "Family Doctor 诊所", doctor: "Dr. Wong"),
+                note: l("电话预约，等待 12 天。OB 转诊信已由 Family Doctor 诊所确认接收。",
+                        "Booked by phone, 12-day wait. The clinic confirmed the OB referral letter was received."),
+                location: l("Family Doctor 诊所", "Family Doctor Clinic"), doctor: "Dr. Wong"),
             to: pregnancy, context: context)
 
         // Weekly weight (a real curve, not a straight line), a few blood
@@ -264,26 +300,31 @@ enum UITestSupport {
                             status: .done, createdAt: day(-146), updatedAt: day(-100))
         context.insert(tooth)
         add(Log(kind: .encounter, type: "面诊", occurredAt: day(-146),
-                note: "右下阻生智齿，拍了全景片，安排微创拔除。",
-                location: "UBC 口腔外科", doctor: "Dr. Patel"),
+                note: l("右下阻生智齿，拍了全景片，安排微创拔除。",
+                        "Impacted lower-right wisdom tooth. Panoramic X-ray taken; minimally invasive extraction booked."),
+                location: l("UBC 口腔外科", "UBC Oral Surgery"), doctor: "Dr. Patel"),
             to: tooth, context: context)
         add(Log(kind: .encounter, type: "其他", occurredAt: day(-140),
-                note: "局麻微创拔除，约 40 分钟。医嘱：24 小时内不漱口，冰敷。",
-                location: "UBC 口腔外科", doctor: "Dr. Patel"),
+                note: l("局麻微创拔除，约 40 分钟。医嘱：24 小时内不漱口，冰敷。",
+                        "Extracted under local anesthetic, about 40 minutes. No rinsing for 24 hours; ice packs."),
+                location: l("UBC 口腔外科", "UBC Oral Surgery"), doctor: "Dr. Patel"),
             to: tooth, context: context)
         add(Log(kind: .quick, type: "症状", occurredAt: day(-139, hour: 20),
-                note: "第二天肿得厉害，冰敷 + 布洛芬 400mg，晚上能睡。"),
+                note: l("第二天肿得厉害，冰敷 + 布洛芬 400mg，晚上能睡。",
+                        "Very swollen on day two. Ice + ibuprofen 400 mg; managed to sleep.")),
             to: tooth, context: context)
         add(Log(kind: .quick, type: "备注", occurredAt: day(-100, hour: 11),
-                note: "复查：牙槽窝愈合良好，可以正常咀嚼，结案。"),
+                note: l("复查：牙槽窝愈合良好，可以正常咀嚼，结案。",
+                        "Follow-up: socket healed well, chewing normally. Case closed.")),
             to: tooth, context: context)
 
         // 3. Profile, so P4 isn't an empty form in the screenshots.
         context.insert(Profile(
-            allergies: "青霉素 Penicillin — 皮疹（2016 年）",
-            medications: "叶酸 0.8mg 每日一次 · 孕期多元维生素",
-            vaccines: "流感疫苗 2025/10 · Tdap 2026/06",
-            history: "2019 右下阻生智齿拔除术，无并发症。无慢性病史。",
+            allergies: l("青霉素 Penicillin — 皮疹（2016 年）", "Penicillin — rash (2016)"),
+            medications: l("叶酸 0.8mg 每日一次 · 孕期多元维生素", "Folic acid 0.8 mg daily · prenatal multivitamin"),
+            vaccines: l("流感疫苗 2025/10 · Tdap 2026/06", "Flu shot 2025/10 · Tdap 2026/06"),
+            history: l("2019 右下阻生智齿拔除术，无并发症。无慢性病史。",
+                       "2019 lower-right wisdom tooth extraction, no complications. No chronic conditions."),
             updatedAt: day(-30)
         ))
     }
@@ -294,16 +335,17 @@ enum UITestSupport {
     /// T32: what a finished 面诊总结 looks like on a real visit.
     private static func demoVisitSummaryJSON(createdAt: Date) -> String? {
         let summary = VisitSummary(
-            saidPlain: "这次产科面诊整体顺利。医生听诊胎心 152 次/分，说处于正常范围；宫高与腹围都符合 14 周的生长曲线。聊到最近的轻微腰酸，医生说是韧带拉伸引起的常见反应，建议避免久坐、侧睡时使用孕妇枕。血常规里血红蛋白偏低一点，医生让按现在的方式继续补充，两周后复查。下次产检会做 NT 超声与血检筛查，检查单当场开具。",
+            saidPlain: l("这次产科面诊整体顺利。医生听诊胎心 152 次/分，说处于正常范围；宫高与腹围都符合 14 周的生长曲线。聊到最近的轻微腰酸，医生说是韧带拉伸引起的常见反应，建议避免久坐、侧睡时使用孕妇枕。血常规里血红蛋白偏低一点，医生让按现在的方式继续补充，两周后复查。下次产检会做 NT 超声与血检筛查，检查单当场开具。",
+                         "The prenatal visit went well. The doctor heard a fetal heart rate of 152 bpm, which is in the normal range, and fundal height and belly size both match 14 weeks. The recent mild back pain is most likely ligaments stretching — common in pregnancy; avoid sitting for long and use a pregnancy pillow when sleeping on your side. Hemoglobin was a little low, so keep taking the current supplements and recheck in two weeks. The next visit includes an NT ultrasound and blood screening; the requisition was issued today."),
             keyPoints: [
-                "两周后复查血常规，看血红蛋白有没有回升",
-                "下次产检带上 Lab Health BC 出具的纸质 NT 超声报告",
-                "腰酸时避免久坐，侧睡垫孕妇枕",
-                "出现持续腹痛或水肿加重，随时联系诊所护士",
+                l("两周后复查血常规，看血红蛋白有没有回升", "Recheck the blood count in two weeks to see if hemoglobin is up"),
+                l("下次产检带上 Lab Health BC 出具的纸质 NT 超声报告", "Bring the paper NT ultrasound report from Lab Health BC next time"),
+                l("腰酸时避免久坐，侧睡垫孕妇枕", "For back pain: avoid long sitting, side-sleep with a pregnancy pillow"),
+                l("出现持续腹痛或水肿加重，随时联系诊所护士", "Call the clinic nurse for ongoing belly pain or worsening swelling"),
             ],
             followUps: [
-                "复查血常规需要空腹吗？",
-                "下次大排畸超声的预约时间窗口是什么时候？",
+                l("复查血常规需要空腹吗？", "Do I need to fast for the blood recheck?"),
+                l("下次大排畸超声的预约时间窗口是什么时候？", "When is the booking window for the anatomy scan?"),
             ],
             model: "carelogue-relay",
             createdAt: createdAt
@@ -329,17 +371,22 @@ enum UITestSupport {
 
     private static func demoExplanationJSON(createdAt: Date) -> String? {
         let explanation = Explanation(
-            summaryPlain: "这次检查整体平稳。血红蛋白 112 g/L，略低于参考范围（115–150），孕中期常见，多是生理性血液稀释；白细胞和血小板都在正常范围内。NT 颈项透明层 1.4 mm，低于 2.5 mm 的参考上限。",
+            summaryPlain: l("这次检查整体平稳。血红蛋白 112 g/L，略低于参考范围（115–150），孕中期常见，多是生理性血液稀释；白细胞和血小板都在正常范围内。NT 颈项透明层 1.4 mm，低于 2.5 mm 的参考上限。",
+                            "Overall a steady result. Hemoglobin is 112 g/L, a little below the reference range (115–150) — common mid-pregnancy, usually because blood volume grows faster than red cells. White cells and platelets are both normal. The NT measurement is 1.4 mm, under the 2.5 mm upper limit."),
             terms: [
-                .init(original: "Hb · 血红蛋白", plain: "血液里运送氧气的蛋白，偏低时容易疲劳"),
-                .init(original: "WBC · 白细胞", plain: "免疫细胞数量，反映有没有感染"),
-                .init(original: "PLT · 血小板", plain: "帮助止血的细胞"),
-                .init(original: "NT · 颈项透明层", plain: "孕早期超声测量的胎儿颈后积液厚度"),
+                .init(original: l("Hb · 血红蛋白", "Hb · Hemoglobin"),
+                      plain: l("血液里运送氧气的蛋白，偏低时容易疲劳", "The protein that carries oxygen; low levels can make you tired")),
+                .init(original: l("WBC · 白细胞", "WBC · White blood cells"),
+                      plain: l("免疫细胞数量，反映有没有感染", "Immune cells; the count hints at infection")),
+                .init(original: l("PLT · 血小板", "PLT · Platelets"),
+                      plain: l("帮助止血的细胞", "Cells that help blood clot")),
+                .init(original: l("NT · 颈项透明层", "NT · Nuchal translucency"),
+                      plain: l("孕早期超声测量的胎儿颈后积液厚度", "Fluid thickness at the back of the baby's neck, measured by early ultrasound")),
             ],
             questions: [
-                "血红蛋白 112 g/L 需要补铁吗？还是先从饮食调整？",
-                "如果要补铁，多久后复查一次血常规比较合适？",
-                "NT 结果正常，后续还需要做哪些筛查？",
+                l("血红蛋白 112 g/L 需要补铁吗？还是先从饮食调整？", "Should I take iron for hemoglobin at 112 g/L, or start with diet?"),
+                l("如果要补铁，多久后复查一次血常规比较合适？", "If I take iron, when should the blood count be rechecked?"),
+                l("NT 结果正常，后续还需要做哪些筛查？", "The NT result is normal — which screenings come next?"),
             ],
             model: "deepseek-chat",
             createdAt: createdAt
@@ -433,6 +480,20 @@ enum UITestSupport {
     }
 
     static let seededVisitNote = "UITest 面诊录音"
+
+    /// T39: pins the first active Journey's share metadata so the marker,
+    /// info sheet and fallback copy can be driven without an account.
+    /// "ended" leaves `isShared` false — the steady state after a revoke.
+    private static func fakeShare(mode: String, context: ModelContext) {
+        let journeys = (try? context.fetch(FetchDescriptor<Journey>())) ?? []
+        guard let journey = journeys.first(where: { $0.status == .active }) ?? journeys.first else { return }
+        journey.shareRecordID = "share-fake"
+        journey.ownerID = "user-fake"
+        journey.shareZoneOwnerName = "__fakeOwner__"
+        journey.isShared = mode == "active"
+        journey.lastSharedUpdatedAt = .now
+        try? context.save()
+    }
 
     /// T32: a visit to hang the recording card off. With `withRecording`, the
     /// audio is a real (silent) m4a written here — small, valid, and enough

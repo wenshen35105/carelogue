@@ -689,6 +689,23 @@
         }
       }
     },
+    "Concurrent edits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concurrent edits"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concurrent edits"
+          }
+        }
+      }
+    },
     "Couldn't explain": {
       "extractionState": "manual",
       "localizations": {
@@ -964,6 +981,40 @@
         }
       }
     },
+    "Shared via iCloud": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared via iCloud"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared via iCloud"
+          }
+        }
+      }
+    },
+    "Stop sharing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop sharing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop sharing"
+          }
+        }
+      }
+    },
     "Subscription": {
       "extractionState": "manual",
       "localizations": {
@@ -994,6 +1045,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "TOOTH EXTRACTION"
+          }
+        }
+      }
+    },
+    "Two-way sync": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-way sync"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-way sync"
           }
         }
       }
@@ -1221,6 +1289,23 @@
         }
       }
     },
+    "两个人改了同一条记录时，保留较新的一条；附件不会被自动合并。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you both edit the same record, the newer one wins; attachments are never merged automatically."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两个人改了同一条记录时，保留较新的一条；附件不会被自动合并。"
+          }
+        }
+      }
+    },
     "了解 Carelogue Plus": {
       "extractionState": "manual",
       "localizations": {
@@ -1391,6 +1476,23 @@
         }
       }
     },
+    "你们都能查看和编辑这段旅程；改动双向同步，只经过你们自己的 iCloud，不经任何其他服务器。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can both view and edit this journey; changes sync both ways through your own iCloud and no other server."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你们都能查看和编辑这段旅程；改动双向同步，只经过你们自己的 iCloud，不经任何其他服务器。"
+          }
+        }
+      }
+    },
     "你的设备与 iCloud": {
       "extractionState": "manual",
       "localizations": {
@@ -1438,6 +1540,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "保存"
+          }
+        }
+      }
+    },
+    "停止共享": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop sharing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止共享"
+          }
+        }
+      }
+    },
+    "停止共享后，对方的副本会保留在其设备上，但不再更新。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After you stop sharing, their copy stays on their device but no longer updates."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止共享后，对方的副本会保留在其设备上，但不再更新。"
           }
         }
       }
@@ -1493,6 +1629,91 @@
         }
       }
     },
+    "共享": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共享"
+          }
+        }
+      }
+    },
+    "共享中": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共享中"
+          }
+        }
+      }
+    },
+    "共享已结束": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharing Ended"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共享已结束"
+          }
+        }
+      }
+    },
+    "共享暂不可用": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharing Unavailable"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共享暂不可用"
+          }
+        }
+      }
+    },
+    "共享通过你自己的 iCloud 完成。请在系统「设置 → 登录 iPhone」后重试；不登录也能正常记录，只是无法共享。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharing goes through your own iCloud. Sign in under Settings → Sign in to iPhone and try again; without an account you can still keep records, just not share them."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共享通过你自己的 iCloud 完成。请在系统「设置 → 登录 iPhone」后重试；不登录也能正常记录，只是无法共享。"
+          }
+        }
+      }
+    },
     "关于 AI 白话解释": {
       "extractionState": "manual",
       "localizations": {
@@ -1506,6 +1727,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "关于 AI 白话解释"
+          }
+        }
+      }
+    },
+    "关于这段共享": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About This Share"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关于这段共享"
           }
         }
       }
@@ -1574,6 +1812,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "其他"
+          }
+        }
+      }
+    },
+    "分开保留 · Keep separate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep Separate"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分开保留 · Keep separate"
           }
         }
       }
@@ -1833,6 +2088,23 @@
         }
       }
     },
+    "双向同步": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-way sync"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双向同步"
+          }
+        }
+      }
+    },
     "发生时间": {
       "extractionState": "manual",
       "localizations": {
@@ -2050,6 +2322,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "同意并继续 · Continue"
+          }
+        }
+      }
+    },
+    "同时改动": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concurrent edits"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同时改动"
           }
         }
       }
@@ -2428,6 +2717,23 @@
         }
       }
     },
+    "对方停止了共享。这段旅程的副本会保留在这台设备上，但不再更新。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The other person stopped sharing. This journey's copy stays on this device but no longer updates."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对方停止了共享。这段旅程的副本会保留在这台设备上，但不再更新。"
+          }
+        }
+      }
+    },
     "将删除 %lld 段旅程、%lld 条记录、%lld 份附件，以及档案内容。删除后无法恢复，也不会留下备份。": {
       "extractionState": "manual",
       "localizations": {
@@ -2717,6 +3023,57 @@
         }
       }
     },
+    "已通过 iCloud 与家人共享": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared with family via iCloud"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已通过 iCloud 与家人共享"
+          }
+        }
+      }
+    },
+    "并入 · Merge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "并入 · Merge"
+          }
+        }
+      }
+    },
+    "并入共享旅程？": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge into the Shared Journey?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "并入共享旅程？"
+          }
+        }
+      }
+    },
     "开始录音 · Record": {
       "extractionState": "manual",
       "localizations": {
@@ -2815,6 +3172,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "录音保存在你的设备与 iCloud 私有库；音频不进 AI——在这台设备上转写，只把文字送去整理"
+          }
+        }
+      }
+    },
+    "录音只保存在这台设备上；音频不进 AI——在这台设备上转写，只把文字送去整理": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recordings stay on this device only; audio never goes to AI — it is transcribed on this device, and only the text is sent for tidying up."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音只保存在这台设备上；音频不进 AI——在这台设备上转写，只把文字送去整理"
           }
         }
       }
@@ -3346,6 +3720,23 @@
         }
       }
     },
+    "无法接受共享": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't Accept the Share"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法接受共享"
+          }
+        }
+      }
+    },
     "无法解释，请重试": {
       "extractionState": "manual",
       "localizations": {
@@ -3550,6 +3941,23 @@
         }
       }
     },
+    "暂时连不上 iCloud，请稍后再试。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can't reach iCloud right now. Please try again later."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂时连不上 iCloud，请稍后再试。"
+          }
+        }
+      }
+    },
     "最近 %@": {
       "extractionState": "manual",
       "localizations": {
@@ -3648,6 +4056,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "本地转写模型还没准备好，连上网络后会自动下载一次"
+          }
+        }
+      }
+    },
+    "本机已有一段同名旅程「%@」。并入后，它的记录会加入共享旅程，本机副本会被删除；分开保留则两段旅程互不影响。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A local journey named \"%@\" already exists. Merging moves its records into the shared journey and deletes the local copy; keeping them separate leaves both untouched."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本机已有一段同名旅程「%@」。并入后，它的记录会加入共享旅程，本机副本会被删除；分开保留则两段旅程互不影响。"
           }
         }
       }
@@ -4306,6 +4731,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "筛选 Filter"
+          }
+        }
+      }
+    },
+    "管理共享 · Manage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "管理共享 · Manage"
           }
         }
       }
@@ -5172,6 +5614,23 @@
         }
       }
     },
+    "这个共享不是来自 Carelogue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This share didn't come from Carelogue"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这个共享不是来自 Carelogue"
+          }
+        }
+      }
+    },
     "这份报告的文字太长，试试只解释其中一页": {
       "extractionState": "manual",
       "localizations": {
@@ -5338,6 +5797,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "这段录音里没有听清的内容"
+          }
+        }
+      }
+    },
+    "这段旅程已经在共享中了": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This journey is already shared"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这段旅程已经在共享中了"
+          }
+        }
+      }
+    },
+    "这段旅程还没有开启共享": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This journey isn't shared yet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这段旅程还没有开启共享"
           }
         }
       }
@@ -5826,6 +6319,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "需要先同意 AI 说明"
+          }
+        }
+      }
+    },
+    "需要登录 iCloud": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iCloud Sign-in Required"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要登录 iCloud"
+          }
+        }
+      }
+    },
+    "需要登录 iCloud 才能共享": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to iCloud to share"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要登录 iCloud 才能共享"
           }
         }
       }

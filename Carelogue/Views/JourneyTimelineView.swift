@@ -1,3 +1,4 @@
+import CloudKit
 import SwiftUI
 import SwiftData
 
@@ -42,6 +43,10 @@ struct JourneyTimelineView: View {
     @State private var measurementFilter: String?
     @State private var editingMeasurement: Log?
     @State private var showingChart = false
+    // T39 share entry state.
+    @State private var showingShareInfo = false
+    @State private var showingNewShare = false
+    @State private var needsICloud = false
 
     private var measurements: [Log] {
         journey.allLogs.filter { $0.kind == .measurement }
@@ -117,6 +122,15 @@ struct JourneyTimelineView: View {
         .background(Theme.background)
         .navigationTitle(journey.name)
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: openShare) {
+                    Image(systemName: journey.isShared ? "person.2.fill" : "person.2")
+                }
+                .accessibilityLabel(String(localized: "共享"))
+                .accessibilityIdentifier("timeline.share")
+            }
+        }
         .overlay(alignment: .bottomTrailing) {
             addButton
         }
@@ -129,8 +143,45 @@ struct JourneyTimelineView: View {
         .sheet(isPresented: $showingChart) {
             MeasurementChartView(journey: journey, initialType: effectiveMeasurementFilter)
         }
+        .sheet(isPresented: $showingShareInfo) {
+            ShareInfoSheet(journey: journey)
+        }
+        .sheet(isPresented: $showingNewShare) {
+            CloudSharingSheet(
+                controller: UICloudSharingController(preparationHandler: { _, handler in
+                    Task { @MainActor in
+                        do {
+                            let share = try await ShareChannel.prepare(journey: journey, context: modelContext)
+                            handler(share, ShareChannel.container, nil)
+                        } catch {
+                            handler(nil, nil, error)
+                        }
+                    }
+                }),
+                journey: journey
+            )
+        }
+        .alert(String(localized: "需要登录 iCloud"), isPresented: $needsICloud) {
+            Button(String(localized: "好"), role: .cancel) {}
+        } message: {
+            Text("共享通过你自己的 iCloud 完成。请在系统「设置 → 登录 iPhone」后重试；不登录也能正常记录，只是无法共享。")
+        }
         .navigationDestination(for: Log.self) { log in
             LogDetailView(log: log)
+        }
+    }
+
+    /// The share entry (T39): a shared journey always opens the info sheet —
+    /// reading what a share is needs no account. Starting one without an
+    /// iCloud account explains instead of failing silently; otherwise the
+    /// system sharing controller creates the invite.
+    private func openShare() {
+        if journey.isShared {
+            showingShareInfo = true
+        } else if !CloudSync.hasICloudAccount {
+            needsICloud = true
+        } else if !ShareChannel.simulated {
+            showingNewShare = true
         }
     }
 
@@ -146,6 +197,9 @@ struct JourneyTimelineView: View {
                         .foregroundStyle(Theme.accent)
                 }
                 StatusPill(status: journey.status)
+                if journey.isShared {
+                    ShareStatusPill { showingShareInfo = true }
+                }
             }
             Text("\(journey.template.displayName) · 始于 \(journey.createdAt.yearMonth) · 共 \(journey.allLogs.count) 条记录")
                 .font(.footnote)

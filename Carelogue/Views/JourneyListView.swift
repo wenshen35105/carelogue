@@ -10,6 +10,11 @@ struct JourneyListView: View {
     @State private var showingProfile = false
     @State private var renamingJourney: Journey?
     @State private var renameText = ""
+    // T39: share notices (remote end / failed acceptance) and the
+    // merge-into-share tail after an import.
+    @State private var shareEnded = false
+    @State private var acceptFailure: String?
+    @State private var mergePair: (shared: Journey, twin: Journey)?
 
     private var activeCount: Int {
         journeys.filter { $0.status == .active }.count
@@ -50,7 +55,64 @@ struct JourneyListView: View {
                 Button("取消", role: .cancel) {}
                 Button("保存", action: commitRename)
             }
+            .onReceive(NotificationCenter.default.publisher(for: ShareChannel.didEnd)) { note in
+                if let id = note.userInfo?["journey"] as? UUID,
+                   journeys.contains(where: { $0.id == id }) {
+                    shareEnded = true
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: ShareChannel.didFailImport)) { note in
+                acceptFailure = (note.userInfo?["error"] as? String) ?? ""
+            }
+            .onReceive(NotificationCenter.default.publisher(for: ShareChannel.didImport)) { note in
+                offerMergeIfTwinExists(imported: note)
+            }
+            .alert(String(localized: "共享已结束"), isPresented: $shareEnded) {
+                Button(String(localized: "好"), role: .cancel) {}
+            } message: {
+                Text("对方停止了共享。这段旅程的副本会保留在这台设备上，但不再更新。")
+            }
+            .alert(String(localized: "无法接受共享"), isPresented: Binding(
+                get: { acceptFailure != nil }, set: { if !$0 { acceptFailure = nil } }
+            )) {
+                Button(String(localized: "好"), role: .cancel) {}
+            } message: {
+                Text(acceptFailure ?? "")
+            }
+            .alert(String(localized: "并入共享旅程？"), isPresented: isMergingBinding) {
+                Button(String(localized: "并入 · Merge")) { commitMerge() }
+                Button(String(localized: "分开保留 · Keep separate"), role: .cancel) { mergePair = nil }
+            } message: {
+                if let pair = mergePair {
+                    Text("本机已有一段同名旅程「\(pair.twin.name)」。并入后，它的记录会加入共享旅程，本机副本会被删除；分开保留则两段旅程互不影响。")
+                }
+            }
         }
+    }
+
+    /// The acceptance tail (T39): after a shared journey lands, a local
+    /// twin with the same name is offered a one-tap merge into the share.
+    private func offerMergeIfTwinExists(imported note: Notification) {
+        guard let id = note.userInfo?["journey"] as? UUID,
+              let shared = journeys.first(where: { $0.id == id }) else { return }
+        if let twin = journeys.first(where: {
+            !$0.isShared && $0.id != id && $0.name == shared.name && $0.status == .active
+        }) {
+            mergePair = (shared, twin)
+        }
+    }
+
+    private var isMergingBinding: Binding<Bool> {
+        Binding(
+            get: { mergePair != nil },
+            set: { if !$0 { mergePair = nil } }
+        )
+    }
+
+    private func commitMerge() {
+        guard let pair = mergePair else { return }
+        ShareChannel.merge(twin: pair.twin, into: pair.shared, context: modelContext)
+        mergePair = nil
     }
 
     private var header: some View {
@@ -160,18 +222,12 @@ private struct JourneyCard: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(journey.name)
-                            .font(.title3.weight(.bold))
-                            .foregroundStyle(Theme.inkPrimary)
-                            .lineLimit(1)
-                        if let label = journey.template.englishLabel {
-                            Text(label)
-                                .font(.caption.weight(.semibold))
-                                .tracking(0.8)
-                                .foregroundStyle(isActive ? Theme.accent : Theme.inkSecondary)
-                                .lineLimit(1)
-                        }
+                    // The template label is decoration: when it would only
+                    // fit truncated ("TOOTH EXTRACTI…" in English), leave
+                    // it out — the line below names the template anyway.
+                    ViewThatFits(in: .horizontal) {
+                        titleRow(withLabel: true)
+                        titleRow(withLabel: false)
                     }
                     Text("\(journey.template.displayName) · 始于 \(journey.createdAt.numericDate)")
                         .font(.footnote)
@@ -199,9 +255,34 @@ private struct JourneyCard: View {
         }
     }
 
+    private func titleRow(withLabel: Bool) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(journey.name)
+                .font(.title3.weight(.bold))
+                .foregroundStyle(Theme.inkPrimary)
+                .lineLimit(1)
+            if withLabel, let label = journey.template.englishLabel {
+                Text(label)
+                    .font(.caption.weight(.semibold))
+                    .tracking(0.8)
+                    .foregroundStyle(isActive ? Theme.accent : Theme.inkSecondary)
+                    .fixedSize()
+            }
+        }
+    }
+
+    /// Longer English stats don't fit one row with every item: drop the
+    /// latest-date stat before anything gets truncated.
     private var statsRow: some View {
+        ViewThatFits(in: .horizontal) {
+            stats(includingLatest: true)
+            stats(includingLatest: false)
+        }
+    }
+
+    private func stats(includingLatest: Bool) -> some View {
         HStack(spacing: 8) {
-            if let latest = journey.latestPastLog {
+            if includingLatest, let latest = journey.latestPastLog {
                 stat(icon: "calendar", text: String(localized: "最近 \(latest.occurredAt.shortDay)"))
                 dot
             }
@@ -209,6 +290,15 @@ private struct JourneyCard: View {
             if journey.artifactCount > 0 {
                 dot
                 stat(icon: "photo", text: String(localized: "\(journey.artifactCount) 份附件"))
+            }
+            // Icon only: a fourth labelled stat overflows the row and
+            // truncates the date. The timeline header spells it out.
+            if journey.isShared {
+                dot
+                Image(systemName: "person.2.fill")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.accent)
+                    .accessibilityLabel(String(localized: "共享中"))
             }
         }
     }
