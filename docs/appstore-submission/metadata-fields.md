@@ -56,7 +56,9 @@
 
 - **内容描述符逐项**（None / Infrequent / Frequent）：
   - **Mature Themes**：Profanity or Crude Humor = **None**；Horror/Fear Themes = **None**；Alcohol, Tobacco, or Drug Use or References = **None**
-  - **Medical or Wellness**：Health or Wellness Topics = **None**；**Medical or Treatment Information = Infrequent**（展示医疗记录 + 教育性解释；不提供诊断/治疗指导。注：Apple 新规 **Frequent 医疗内容 → 16+**）
+  - **Medical or Wellness**：
+    - Medical or Treatment Information（三档频率题 None/Infrequent/Frequent）：**Infrequent**——展示医疗记录 + 教育性解释；不提供诊断/治疗指导（Apple 新规：**Frequent 医疗内容 → 16+**）
+    - Health or Wellness Topics（**No/Yes 布尔题**）：**No**——不提供自我护理/生活方式建议；用户记录数据 ≠ 建议
   - **Sexuality or Nudity**：Mature or Suggestive Themes / Sexual Content or Nudity / Graphic Sexual Content and Nudity = **None**（全）
   - **Violence**：Cartoon or Fantasy Violence / Realistic Violence / Prolonged Graphic or Sadistic Realistic Violence / Guns or Other Weapons = **None**（全）
   - **Chance-Based Activities**：Gambling / Simulated Gambling / Contests / Loot Boxes = **None**（全）
