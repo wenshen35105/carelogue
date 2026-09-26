@@ -64,7 +64,7 @@
   - **Chance-Based Activities**：Gambling / Simulated Gambling / Contests / Loot Boxes = **None**（全）
 - **分级档位（2025 新制）**：4+ / 9+ / 13+ / 16+ / 18+（旧 12+ / 17+ 已移除）。
 - **最终取值（2026-09-25 已办）**：问卷答完后**手动提高到 16+**——官方支持（"set a higher age rating"）；医疗内容 + 成人工具，保守无副作用（分级只影响家长控制，不挡成人用户）。
-- **相关**：App Information 里另有 **Regulated Medical Device Status** 声明——选**非受监管医疗器械**（app 明确不做诊断/治疗，文案已全程声明）。
+- **Regulated Medical Device 声明**（触发条件：在 US/EU/UK 在售且类目为 Health & Fitness/Medical——我们满足；路径：App Information → App Store Regulations & Permits → **Declare Regulated Medical Device**）：**选 No**（非受监管医疗器械）——官方判定清单六条（FDA 批准/注册、CE、UKCA、自认证）全否；器械定义（诊断/预防/监测/治疗）不沾。**选 No 无需附加材料，Save 即完成**。
 
 ## C. Description 全文草案
 
