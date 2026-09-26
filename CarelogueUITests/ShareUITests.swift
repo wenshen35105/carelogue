@@ -113,6 +113,53 @@ final class ShareUITests: CarelogueUITestCase {
         XCTAssertTrue(sheet.waitForExistence(timeout: 8), "No sharing options on screen")
     }
 
+    /// The sync badge (T39): a round in flight shows 同步中 beside the share
+    /// marker — on device there was no way to tell syncing from stuck.
+    func testSyncBadgeShowsSyncing() {
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-share", "active",
+                "-uitest-sync-state", "syncing"])
+        openSeededJourney()
+
+        waitFor(id("share.sync"))
+        XCTAssertTrue(element(containing: "同步中").exists)
+        screenshot("T39-sync-syncing")
+    }
+
+    /// A failed round is tappable and explains itself, with a retry that
+    /// clears the alert (simulated: the retry round is a no-op).
+    func testSyncBadgeFailureExplains() {
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-share", "active",
+                "-uitest-sync-state", "failed"])
+        openSeededJourney()
+
+        id("share.sync").tap()
+        let alert = app.alerts.firstMatch
+        waitFor(alert)
+        XCTAssertTrue(element(containing: "暂时连不上 iCloud").exists)
+        screenshot("T39-sync-failed")
+        alert.buttons[t("重试", "Retry")].tap()
+        XCTAssertFalse(app.alerts.firstMatch.waitForExistence(timeout: 2))
+    }
+
+    /// 停止共享 is a real button now: confirm, and the marker is gone while
+    /// the journey itself stays (there is no delete, by design).
+    func testStopSharingEndsMarker() {
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-share", "active"])
+        openSeededJourney()
+
+        app.buttons["timeline.share"].tap()
+        waitFor(element(containing: "已通过 iCloud 与家人共享"))
+        id("share.info.stop").tap()
+        let confirm = app.buttons[t("停止共享", "Stop sharing")].firstMatch
+        waitFor(confirm, timeout: 5)
+        confirm.tap()
+
+        waitFor(app.buttons["timeline.share"])
+        XCTAssertFalse(id("share.status").waitForExistence(timeout: 2))
+        XCTAssertTrue(element(containing: "UITest 孕期").exists)
+        screenshot("T39-share-stopped")
+    }
+
     /// Creating the share fails (here: the simulator has no real iCloud
     /// account behind the pinned "signed in"): the timeline must say why,
     /// not leave the system's bare "couldn't create a link" / a spinner.

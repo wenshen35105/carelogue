@@ -345,15 +345,21 @@ enum ShareChannel {
         }
 
         let journey = upsertJourney(from: root, in: context)
-        for record in records where record.recordType == RecordType.log {
-            _ = upsertLog(from: record, in: journey, context: context)
-        }
-        // Artifact binaries come down one by one, only for records whose
-        // metadata says the local copy is missing or stale.
-        for record in records where record.recordType == RecordType.artifact {
-            guard needsImport(record, context: context) else { continue }
-            let full = try await database.record(for: record.recordID)
-            upsertArtifact(from: full, in: context)
+        ShareSyncStatus.shared.update(.syncing, for: journey.id)
+        do {
+            for record in records where record.recordType == RecordType.log {
+                _ = upsertLog(from: record, in: journey, context: context)
+            }
+            // Artifact binaries come down one by one, only for records whose
+            // metadata says the local copy is missing or stale.
+            for record in records where record.recordType == RecordType.artifact {
+                guard needsImport(record, context: context) else { continue }
+                let full = try await database.record(for: record.recordID)
+                upsertArtifact(from: full, in: context)
+            }
+        } catch {
+            ShareSyncStatus.shared.update(.failed(error.localizedDescription), for: journey.id)
+            throw error
         }
 
         journey.shareRecordID = share.recordID.recordName
@@ -362,6 +368,7 @@ enum ShareChannel {
         journey.isShared = true
         journey.lastSharedUpdatedAt = .now
         try? context.save()
+        ShareSyncStatus.shared.update(.synced(.now), for: journey.id)
         storeToken(result.changeToken, for: zoneID)
 
         await ensureSubscriptions()
@@ -426,6 +433,7 @@ enum ShareChannel {
         // Stamped with the start time: an edit made while this round is in
         // flight is newer than the stamp, so the next round still pushes it.
         let startedAt = Date.now
+        ShareSyncStatus.shared.update(.syncing, for: journey.id)
         do {
             try await pull(journey: journey, zoneID: zoneID, database: database, context: context)
             try await push(journey: journey, zoneID: zoneID, database: database, context: context)
@@ -433,7 +441,9 @@ enum ShareChannel {
             journey.lastSharedUpdatedAt = startedAt
             try? context.save()
             isWritingLocally = false
+            ShareSyncStatus.shared.update(.synced(startedAt), for: journey.id)
         } catch {
+            ShareSyncStatus.shared.update(.failed(error.localizedDescription), for: journey.id)
             handleSyncError(error, journey: journey, context: context)
         }
     }
@@ -452,12 +462,20 @@ enum ShareChannel {
 
             isWritingLocally = true
             for deletion in result.deletions {
-                // A deleted root means the share ended — never delete the
+                let name = deletion.recordID.recordName
+                // The share record itself being deleted — a stop that landed
+                // on another device, or the system's Stop Sharing — ends the
+                // share even though the zone and its records are untouched.
+                // This event used to fall through to deleteLocal, which
+                // ignores names it cannot classify, so a stopped share kept
+                // showing 共享中 through relaunches (TestFlight 1.0 (6)).
+                // A deleted root means the same thing; never delete the
                 // local journey copy. Children deleted remotely do go.
-                if RecordType.from(recordName: deletion.recordID.recordName) == RecordType.journey {
+                if name == journey.shareRecordID
+                    || RecordType.from(recordName: name) == RecordType.journey {
                     endShare(journey: journey, in: context)
                 } else {
-                    deleteLocal(recordName: deletion.recordID.recordName, context: context)
+                    deleteLocal(recordName: name, context: context)
                 }
             }
             for change in result.modificationResultsByID.values {
@@ -801,14 +819,19 @@ enum ShareChannel {
     // MARK: - Ending shares
 
     /// Remote side ended the share (revoked, or the root record was deleted):
-    /// the local copy stays exactly where it is, but stops syncing.
+    /// the local copy stays exactly where it is, but stops syncing. A
+    /// self-initiated stop passes `announce: false` — the person holding the
+    /// device already knows.
     @MainActor
-    static func endShare(journey: Journey, in context: ModelContext) {
+    static func endShare(journey: Journey, in context: ModelContext, announce: Bool = true) {
         guard journey.isShared else { return }
         journey.isShared = false
         if let zoneID = zoneID(for: journey) { clearToken(for: zoneID) }
         try? context.save()
-        NotificationCenter.default.post(name: didEnd, object: nil, userInfo: ["journey": journey.id])
+        ShareSyncStatus.shared.clear(journey.id)
+        if announce {
+            NotificationCenter.default.post(name: didEnd, object: nil, userInfo: ["journey": journey.id])
+        }
     }
 
     /// Local side stopped sharing: the owner deletes the zone (which ends it
@@ -820,7 +843,7 @@ enum ShareChannel {
             _ = try? await container.privateCloudDatabase
                 .modifyRecordZones(saving: [], deleting: [zoneID])
         }
-        endShare(journey: journey, in: context)
+        endShare(journey: journey, in: context, announce: false)
     }
 
     /// The acceptance tail (T39): folds a pre-existing local journey into the

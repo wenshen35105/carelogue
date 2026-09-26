@@ -28,6 +28,62 @@ struct ShareStatusPill: View {
     }
 }
 
+/// Share-sync state beside the 共享中 marker (T39): a round in flight shows
+/// a quiet spinner; a failed round shows a tappable badge that explains and
+/// offers a retry. A successful round shows nothing here — calm stays the
+/// default; the info sheet carries the last-sync time.
+struct ShareSyncPill: View {
+    let journey: Journey
+
+    private let status = ShareSyncStatus.shared
+    @State private var showingFailure = false
+
+    private var phase: ShareSyncStatus.Phase? { status.phases[journey.id] }
+
+    var body: some View {
+        switch phase {
+        case .syncing:
+            HStack(spacing: 5) {
+                ProgressView()
+                    .controlSize(.mini)
+                    .tint(Theme.inkSecondary)
+                Text("同步中")
+            }
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(Theme.inkSecondary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(Theme.insetFill))
+            .accessibilityIdentifier("share.sync")
+        case .failed:
+            Button {
+                showingFailure = true
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.caption2)
+                    Text("同步失败")
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Theme.accent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(Capsule().fill(Theme.accentTint))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("share.sync")
+            .alert(String(localized: "同步失败"), isPresented: $showingFailure) {
+                Button(String(localized: "重试")) { ShareChannel.scheduleSync() }
+                Button(String(localized: "好"), role: .cancel) {}
+            } message: {
+                if case .failed(let reason) = phase { Text(reason) }
+            }
+        case .synced, nil:
+            EmptyView()
+        }
+    }
+}
+
 /// The share explanation (T39): what two-way sync means here, the coarse
 /// conflict policy, and what revoking leaves behind — the copy the study
 /// asked to be stated in plain words. The system UICloudSharingController
@@ -39,6 +95,7 @@ struct ShareInfoSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var working = false
     @State private var failure: String?
+    @State private var confirmingStop = false
 
     var body: some View {
         NavigationStack {
@@ -54,10 +111,7 @@ struct ShareInfoSheet: View {
                         title: String(localized: "同时改动"),
                         gloss: AppLanguage.gloss(String(localized: "Concurrent edits")),
                         detail: String(localized: "两个人改了同一条记录时，保留较新的一条；附件不会被自动合并。"))
-                    row(icon: "person.2.slash",
-                        title: String(localized: "停止共享"),
-                        gloss: AppLanguage.gloss(String(localized: "Stop sharing")),
-                        detail: String(localized: "停止共享后，对方的副本会保留在其设备上，但不再更新。"))
+                    stopSharingRow
 
                     if !ShareChannel.simulated {
                         manageButton
@@ -87,6 +141,29 @@ struct ShareInfoSheet: View {
 
     // MARK: - Pieces
 
+    /// The channel's own state, one quiet line under the title: when the
+    /// last round landed, or that one is in flight / the last one failed.
+    @ViewBuilder private var syncLine: some View {
+        switch ShareSyncStatus.shared.phases[journey.id] {
+        case .syncing:
+            Text("同步中")
+                .font(.caption2)
+                .foregroundStyle(Theme.inkSecondary)
+        case .failed:
+            Text("上次同步失败")
+                .font(.caption2)
+                .foregroundStyle(Theme.accent)
+        case .synced(let date):
+            let stamp = date.formatted(Date.FormatStyle(date: .omitted, time: .shortened,
+                                                        locale: AppLanguage.locale))
+            Text("上次同步 \(stamp)")
+                .font(.caption2)
+                .foregroundStyle(Theme.inkSecondary)
+        case nil:
+            EmptyView()
+        }
+    }
+
     private var header: some View {
         VStack(spacing: 10) {
             Image(systemName: "person.2")
@@ -107,6 +184,7 @@ struct ShareInfoSheet: View {
                 }
                 .font(.footnote)
                 .foregroundStyle(Theme.inkSecondary)
+                syncLine
             }
         }
         .frame(maxWidth: .infinity)
@@ -183,6 +261,57 @@ struct ShareInfoSheet: View {
         }
         .buttonStyle(PressableStyle())
         .accessibilityIdentifier("share.info.manage")
+    }
+
+    /// 停止共享 as a real button, not a described policy (TestFlight 1.0 (6):
+    /// the row looked like the way out but did nothing, and the system manage
+    /// sheet — the other way — could not always be reached). Owner deletes
+    /// the share for everyone; a participant just detaches this device.
+    private var stopSharingRow: some View {
+        Button {
+            confirmingStop = true
+        } label: {
+            HStack(alignment: .top, spacing: 14) {
+                Image(systemName: "person.2.slash")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Theme.accent)
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(Theme.accentTint))
+                VStack(alignment: .leading, spacing: 4) {
+                    BilingualTitle(primary: String(localized: "停止共享"),
+                                   secondary: AppLanguage.gloss(String(localized: "Stop sharing")),
+                                   font: .body.weight(.semibold))
+                    Text(String(localized: "停止共享后，对方的副本会保留在其设备上，但不再更新。"))
+                        .font(.footnote)
+                        .foregroundStyle(Theme.inkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .cardSurface()
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("share.info.stop")
+        .confirmationDialog(String(localized: "停止共享这段旅程？"),
+                            isPresented: $confirmingStop, titleVisibility: .visible) {
+            Button(String(localized: "停止共享"), role: .destructive) { stopSharing() }
+            Button(String(localized: "取消"), role: .cancel) {}
+        } message: {
+            Text("你将不再与对方同步这段旅程。")
+        }
+    }
+
+    /// Simulated shares (UI tests, no account) skip the network entirely —
+    /// the marker simply drops.
+    private func stopSharing() {
+        guard !ShareChannel.simulated else {
+            ShareChannel.endShare(journey: journey, in: modelContext, announce: false)
+            dismiss()
+            return
+        }
+        dismiss()
+        Task { @MainActor in
+            await ShareChannel.stopSharing(journey: journey, in: modelContext)
+        }
     }
 }
 

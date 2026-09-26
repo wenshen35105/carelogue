@@ -29,6 +29,8 @@ import UIKit
 ///                                 ended. ShareChannel.simulated goes on, so
 ///                                 no network path runs and the share UI
 ///                                 renders purely from model fields
+///   -uitest-sync-state <phase>    stamp that fake-shared journey's sync
+///                                 badge (T39): syncing | failed
 ///   -uitest-subscription <state>  pin Carelogue Plus to active | none, so the
 ///                                 paywall and the locked card can be driven
 ///                                 without the App Store
@@ -106,6 +108,19 @@ enum UITestSupport {
         if let index = arguments.firstIndex(of: "-uitest-fake-share"), index + 1 < arguments.count {
             ShareChannel.simulated = true
             fakeShare(mode: arguments[index + 1], context: context)
+        }
+        // After fake-share, so a shared journey exists to stamp: pins the
+        // sync badge (T39) — syncing | failed.
+        if let index = arguments.firstIndex(of: "-uitest-sync-state"), index + 1 < arguments.count {
+            let mode = arguments[index + 1]
+            let shared = ((try? context.fetch(FetchDescriptor<Journey>())) ?? []).first { $0.isShared }
+            if let shared {
+                switch mode {
+                case "syncing": ShareSyncStatus.shared.update(.syncing, for: shared.id)
+                case "failed": ShareSyncStatus.shared.update(.failed(String(localized: "暂时连不上 iCloud，请稍后再试。")), for: shared.id)
+                default: break
+                }
+            }
         }
         try? context.save()
         if arguments.contains("-selftest-extract") {

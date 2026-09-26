@@ -183,6 +183,7 @@ struct JourneyTimelineView: View {
                 StatusPill(status: journey.status)
                 if journey.isShared {
                     ShareStatusPill { showingShareInfo = true }
+                    ShareSyncPill(journey: journey)
                 }
             }
             Text("\(journey.template.displayName) · 始于 \(journey.createdAt.yearMonth) · 共 \(journey.allLogs.count) 条记录")
