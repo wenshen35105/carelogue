@@ -281,7 +281,14 @@ enum ShareChannel {
         // What the invite and the system share UI show as the item's name.
         share[CKShare.SystemFieldKey.title] = journey.name
         records.append(share)
-        _ = try await save(records, to: database)
+        do {
+            try await save(records, to: database)
+        } catch {
+            // Don't leave a half-built zone behind; the next attempt starts
+            // clean.
+            _ = try? await database.modifyRecordZones(saving: [], deleting: [zoneID])
+            throw error
+        }
 
         isWritingLocally = true
         journey.shareRecordID = share.recordID.recordName
@@ -576,6 +583,20 @@ enum ShareChannel {
                              to database: CKDatabase) async throws {
         let result = try await database.modifyRecords(saving: records, deleting: deleting,
                                                       savePolicy: .ifServerRecordUnchanged, atomically: false)
+        // Per-record failures don't throw on their own. Anything but a lost
+        // race (retried below) or deleting what is already gone must surface:
+        // swallowing them handed the system a share that was never saved
+        // (TestFlight 1.0 (3): "未能创建链接", Messages spinning).
+        for (_, outcome) in result.saveResults {
+            if case .failure(let error) = outcome, (error as? CKError)?.code != .serverRecordChanged {
+                throw error
+            }
+        }
+        for (_, outcome) in result.deleteResults {
+            if case .failure(let error) = outcome, (error as? CKError)?.code != .unknownItem {
+                throw error
+            }
+        }
         let conflicted = result.saveResults.filter { _, outcome in
             if case .failure(let error) = outcome, (error as? CKError)?.code == .serverRecordChanged {
                 return true
@@ -593,8 +614,15 @@ enum ShareChannel {
             }
             retried.append(fresh)
         }
-        _ = try await database.modifyRecords(saving: retried, deleting: [],
-                                             savePolicy: .ifServerRecordUnchanged, atomically: false)
+        let retry = try await database.modifyRecords(saving: retried, deleting: [],
+                                                     savePolicy: .ifServerRecordUnchanged, atomically: false)
+        // Losing the race twice means the other side was newer — fine (last
+        // write wins). Any other failure is real.
+        for (_, outcome) in retry.saveResults {
+            if case .failure(let error) = outcome, (error as? CKError)?.code != .serverRecordChanged {
+                throw error
+            }
+        }
     }
 
     // MARK: - Local store upserts

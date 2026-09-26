@@ -25,6 +25,7 @@
 5. [ ] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
 6. [x] **CloudKit schema 部署到 Production** ✅ 2026-09-25——CloudKit Console → 容器 `iCloud.ca.carelogue.app` → Development 环境 → Deploy Schema Changes → 目标 Production。
    **这是 TestFlight 的前置条件，不是发布前才做的事**：TestFlight / App Store 构建走的是 **Production** 容器（Release 产物的 `com.apple.developer.icloud-container-environment` = `Production`），而 Production 里没有 schema 时**不会自动建记录类型**（自动建只发生在 Development），结果是本地能存、同步静默失败。数据不丢，但同步这块等于没测。
+   - [ ] **T39 共享的记录类型再部署一次**（9/25 那次部署早于 T39，不含 `Journey` / `Log` / `Artifact`——没有它们，TestFlight 里创建共享必然失败）：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development，再在 Console 里 Deploy Schema Changes → Production。以后 `ShareChannel` 每加一个字段，都要重走这两步。
 7. [x] **TestFlight 首个构建** ✅ 2026-09-25 上传 `1.0 (1)`（流程见下方 §E）
 8. [x] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）。走 TestFlight 免开 Developer Mode（Xcode 直装才需要）。顺序：你自己先装一遍跑通 Smoke + 同步，再邀请她
 

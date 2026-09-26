@@ -1,0 +1,59 @@
+    RECORD TYPE Journey (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        "name"          STRING,
+        "templateRaw"   STRING,
+        "statusRaw"     STRING,
+        "createdAt"     TIMESTAMP,
+        "updatedAt"     TIMESTAMP,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
+    RECORD TYPE Log (
+        "___createTime"    TIMESTAMP,
+        "___createdBy"     REFERENCE,
+        "___etag"          STRING,
+        "___modTime"       TIMESTAMP,
+        "___modifiedBy"    REFERENCE,
+        "___recordID"      REFERENCE QUERYABLE,
+        "kindRaw"          STRING,
+        "type"             STRING,
+        "occurredAt"       TIMESTAMP,
+        "note"             STRING,
+        "location"         STRING,
+        "doctor"           STRING,
+        "value"            DOUBLE,
+        "unit"             STRING,
+        "visitSummaryJSON" STRING,
+        "questionsJSON"    STRING,
+        "createdAt"        TIMESTAMP,
+        "updatedAt"        TIMESTAMP,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );
+
+    RECORD TYPE Artifact (
+        "___createTime" TIMESTAMP,
+        "___createdBy"  REFERENCE,
+        "___etag"       STRING,
+        "___modTime"    TIMESTAMP,
+        "___modifiedBy" REFERENCE,
+        "___recordID"   REFERENCE QUERYABLE,
+        "fileName"      STRING,
+        "mime"          STRING,
+        "fileData"      ASSET,
+        "aiExplainJSON" STRING,
+        "transcript"    STRING,
+        "createdAt"     TIMESTAMP,
+        "updatedAt"     TIMESTAMP,
+        GRANT WRITE TO "_creator",
+        GRANT CREATE TO "_icloud",
+        GRANT READ TO "_world"
+    );

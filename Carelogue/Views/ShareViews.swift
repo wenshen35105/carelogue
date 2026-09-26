@@ -183,10 +183,16 @@ struct ShareInfoSheet: View {
 enum SharePresenter {
     /// Kept alive while the manage controller is up: its delegate is weak.
     private static var coordinator: ManageCoordinator?
+    /// Why the last share creation failed. The system sheet only says
+    /// "couldn't create a link" (or spins in Messages); the real reason is
+    /// shown once the sheet is closed — nothing can be presented over it
+    /// from the timeline while it is up.
+    fileprivate static var pendingFailure: String?
 
     /// New share: the system share sheet with a CKShare item. The share is
     /// only created once the user picks how to send the invite.
     static func presentNewShare(for journey: Journey, context: ModelContext) {
+        pendingFailure = nil
         let preparation = SharePreparation(journey: journey, context: context)
         let provider = NSItemProvider()
         provider.registerCKShare(container: ShareChannel.container) {
@@ -198,6 +204,19 @@ enum SharePresenter {
         let title = journey.name
         configuration.metadataProvider = { key in key == .title ? title : nil }
         let controller = UIActivityViewController(activityItemsConfiguration: configuration)
+        controller.completionWithItemsHandler = { _, _, _, _ in
+            Task { @MainActor in
+                guard let reason = pendingFailure else { return }
+                pendingFailure = nil
+                let alert = UIAlertController(
+                    title: String(localized: "共享暂不可用"),
+                    message: String(localized: "没能创建共享，这段旅程没有被改动。原因：\(reason)"),
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: String(localized: "好"), style: .cancel))
+                present(alert)
+            }
+        }
         present(controller)
     }
 
@@ -234,7 +253,12 @@ private final class SharePreparation: @unchecked Sendable {
     }
 
     func run() async throws -> CKShare {
-        try await ShareChannel.prepare(journey: journey, context: context)
+        do {
+            return try await ShareChannel.prepare(journey: journey, context: context)
+        } catch {
+            SharePresenter.pendingFailure = error.localizedDescription
+            throw error
+        }
     }
 }
 

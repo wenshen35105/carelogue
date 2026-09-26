@@ -4361,6 +4361,23 @@
         }
       }
     },
+    "没能创建共享，这段旅程没有被改动。原因：%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The share couldn't be created; this journey is unchanged. Reason: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没能创建共享，这段旅程没有被改动。原因：%@"
+          }
+        }
+      }
+    },
     "测量": {
       "extractionState": "manual",
       "localizations": {

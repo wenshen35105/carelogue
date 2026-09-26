@@ -112,4 +112,34 @@ final class ShareUITests: CarelogueUITestCase {
         let sheet = app.otherElements["ActivityListView"]
         XCTAssertTrue(sheet.waitForExistence(timeout: 8), "No sharing options on screen")
     }
+
+    /// Creating the share fails (here: the simulator has no real iCloud
+    /// account behind the pinned "signed in"): the timeline must say why,
+    /// not leave the system's bare "couldn't create a link" / a spinner.
+    func testFailedShareCreationExplains() {
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-icloud-account"])
+        openSeededJourney()
+
+        app.buttons["timeline.share"].tap()
+        let sheet = app.otherElements["ActivityListView"]
+        waitFor(sheet, timeout: 8)
+        let invite = app.staticTexts[t("通过链接邀请", "Invite with Link")]
+        waitFor(invite, timeout: 8)
+        invite.tap()
+
+        // The system reports its own failure inside the sheet; close
+        // whatever it shows, then the sheet, and our explanation follows.
+        let ours = element(containing: "没能创建共享")
+        for _ in 0..<6 where !ours.waitForExistence(timeout: 3) {
+            if app.alerts.count > 0, let button = app.alerts.firstMatch.buttons.allElementsBoundByIndex.first {
+                button.tap()
+            } else if app.buttons["Close"].exists {
+                app.buttons["Close"].tap()
+            } else if app.buttons["关闭"].exists {
+                app.buttons["关闭"].tap()
+            }
+        }
+        screenshot("T39-share-create-failed")
+        XCTAssertTrue(ours.exists, "No explanation after the share failed")
+    }
 }
