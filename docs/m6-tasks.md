@@ -8,6 +8,11 @@
 
 ### T39 · CKShare 真共享（直接开工 · 2026-09-25 定）
 
+> **状态（2026-09-26）**：代码完成并经多轮 TestFlight 修复（`1.0 (2)–(8)`：邀请落地、空 sheet、hollow journey、共享删除、同步状态；最后一笔「calm pill + 同步节奏」`9bd9fc7` 尚未出构建，双机联调前先传 `1.0 (9)`）。**未完三件**：
+> ① CloudKit 记录类型部署 Production（owner-actions B.6 子项——**当前头号阻塞**，不部署则 TestFlight 里建共享必失败）；
+> ② 双真机 × 两 Apple ID 联调（`scripts/t39-two-device-check.sh` 引导式清单，做完把报告贴回本卡）；
+> ③ 尾巴「她的本地副本并进共享」**未实现**——accept 只把共享 zone 导入成新旅程，与太太内测期已建的本地旅程会是两条重复记录（无合并逻辑）。待拍板：1.0 前实现 / 手动处理（她删本地、损失其记录） / 进 v1.0.1。
+
 - 路线 B（SwiftData 主库 + 独立 CKShare 通道）：她装 app、接受共享后即有数据，双方改动双向自动同步；数据全在 Apple 生态，不经我们 server
 - 实施计划：`docs/ck-share-study.md` 第四节（7 步，5–6 天）；参考实现 framara/CloudKitSharing——**当骨架与坑清单，不当依赖**
 - 测试：双真机 × 两个 Apple ID（你的 + 太太的）；模拟器代替不了
@@ -29,10 +34,12 @@
 
 ### T41 · 1.0 提审材料包（folder + 字段手册）
 
-- 目录 `docs/appstore-submission/`：`metadata-fields.md`（已出稿，逐字段填什么）+ `review-notes.md` + `screenshots/`（CC 出图）+ `reference/`（ASC 版本页 PDF 与转图）
+- 目录 `docs/appstore-submission/`：`metadata-fields.md`（逐字段手册，含 §D checklist）+ `review-notes.md` + `posters/`（上传定稿）+ `screenshots/`（底图源）+ `reference/`（ASC 版本页 PDF 与转图）
 - 截图：**海报式双工序**（2026-09-26 定）——① **底图**（CC）：现有模拟器流程出图（1290×2796 即可），demo 数据，状态栏统一 9:41（`simctl status_bar override`）；② **套版**（主助理）：HTML 模板 → 输出**精确 1284×2778**（ASC 6.5" 档硬规格）；**已落地** `tools/appstore-posters/`（`make-posters.py` 一条命令出 en/zh 各 7 张，2026-09-26 已出全套，成品在 `docs/appstore-submission/posters/`）。主题 7 张：Journeys 列表 / 时间线 / 报告+AI 解释 / 面诊录音 / 面诊总结 / 疑问翻译 / 订阅页
-- iPad 13" 档：默认改 **iPhone-only**（CC 先报告改法）
-- ASC 待改项：Sign-in required 取消勾选；Release 改 Manually release；Support URL 页 ✅ 已建（2026-09-26：`docs/web/support.md`，Worker 同部署，`/support` 已上线）
+- iPad 13" 档：✅ 已核实工程为 iPhone-only（`TARGETED_DEVICE_FAMILY = 1`），Xcode 无需改动；构建上传后 ASC 该档自动消失
+- Support URL 页 ✅ 已上线（2026-09-26：`docs/web/support.md`，Worker 同部署，`/support` 已验证 200）
+- **仍待办（ASC 侧，老板）**：① 截图替换为海报版（9/26 凌晨传的是海报化之前的模拟器套）② Sign-in required 取消勾选 ③ Release 改 Manually release ④ 订阅产品核对 Intro Offer + Family Sharing 后 Ready to Submit——逐项见 `metadata-fields.md` §D
+- ⚠️ 已知问题：`carelogue.ca` 根路径 522（Worker 只挂了 `/privacy` `/terms` `/support` 三条路由）——Marketing URL 留空即可规避；根落地页进 backlog
 - CC 分工：出截图 + 装包 + 核对字段手册与 repo 现状的一致性
 
 ## ③ 提交与上线（以 owner-actions 为准）

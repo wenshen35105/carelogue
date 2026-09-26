@@ -3,7 +3,7 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：**M6 进行中**（1.0 提交准备）：T39 CKShare 真共享（头号功能卡）+ T41 提审材料包（`docs/appstore-submission/`，字段手册已出稿）+ 发布流程按 owner-actions；M5 已完成评审（真机验收待产检）。
+当前阶段：**M6 进行中**（1.0 提交准备）：T39 CKShare 真共享（代码完成，余 CloudKit schema 部署 + 双机联调 + 本地副本尾巴）+ T41 提审材料包（材料齐备，余 ASC 侧动作，见 `docs/appstore-submission/metadata-fields.md` §D）+ 发布流程按 owner-actions（§顶部=当前阻塞）；T40 产检真机验收不阻塞提审。
 
 ## 先读这些（按序）
 

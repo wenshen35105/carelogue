@@ -1,7 +1,7 @@
-# Carelogue · App Store 审核要素自检（T28）
+# Carelogue · App Store 审核要素自检（T28 起，M6 提审前复核 2026-09-26）
 
 > 对着 App Review Guidelines 里与本应用有关的条目逐项过。✅ = 代码/文档里已经落地；
-> ⏳ = 等你手动完成（账号、域名、素材）。M6 提审前再整体复核一次。
+> ⏳ = 等你手动完成（账号、域名、素材）。
 
 ## 订阅（Guideline 3.1.1 / 3.1.2）
 
@@ -46,10 +46,10 @@
 | 紧急情况提示 | ✅ | 使用条款第 2 条；应用内免责文案 |
 | 不声称经过医疗认证 | ✅ | 全文无此类表述 |
 
-## 提交前还要准备（M5）
+## 提交前还要准备（M6 · 逐项动作见 owner-actions §D）
 
-- 素材与逐字段填写 → **见 `docs/appstore-submission/`**（截图、描述、关键词、URL、审核备注、隐私标签/分级问卷、Sign-in/Release 设置——含逐字段手册与 checklist）
-  - 遗留决策：App Store 页面是否加 **zh-Hans 本地化**（若加 → 补中文文案与中文截图套；中文 Description 已备）
+- 素材与逐字段填写 → **见 `docs/appstore-submission/`**（截图、描述、关键词、URL、审核备注、Sign-in/Release 设置——含逐字段手册与 checklist）
+  - ~~遗留决策：zh-Hans 本地化~~ 已定：**加**（中文 Description/截图已备，`posters/zh-Hans/`）
 - ⏳ `server/wrangler.toml` 的 `ALLOW_SANDBOX`：**审核期间保持 `"1"`**（审核员用沙盒购买，关掉订阅就不解锁）；上架且内测收尾后再评估改 `"0"`（保留的风险仅限自己创建的 ASC 沙盒测试员）
-- ⏳ 内部通道下线（T30 双保险第二道）：`cd server && npx wrangler secret delete INTERNAL_ACCESS_KEY`
+- ⏳ 内部通道下线（T30 双保险第二道，**上架后**做）：`cd server && npx wrangler secret delete INTERNAL_ACCESS_KEY`
   → `npx wrangler secret list` 里不再出现它；客户端那半边本来就只在 Debug 编译路径里，Release 产物 `strings` 查不到

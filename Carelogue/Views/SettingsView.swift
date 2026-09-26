@@ -8,7 +8,7 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @AppStorage(AISettings.enabledKey) private var aiEnabled = true
-    @AppStorage(AISettings.includeProfileKey) private var includeProfile = true
+    @AppStorage(AISettings.includeProfileKey) private var includeProfile = false
     @AppStorage(AISettings.consentKey) private var consentRaw = ""
     @State private var showingRevokeConfirm = false
     @State private var showingEraseConfirm = false

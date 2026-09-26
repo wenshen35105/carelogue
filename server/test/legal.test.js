@@ -136,6 +136,12 @@ test('unknown paths are still 404, and the API is untouched', async () => {
   assert.deepEqual(await health.json(), { ok: true });
 });
 
+test('the bare domain redirects to the support page', async () => {
+  const response = await get('/');
+  assert.equal(response.status, 302);
+  assert.equal(response.headers.get('location'), 'https://carelogue.ca/support');
+});
+
 test('a deployment without the documents says so instead of serving a blank page', async () => {
   const bare = createWorker({});
   const response = await bare.fetch(new Request('https://carelogue.ca/privacy'), {});

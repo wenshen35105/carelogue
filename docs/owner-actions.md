@@ -1,18 +1,21 @@
 # Carelogue · 待办（只有你能做的）
 
 > 其余全部已由 CC 完成（M4：T23–T28 已合入）。这份只列真正需要你动手的，按"什么时候能做"分组。
-> 更新：2026-09-25（CloudKit schema 已部署到 Production；TestFlight 首个构建 `1.0 (1)` 已上传，流程见 §E）
+> 更新：2026-09-26（docs 全面复核：T39 代码完成待双机联调；提审前动作收拢进 §D）
 
-## ⏳ 唯一阻塞项
+## ⏳ 当前阻塞项（按序做完即可提审）
 
-- [x] **Apple Developer 认证** ✅ 2026-09-24 通过——B 组解锁。
+- [x] **T39 共享记录类型部署 Production**（即 B.6 子项）：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development → Console 里 Deploy Schema Changes → Production。**不部署则 TestFlight 里创建共享必然失败**（9/25 那次部署早于 T39，不含 `Journey`/`Log`/`Artifact`）
+- [ ] **T39 双真机联调**：`scripts/t39-two-device-check.sh`（引导式清单，做完把报告贴回 m6 卡）。联调前先传 `1.0 (9)`——最新修复（`9bd9fc7` calm pill / 同步节奏）还没出过构建
+- [x] §D 的 ASC 动作清单（截图换海报版等）
+- [x] ~~Apple Developer 认证~~ ✅ 2026-09-24 通过
   - ⚠️ （2026-09-24）**重复付款跟进**——认证已过，付款周期完结，不用再干等：① 查邮箱 "Apple Developer" 收据 + 账单结算状态（只扣一笔 → 删除本项）② 两笔都实扣（posted）→ 开 case：`developer.apple.com/contact/` → Membership and Account → Other Memberships/Account Questions → Email：请保留 Amex、退支付宝那笔，附两笔凭证 ③ 有笔仍挂 pending → 等结算（1–2 天）再定。开 case 不影响账号正常使用
 
 ## B. 认证过审后（按序）
 
-1. [ ] Xcode → Settings → Accounts 登录开发者账号
-2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）
-3. [ ] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23
+1. [x] Xcode → Settings → Accounts 登录开发者账号 ✅（随 TestFlight 上传流程已验证——构建已传到 `1.0 (8)`）
+2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）——TestFlight 安装已覆盖真机安装；若没做过 Xcode 直装且不需要调试，可勾掉跳过
+3. [ ] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23。可与 T39 双机联调（§顶部）同场做
 4. [ ] App Store Connect：
    - [x] **bundle id 迁移**（✅ 已定：换为 `ca.carelogue.app`）——顺序：① developer.apple.com 接受待签协议（新账号必做）② Identifiers 页面把列表切到 **iCloud Containers**（独立分类，不在 App ID 里）先建 `iCloud.ca.carelogue.app`（Description: Carelogue）→ 回 App IDs 新建 `ca.carelogue.app`（勾 iCloud + CloudKit，Configure 里勾上刚建的容器） ③ ~~CC 改 repo~~ **✅ 已完成 2026-09-24** ④ Xcode Run 验证（报错兜底：账号移除重加 / 清 DerivedData）⑤ 之后才给太太和各设备装
      - ⚠️ **拼写以 `carelogue` 为准**（域名 carelogue.ca）——此前文档里的 `ca.carelolgue.app` 是笔误（多一个 `l`），已订正。在 Apple 后台建 identifier 时务必照订正后的拼写填，**建完即锁定**
@@ -72,9 +75,15 @@
   **按卡内验收**：最好就是下次产检真录一次，太太一起看看总结和「我的疑问」大字版能不能用。
 - [ ] **拍一个小项**：解释可"附带档案信息"（过敏/长期用药，默认开启；隐私政策已披露、设置可关）——① 同意弹窗要不要也补一句透明说明？（建议：补）② 默认值"开"还是"关"？（建议：开）回一句即可
 
-## D. 发布前（M5，内测之后）
+## D. 发布前（提审动作，M6 · 2026-09-26 收拢）
 
-- [ ] 其余见两处：`docs/appstore-submission/`（**提审材料包**：逐字段手册 + 截图 + 备注）＋ `docs/appstore-checklist.md` 的 ⏳ 项（`ALLOW_SANDBOX` 审核期保持 1、内部通道下线）
+- [x] **ASC 截图替换为海报版**：9/26 凌晨传的是海报化之前的模拟器套；定稿在 `docs/appstore-submission/posters/`（English (Canada) ← `en-CA/`，简体中文 ← `zh-Hans/`）
+- [x] 版本页 **Sign-in required 取消勾选**（无账号系统）
+- [x] 版本页 Release 改 **Manually release this version**
+- [x] **核对订阅产品配置**：Introductory Offer（Free Trial 1 周）与 Family Sharing 在 ASC 里真的开了（仓库 storekit 夹具两者都没配，repo 验证不了——`review-notes.md` ⚠️）→ 订阅 Ready to Submit + 版本页勾选
+- [x] 版本页 Add Build 选最新构建；Notes 粘贴 `review-notes.md`；Contact Information 确认已填
+- [x] Promotion Text / Description / Keywords / 版权照 `metadata-fields.md` §A/§C 填（字段手册逐项有状态）
+- [ ] 提审前 `ALLOW_SANDBOX` 保持 `"1"`（已开，勿动）；**上架且内测收尾后**再评估改 `"0"` + `npx wrangler secret delete INTERNAL_ACCESS_KEY`（appstore-checklist ⏳ 项）
 
 ## E. 出一个 TestFlight 构建
 

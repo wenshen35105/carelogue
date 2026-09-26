@@ -53,6 +53,10 @@ zone_name = "carelogue.ca"
 pattern = "carelogue.ca/support"
 zone_name = "carelogue.ca"
 
+[[routes]]
+pattern = "carelogue.ca/"
+zone_name = "carelogue.ca"
+
 # Secrets, never in this file:
 #   npx wrangler secret put DEEPINFRA_API_KEY
 #

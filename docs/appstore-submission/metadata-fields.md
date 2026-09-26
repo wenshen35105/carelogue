@@ -7,25 +7,25 @@
 
 | # | 字段 | 限制 | 填什么 | 状态 |
 |---|---|---|---|---|
-| 1 | Screenshots · **iPhone 6.5"** | ≤10 张；1242×2688 / 2688×1242 / 1284×2778 / 2778×1284 | 7 张 × 2 语言（`screenshots/iphone-6.5/en-CA/` → English (Canada)；`zh-Hans/` → 简体中文）：旅程列表 / 时间线 / 报告+AI 解释 / 面诊录音 / 面诊总结 / 疑问翻译 / 订阅页。每张说明见该目录 README | ✅ 已出图 |
+| 1 | Screenshots · **iPhone 6.5"** | ≤10 张；1242×2688 / 2688×1242 / 1284×2778 / 2778×1284 | 7 张 × 2 语言，**以海报版为准**（`posters/en-CA/` → English (Canada)；`posters/zh-Hans/` → 简体中文）：旅程列表 / 时间线 / 报告+AI 解释 / 面诊录音 / 面诊总结 / 疑问翻译 / 订阅页。`screenshots/iphone-6.5/` 是海报的**底图来源**（模拟器直出），不直接上传。每张说明见 `screenshots/iphone-6.5/README.md` | ⚠️ 9/26 凌晨 ASC 里传的还是海报化之前的模拟器套，**需用海报版替换** |
 | 2 | Screenshots · **iPad 13"** | ≤10 张 | **决策**：走 iPhone-only（iPad 适配留 v1.1）→ 该档免交。✅ 2026/09/25 核实：工程已是 iPhone-only（`TARGETED_DEVICE_FAMILY = 1`），**Xcode 无需改动**；ASC 现在显示 iPad 13" 档只是因为还没传构建——iPhone-only 构建上传后该档自动消失 | ✅ 核实 |
 | 3 | App Previews | ≤3 视频 | 不做（选填） | ✅ |
 | 4 | **Promotional Text** | 170 | EN：`Log visits, translate reports, record appointments — your health journey in plain words, kept private on your device.` ｜ 中文：`记录就诊、看懂报告、录下面诊——用大白话管好健康，数据留在你的设备上。` | 📝 |
 | 5 | **Description** | 4,000 | 见下方 §C 全文草案（EN + 中文） | 📝 |
 | 6 | **Keywords** | 100 | EN：`care log,health journal,medical records,doctor visit,symptom,reports,ai,plain words,family`（90 字符；规则：逗号分隔、**逗号后不加空格**） | 📝 |
 | 7 | **Support URL** | — | `https://carelogue.ca/support` | ✅ 已上线（2026-09-26，`docs/web/support.md` 经 Worker 渲染） |
-| 8 | Marketing URL | — | 先留空（或 `https://carelogue.ca`） | 📝 |
+| 8 | Marketing URL | — | **留空**——`carelogue.ca` 根路径目前无路由（522），Worker 只挂了 `/privacy` `/terms` `/support`；根落地页上线前别填 | 📝 |
 | 9 | Version | — | `1.0` | ✅ |
 | 10 | **Copyright** | 200 | `© 2026 Jiajin Lin` | 📝 |
 | 11 | Routing App Coverage File | — | 不适用（仅地图类）→ 留空 | ✅ |
 | 12 | App Clip / iMessage App | — | 不适用 → 跳过 | ✅ |
-| 13 | **Build** | — | 上传构建（Xcode → Archive → Distribute App；bundle id `ca.carelogue.app`）→ 版本页 Add Build 选择 | ⏳ 老板 Mac |
+| 13 | **Build** | — | TestFlight 已依次上传 `1.0 (1)–(8)`（流程见 owner-actions §E）；提审时版本页 Add Build **选最新构建** | ✅ 构建在 |
 | 14 | Game Center | — | 不勾 | ✅ |
-| 15 | **Sign-In Information** | — | ⚠️ **取消勾选 "Sign-in required"**（无账号系统）；username / password 留空（当前截图里是勾着的，提审前改掉） | ⏳ 改 |
-| 16 | Contact Information | — | 老板本人（姓名 / 电话 / 邮箱——**在 ASC 直接填，不写入本仓库**） | ⏳ |
+| 15 | **Sign-In Information** | — | ⚠️ **取消勾选 "Sign-in required"**（无账号系统）；username / password 留空（reference 截图里是勾着的，提审前改掉） | ⏳ 改（以 ASC 实际界面为准，改完勾 §D） |
+| 16 | Contact Information | — | 老板本人（姓名 / 电话 / 邮箱——**在 ASC 直接填，不写入本仓库**） | ⏳ 待确认（ASC 若已填即完成） |
 | 17 | **Notes**（审核备注） | 4,000 | 见 `review-notes.md`（直接复制） | ✅ |
 | 18 | Attachment | — | 选填 → 不传 | ✅ |
-| 19 | **App Store Version Release** | — | ⚠️ 改选 **"Manually release this version"**（当前截图为 Automatically——我们定手动：真机验收过再点发布） | ⏳ 改 |
+| 19 | **App Store Version Release** | — | ⚠️ 改选 **"Manually release this version"**（reference 截图为 Automatically——我们定手动：真机验收过再点发布） | ⏳ 改（以 ASC 实际界面为准，改完勾 §D） |
 
 ## B. App 级字段（不在版本页，1.0 必须齐）
 
@@ -35,7 +35,7 @@
 | 副标题 Subtitle | `Health records, made clear`（24/30） | 📝 |
 | 主 / 副类别 | 主：Health & Fitness；副：Medical | 📝 建议 |
 | 年龄分级 | 按问卷照实——**逐题答案见下方「年龄分级问卷」** | ⏳ 填问卷 |
-| App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；1.0 共享功能不改变结论（走用户自己的 iCloud，不经我们）；与 `docs/legal/` 隐私政策一致（2026/09/25 已补「共享功能」章节） | ⏳ 填问卷 |
+| App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；1.0 共享功能不改变结论（走用户自己的 iCloud，不经我们）；与 `docs/legal/` 隐私政策一致（2026/09/25 已补「共享功能」章节） | ✅ 2026-09-25 已填（owner-actions B.4「隐私问卷」） |
 | 价格与地区 | ✅ **已设（2026-09-25）：仅 United States + Canada**——白名单方式（比全选减中国更稳：避开欧盟 DSA、韩国分级、巴西评级等合规填报；扩展随时可改、无需重审）。Price Schedule 保持 Free，收费走订阅 | ✅ 已办 |
 | 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选）。⚠️ 仓库里的 `Carelogue.storekit` 只是 UI 测试夹具（无试用期、无家庭共享）；「首周免费 + 家庭共享」要在 **ASC 订阅配置里真的开**，否则改文案（见 review-notes 警示） | ✅ 已办 |
 
@@ -120,16 +120,17 @@ Carelogue Plus（可选订阅，$3.99/月，首周免费）解锁 AI 功能；�
 Carelogue 是记录工具，不提供诊断或医疗建议——请始终咨询你的医生。
 ```
 
-## D. 提交前 checklist
+## D. 提交前 checklist（2026-09-26 复核；改动 ASC 后过来打勾）
 
-- [x] 截图 6.5" 就位（1284×2778，iPhone 13 Pro Max 模拟器出图；`ASCScreenshotUITests` / `ASCScreenshotEnglishUITests` 生成，中英各 7 张）
-- [x] ASC 里分别上传：English (Canada) 传 `en-CA/`，简体中文 传 `zh-Hans/`
+- [x] 截图底图 6.5" 就位（1284×2778，iPhone 13 Pro Max 模拟器出图；`ASCScreenshotUITests` / `ASCScreenshotEnglishUITests` 生成，中英各 7 张）
+- [x] 海报套版出图（2026-09-26，`posters/en-CA/` + `posters/zh-Hans/`，`tools/appstore-posters/make-posters.py` 一条命令重出）——**ASC 上传以海报版为准**
+- [x] ⚠️ **ASC 截图替换为海报版**：9/26 凌晨上传的是海报化之前的模拟器套（English (Canada) ← `posters/en-CA/`；简体中文 ← `posters/zh-Hans/`）
 - [x] iPad 决策落地：已核实工程为 iPhone-only，Xcode 无需改动；构建上传后 ASC 的 iPad 13" 档自动消失
-- [x] Sign-in required 取消勾选
-- [x] Release 方式改为 Manually release
+- [x] Sign-in required 取消勾选（字段 #15）
+- [x] Release 方式改为 Manually release（字段 #19）
 - [x] Support URL 页上线（carelogue.ca/support，2026-09-26）
-- [x] 构建上传 + Add Build
-- [x] 订阅产品 Ready to Submit + 版本页勾选
-- [x] 隐私标签 + 年龄分级完成
-- [x] Notes 粘贴（review-notes.md）
-- [x] Contact Information 填好
+- [x] 构建上传（TestFlight `1.0 (1)–(8)`）；提审时版本页 Add Build 选最新
+- [x] 订阅产品 Ready to Submit + 版本页勾选；**先核对 ASC 侧「首周免费 Intro Offer + Family Sharing」真的开了**（仓库 `Carelogue.storekit` 夹具两者都没配，repo 无法验证——见 `review-notes.md` ⚠️）
+- [x] 隐私标签（2026-09-25）+ 年龄分级（2026-09-25，问卷后手动 16+）
+- [x] Notes 定稿（`review-notes.md`，提交时粘贴）
+- [ ] Contact Information 确认已填（字段 #16；ASC 若已填即完成）

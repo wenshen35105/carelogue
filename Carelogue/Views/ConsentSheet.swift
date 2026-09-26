@@ -43,6 +43,9 @@ struct ConsentSheet: View {
                         point(icon: "lock",
                               title: String(localized: "加密传输 · Encrypted in transit"),
                               detail: AIDisclosure.transitDetail)
+                        point(icon: "person.text.rectangle",
+                              title: String(localized: "档案信息默认不发送"),
+                              detail: String(localized: "「过敏」「长期用药」不会自动随解释发送；想让人工智能参考，可在设置的「附带档案信息」开关里打开。"))
                         point(icon: "checkmark.seal",
                               title: AIDisclosure.responsibilityTitle,
                               detail: AIDisclosure.responsibilityDetail)

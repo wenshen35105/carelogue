@@ -83,6 +83,12 @@ async function handle(request, env, documents) {
     return request.method === 'HEAD' ? new Response(null, response) : response;
   }
 
+  // The bare domain has no page yet; don't leave it dangling (522 without
+  // this route) — send visitors somewhere real.
+  if (path === '/' && (request.method === 'GET' || request.method === 'HEAD')) {
+    return Response.redirect(`${url.origin}/support`, 302);
+  }
+
   if (request.method === 'GET' && path === '/v1/health') {
     return json({ ok: true });
   }

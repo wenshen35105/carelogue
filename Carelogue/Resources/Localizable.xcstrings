@@ -6594,6 +6594,40 @@
           }
         }
       }
+    },
+    "档案信息默认不发送": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile info stays off by default"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "档案信息默认不发送"
+          }
+        }
+      }
+    },
+    "「过敏」「长期用药」不会自动随解释发送；想让人工智能参考，可在设置的「附带档案信息」开关里打开。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allergies and long-term medications are not sent with explanations automatically; to let the AI consider them, turn on \"Include profile info\" in Settings."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「过敏」「长期用药」不会自动随解释发送；想让人工智能参考，可在设置的「附带档案信息」开关里打开。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

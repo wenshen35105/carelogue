@@ -92,7 +92,9 @@ enum AIServiceError: LocalizedError, Equatable {
 /// Where the AI key and switches live. The key is in the Keychain; the
 /// switches are plain per-device preferences.
 enum AISettings {
-    /// UserDefaults keys (used with @AppStorage). Both default to on.
+    /// UserDefaults keys (used with @AppStorage). AI defaults to on;
+    /// profile context defaults to off (owner decision 2026-09-26: it is
+    /// disclosed here and in the policy, but must be a deliberate opt-in).
     static let enabledKey = "ai.enabled"
     /// Send Profile allergies / medications along as context (spec §5b).
     static let includeProfileKey = "ai.includeProfile"
@@ -112,7 +114,7 @@ enum AISettings {
     }
 
     static var isEnabled: Bool { UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? true }
-    static var includesProfile: Bool { UserDefaults.standard.object(forKey: includeProfileKey) as? Bool ?? true }
+    static var includesProfile: Bool { UserDefaults.standard.object(forKey: includeProfileKey) as? Bool ?? false }
 
     /// The provider explain calls go through (T27): Carelogue's own relay,
     /// authorised by the App Store transaction StoreKit hands us — or, in a
