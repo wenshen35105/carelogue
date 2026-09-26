@@ -30,7 +30,7 @@
 ### T41 · 1.0 提审材料包（folder + 字段手册）
 
 - 目录 `docs/appstore-submission/`：`metadata-fields.md`（已出稿，逐字段填什么）+ `review-notes.md` + `screenshots/`（CC 出图）+ `reference/`（ASC 版本页 PDF 与转图）
-- 截图：**海报式双工序**（2026-09-26 定）——① **底图**（CC）：现有模拟器流程出图（1290×2796 即可），demo 数据，状态栏统一 9:41（`simctl status_bar override`）；② **套版**（主助理）：HTML 模板 → 输出**精确 1284×2778**（ASC 6.5" 档硬规格），模板与脚本将落 `tools/appstore-posters/`。主题 7 张：Journeys 列表 / 时间线 / 报告+AI 解释 / 面诊录音 / 面诊总结 / 疑问翻译 / 订阅页
+- 截图：**海报式双工序**（2026-09-26 定）——① **底图**（CC）：现有模拟器流程出图（1290×2796 即可），demo 数据，状态栏统一 9:41（`simctl status_bar override`）；② **套版**（主助理）：HTML 模板 → 输出**精确 1284×2778**（ASC 6.5" 档硬规格）；**已落地** `tools/appstore-posters/`（`make-posters.py` 一条命令出 en/zh 各 7 张，2026-09-26 已出全套，成品在 `docs/appstore-submission/posters/`）。主题 7 张：Journeys 列表 / 时间线 / 报告+AI 解释 / 面诊录音 / 面诊总结 / 疑问翻译 / 订阅页
 - iPad 13" 档：默认改 **iPhone-only**（CC 先报告改法）
 - ASC 待改项：Sign-in required 取消勾选；Release 改 Manually release；Support URL 页待建（carelogue.ca/support）
 - CC 分工：出截图 + 装包 + 核对字段手册与 repo 现状的一致性
