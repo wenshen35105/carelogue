@@ -3,12 +3,12 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：**M4 收尾**（等 Apple 认证：真机验证 + 内测启动）→ **M5 已定稿**（阶段 1 不等认证、现在就能做）。
+当前阶段：**M5 已完成评审**（真机验收待下次产检）→ **M6 草案已出**（`docs/m6-tasks.md`：Beta → 发布；TF 内测 / 发布素材 / 提审批）。
 
 ## 先读这些（按序）
 
 1. `docs/mvp-spec.md` — 功能蓝图、页面、数据模型、AI 契约（上级文档）
-2. `docs/m5-tasks.md` — **当前里程碑**（阶段 1 现在就做，一次一张）；M4 卡 `docs/m4-tasks.md` 仅剩真机/内测尾巴；M1–M3 见各自文件
+2. `docs/m6-tasks.md` — **当前里程碑（草案）**；M5 卡 `docs/m5-tasks.md` 已完成（T30–T38）；M4 尾巴见 `docs/m4-tasks.md`；M1–M3 见各自文件
 3. `docs/product-brief.md` — 定位与原则（背景）
 4. `docs/design-review.md` + `docs/design/stitch/` 三屏 PNG — UI 参照
 
