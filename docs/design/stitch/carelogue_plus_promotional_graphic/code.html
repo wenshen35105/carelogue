@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background subtle gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FAF8F5"/>
+      <stop offset="100%" stop-color="#F3EFEA"/>
+    </linearGradient>
+
+    <!-- Warm soft apricot ambient glow behind the card -->
+    <radialGradient id="apricotAmbient" cx="50%" cy="46%" r="48%">
+      <stop offset="0%" stop-color="#D9784F" stop-opacity="0.12"/>
+      <stop offset="60%" stop-color="#D9784F" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#D9784F" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Icon subtle drop shadow -->
+    <filter id="iconShadow" x="-20%" y="-15%" width="140%" height="140%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#73503C" flood-opacity="0.08"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#73503C" flood-opacity="0.04"/>
+    </filter>
+
+    <!-- Card shadow -->
+    <filter id="cardShadow" x="-15%" y="-15%" width="130%" height="130%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="24" stdDeviation="36" flood-color="#806250" flood-opacity="0.05"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#806250" flood-opacity="0.03"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1024" height="1024" fill="url(#bgGrad)"/>
+
+  <!-- Large Soft Ambient Warmth -->
+  <circle cx="512" cy="460" r="440" fill="url(#apricotAmbient)"/>
+
+  <!-- Decorative subtle background aura shapes (echoing calm paper journal rhythm) -->
+  <g opacity="0.45">
+    <circle cx="210" cy="230" r="140" fill="#EFE8DE" fill-opacity="0.4"/>
+    <circle cx="830" cy="780" r="180" fill="#EFE8DE" fill-opacity="0.4"/>
+  </g>
+
+  <!-- Abstract Silhouette of the Explanation Card -->
+  <g filter="url(#cardShadow)">
+    <!-- Back secondary card hint -->
+    <rect x="232" y="160" width="560" height="660" rx="36" fill="#FFFFFF" fill-opacity="0.5" stroke="#E6E0D8" stroke-width="1.5" transform="rotate(-1.5 512 490)"/>
+    <!-- Main primary card silhouette -->
+    <rect x="222" y="152" width="580" height="680" rx="38" fill="#FFFFFF" stroke="#EAE3DB" stroke-width="1.5"/>
+  </g>
+
+  <!-- Subtle interior card watermark / hairline aura -->
+  <rect x="254" y="184" width="516" height="616" rx="26" fill="none" stroke="#F5EFE8" stroke-width="1.5"/>
+
+  <!-- App Icon Mark Representation (reusing brand mark geometry) -->
+  <g filter="url(#iconShadow)">
+    <!-- Icon Container Squircle (Apple 22.37% radius equivalent on 160px = ~36px) -->
+    <rect x="432" y="244" width="160" height="160" rx="38" fill="#FFF8F4" stroke="#F2E6DC" stroke-width="1.5"/>
+    
+    <!-- Heart-Pin Outer Contour -->
+    <path d="M512 284C492.5 284 476.5 299.5 476.5 319C476.5 342.5 505.5 360.5 512 364.5C518.5 360.5 547.5 342.5 547.5 319C547.5 299.5 531.5 284 512 284Z" 
+          fill="#D9784F" fill-opacity="0.18" stroke="#D9784F" stroke-width="4.5" stroke-linejoin="round"/>
+    
+    <!-- Cross Symbol -->
+    <path d="M512 303V332M497.5 317.5H526.5" 
+          stroke="#D9784F" stroke-width="5.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Typography Content -->
+  <g text-anchor="middle">
+    <!-- Brand Wordmark "Carelogue" -->
+    <text x="512" y="474" 
+          font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'SF Pro Display', 'Segoe UI', sans-serif" 
+          font-size="52" 
+          font-weight="700" 
+          letter-spacing="-1.2" 
+          fill="#1C1B1A">Carelogue</text>
+
+    <!-- Small Caps Badge / Label: "CARELOGUE PLUS" -->
+    <g>
+      <!-- Subtle Pill container for the Plus label -->
+      <rect x="362" y="508" width="300" height="42" rx="21" fill="#FDF3EC" stroke="#F3DDD1" stroke-width="1.2"/>
+      
+      <!-- Sparkle Icon in apricot -->
+      <path d="M400 529 C400 525 404 521 408 521 C404 521 400 517 400 513 C400 517 396 521 392 521 C396 521 400 525 400 529 Z" fill="#D9784F"/>
+      
+      <text x="518" y="535" 
+            font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'SF Pro Text', sans-serif" 
+            font-size="16.5" 
+            font-weight="700" 
+            letter-spacing="2.8" 
+            fill="#D9784F">CARELOGUE PLUS</text>
+    </g>
+
+    <!-- Delicate Apricot Dot Accent -->
+    <circle cx="512" cy="582" r="3.5" fill="#D9784F"/>
+
+    <!-- Value Proposition / Subtitle -->
+    <text x="512" y="628" 
+          font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', 'SF Pro Text', 'PingFang SC', sans-serif" 
+          font-size="22" 
+          font-weight="400" 
+          letter-spacing="-0.2" 
+          fill="#4A453F">AI explanations for your health records</text>
+
+    <!-- Minimal Abstract Detail: Soft pill cues hinting at plain-language health chips (clean, uncluttered) -->
+    <g transform="translate(0, 672)">
+      <!-- Left abstract chip -->
+      <rect x="338" y="0" width="102" height="30" rx="15" fill="#F7F4F0" stroke="#EDE6DE" stroke-width="1"/>
+      <circle cx="355" cy="15" r="3" fill="#D9784F" fill-opacity="0.8"/>
+      <rect x="368" y="12" width="54" height="6" rx="3" fill="#A49D94" fill-opacity="0.5"/>
+
+      <!-- Center abstract chip -->
+      <rect x="452" y="0" width="120" height="30" rx="15" fill="#FBF3EE" stroke="#F5DED2" stroke-width="1"/>
+      <circle cx="471" cy="15" r="3.5" fill="#D9784F"/>
+      <rect x="484" y="12" width="68" height="6" rx="3" fill="#D9784F" fill-opacity="0.75"/>
+
+      <!-- Right abstract chip -->
+      <rect x="584" y="0" width="102" height="30" rx="15" fill="#F7F4F0" stroke="#EDE6DE" stroke-width="1"/>
+      <circle cx="601" cy="15" r="3" fill="#D9784F" fill-opacity="0.8"/>
+      <rect x="614" y="12" width="54" height="6" rx="3" fill="#A49D94" fill-opacity="0.5"/>
+    </g>
+  </g>
+
+  <!-- Clean Frame Hairline (outer safety border at 1024px canvas boundary) -->
+  <rect x="0.5" y="0.5" width="1023" height="1023" fill="none" stroke="#EAE5DE" stroke-width="1"/>
+</svg>
