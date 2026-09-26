@@ -113,15 +113,17 @@ final class ShareUITests: CarelogueUITestCase {
         XCTAssertTrue(sheet.waitForExistence(timeout: 8), "No sharing options on screen")
     }
 
-    /// The sync badge (T39): a round in flight shows 同步中 beside the share
-    /// marker — on device there was no way to tell syncing from stuck.
+    /// The merged share/sync pill (T39): a round still in flight after the
+    /// grace delay replaces 共享中 with 同步中 in the same capsule — quick
+    /// rounds must not flash the UI at all.
     func testSyncBadgeShowsSyncing() {
         launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-share", "active",
                 "-uitest-sync-state", "syncing"])
         openSeededJourney()
 
-        waitFor(id("share.sync"))
-        XCTAssertTrue(element(containing: "同步中").exists)
+        // The grace delay passes while waiting; then the pill switches.
+        waitFor(element(containing: "同步中"))
+        XCTAssertTrue(id("share.status").exists)
         screenshot("T39-sync-syncing")
     }
 

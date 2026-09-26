@@ -3,84 +3,104 @@ import SwiftUI
 import SwiftData
 import UIKit
 
-/// "共享中 Shared" capsule — the share status marker (T39). Shown in the
-/// timeline header and tappable for the explanation sheet.
+/// The share marker capsule (T39), doubling as the sync state: idle and a
+/// quiet success both read 共享中; a round still in flight after the grace
+/// delay reads 同步中 (most rounds finish inside the delay and never touch
+/// the UI at all — no flashing); a failed round reads 同步失败 and opens the
+/// reason with a retry instead of the explanation sheet.
 struct ShareStatusPill: View {
-    var action: (() -> Void)?
-
-    var body: some View {
-        Button {
-            action?()
-        } label: {
-            HStack(spacing: 5) {
-                Image(systemName: "person.2.fill")
-                    .font(.caption2)
-                Text("共享中")
-            }
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(Theme.accent)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(Capsule().fill(Theme.accentTint))
-        }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("share.status")
-    }
-}
-
-/// Share-sync state beside the 共享中 marker (T39): a round in flight shows
-/// a quiet spinner; a failed round shows a tappable badge that explains and
-/// offers a retry. A successful round shows nothing here — calm stays the
-/// default; the info sheet carries the last-sync time.
-struct ShareSyncPill: View {
     let journey: Journey
+    var action: (() -> Void)?
 
     private let status = ShareSyncStatus.shared
     @State private var showingFailure = false
+    /// Sync-in-flight only shows after this grace period, so quick rounds
+    /// pass by unseen.
+    @State private var slow = false
 
     private var phase: ShareSyncStatus.Phase? { status.phases[journey.id] }
 
+    private var failureReason: String? {
+        if case .failed(let reason) = phase { return reason }
+        return nil
+    }
+
     var body: some View {
-        switch phase {
-        case .syncing:
+        Group {
+            if let failureReason {
+                failedPill(failureReason)
+            } else if isSyncing && slow {
+                syncingPill
+            } else {
+                sharedPill
+            }
+        }
+        .task(id: syncTick) {
+            slow = false
+            guard isSyncing else { return }
+            try? await Task.sleep(for: .seconds(1.5))
+            guard !Task.isCancelled else { return }
+            slow = true
+        }
+    }
+
+    private var isSyncing: Bool {
+        if case .syncing = phase { return true }
+        return false
+    }
+
+    /// Changes whenever the phase flips to/from syncing, re-running the
+    /// grace-delay task above.
+    private var syncTick: Bool { isSyncing }
+
+    private var sharedPill: some View {
+        pillLabel(icon: Image(systemName: "person.2.fill"), text: Text("共享中"),
+                  style: .accent) { action?() }
+        .accessibilityIdentifier("share.status")
+    }
+
+    private var syncingPill: some View {
+        pillLabel(icon: ProgressView().controlSize(.mini).tint(Theme.inkSecondary),
+                  text: Text("同步中"), style: .muted) { action?() }
+        .accessibilityIdentifier("share.status")
+    }
+
+    private func failedPill(_ reason: String) -> some View {
+        pillLabel(icon: Image(systemName: "exclamationmark.triangle.fill"),
+                  text: Text("同步失败"), style: .accent) { showingFailure = true }
+        .accessibilityIdentifier("share.sync")
+        .alert(String(localized: "同步失败"), isPresented: $showingFailure) {
+            // Retry runs right away — the debounced local-edit schedule
+            // would sit on it for half a minute.
+            Button(String(localized: "重试")) {
+                Task { @MainActor in
+                    if let context = CarelogueApp.modelContainer?.mainContext {
+                        await ShareChannel.syncAll(in: context)
+                    }
+                }
+            }
+            Button(String(localized: "好"), role: .cancel) {}
+        } message: {
+            Text(reason)
+        }
+    }
+
+    private enum PillStyle { case accent, muted }
+
+    private func pillLabel<Icon: View>(icon: Icon, text: Text, style: PillStyle,
+                                       action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             HStack(spacing: 5) {
-                ProgressView()
-                    .controlSize(.mini)
-                    .tint(Theme.inkSecondary)
-                Text("同步中")
+                icon.font(.caption2)
+                text
             }
             .font(.caption.weight(.semibold))
-            .foregroundStyle(Theme.inkSecondary)
+            .foregroundStyle(style == .accent ? Theme.accent : Theme.inkSecondary)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
-            .background(Capsule().fill(Theme.insetFill))
-            .accessibilityIdentifier("share.sync")
-        case .failed:
-            Button {
-                showingFailure = true
-            } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.caption2)
-                    Text("同步失败")
-                }
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(Theme.accent)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(Capsule().fill(Theme.accentTint))
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("share.sync")
-            .alert(String(localized: "同步失败"), isPresented: $showingFailure) {
-                Button(String(localized: "重试")) { ShareChannel.scheduleSync() }
-                Button(String(localized: "好"), role: .cancel) {}
-            } message: {
-                if case .failed(let reason) = phase { Text(reason) }
-            }
-        case .synced, nil:
-            EmptyView()
+            .background(Capsule().fill(style == .accent ? Theme.accentTint : Theme.insetFill))
         }
+        .buttonStyle(.plain)
     }
 }
 

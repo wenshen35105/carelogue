@@ -400,13 +400,15 @@ enum ShareChannel {
         }
     }
 
-    /// Debounced: local edits settle for a moment before anything is pushed.
+    /// Debounced: local edits settle for half a minute before anything is
+    /// pushed — the channel is calm by design (activation, remote pushes and
+    /// a manual retry still sync right away).
     @MainActor
     static func scheduleSync() {
         guard let syncContext else { return }
         syncTask?.cancel()
         syncTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: .seconds(30))
             guard !Task.isCancelled else { return }
             await syncAll(in: syncContext)
         }
