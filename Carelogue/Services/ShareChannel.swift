@@ -267,25 +267,27 @@ enum ShareChannel {
 
         let zoneID = ownZoneID(for: journey)
         let database = container.privateCloudDatabase
+        // Start clean: an earlier attempt that failed half-way may have left
+        // this zone behind, root already shared — every retry would then
+        // fail with "already shared". The journey isn't shared locally, so
+        // nothing in the zone is anyone's live data.
+        _ = try? await database.modifyRecordZones(saving: [], deleting: [zoneID])
         _ = try await database.modifyRecordZones(saving: [CKRecordZone(zoneID: zoneID)], deleting: [])
 
-        var records: [CKRecord] = [makeRecord(for: journey, zoneID: zoneID)]
-        for log in journey.allLogs {
-            records.append(makeRecord(for: log, zoneID: zoneID, parent: journey))
-            for artifact in log.allArtifacts {
-                records.append(makeRecord(for: artifact, zoneID: zoneID, parent: log))
-            }
-        }
-
-        let share = CKShare(rootRecord: records[0])
+        // Only the root and the share: the system sheet waits on this
+        // handler (Messages spins, "copy link" gives up), so it must return
+        // fast. The rest of the tree — attachments and recordings can be
+        // tens of MB — goes up right after, through the normal push.
+        let root = makeRecord(for: journey, zoneID: zoneID)
+        let share = CKShare(rootRecord: root)
         // What the invite and the system share UI show as the item's name.
         share[CKShare.SystemFieldKey.title] = journey.name
-        records.append(share)
         do {
-            try await save(records, to: database)
+            // CloudKit requires a new share and its root in one atomic
+            // save ("when saving an added share with its rootRecord, the
+            // operation must be marked as atomic").
+            try await save([root, share], atomically: true, to: database)
         } catch {
-            // Don't leave a half-built zone behind; the next attempt starts
-            // clean.
             _ = try? await database.modifyRecordZones(saving: [], deleting: [zoneID])
             throw error
         }
@@ -295,11 +297,16 @@ enum ShareChannel {
         journey.ownerID = try await myUserID()
         journey.shareZoneOwnerName = zoneID.ownerName
         journey.isShared = true
-        journey.lastSharedUpdatedAt = .now
+        // No stamp yet: the first sync treats every log and attachment as
+        // unsent and uploads the whole tree.
+        journey.lastSharedUpdatedAt = nil
         try? context.save()
         isWritingLocally = false
 
-        await ensureSubscriptions()
+        Task { @MainActor in
+            await sync(journey: journey, in: context)
+            await ensureSubscriptions()
+        }
         return share
     }
 
@@ -580,9 +587,32 @@ enum ShareChannel {
     /// and our save): refetch, apply again, save once more. Losing again
     /// means the other side was newer — last write wins, let it.
     private static func save(_ records: [CKRecord], deleting: [CKRecord.ID] = [],
+                             atomically: Bool = false,
                              to database: CKDatabase) async throws {
+        // CloudKit caps one modify request (400 items, and a size limit);
+        // a whole journey's first upload can exceed that. Parents are listed
+        // before children, so chunking in order keeps them ahead.
+        let chunk = 100
+        if records.count + deleting.count > chunk {
+            for start in stride(from: 0, to: records.count, by: chunk) {
+                try await saveChunk(Array(records[start..<min(start + chunk, records.count)]),
+                                    deleting: [], to: database)
+            }
+            for start in stride(from: 0, to: deleting.count, by: chunk) {
+                try await saveChunk([], deleting: Array(deleting[start..<min(start + chunk, deleting.count)]),
+                                    to: database)
+            }
+            return
+        }
+        try await saveChunk(records, deleting: deleting, atomically: atomically, to: database)
+    }
+
+    private static func saveChunk(_ records: [CKRecord], deleting: [CKRecord.ID],
+                                  atomically: Bool = false,
+                                  to database: CKDatabase) async throws {
         let result = try await database.modifyRecords(saving: records, deleting: deleting,
-                                                      savePolicy: .ifServerRecordUnchanged, atomically: false)
+                                                      savePolicy: .ifServerRecordUnchanged,
+                                                      atomically: atomically)
         // Per-record failures don't throw on their own. Anything but a lost
         // race (retried below) or deleting what is already gone must surface:
         // swallowing them handed the system a share that was never saved
