@@ -3,7 +3,7 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：**M5 已完成评审**（真机验收待下次产检）→ **M6 草案已出**（`docs/m6-tasks.md`：Beta → 发布；TF 内测 / 发布素材 / 提审批）。
+当前阶段：**M6 进行中**（1.0 提交准备）：T39 CKShare 真共享（头号功能卡）+ T41 提审材料包（`docs/appstore-submission/`，字段手册已出稿）+ 发布流程按 owner-actions；M5 已完成评审（真机验收待产检）。
 
 ## 先读这些（按序）
 
