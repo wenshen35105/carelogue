@@ -26,6 +26,13 @@
 - 记录问题清单 → 提审前修复或进 v1.0.1
 - 不因等产检而推迟提审（发布手动 = 保险闸）
 
+### T41 · 1.0 提审材料包（folder + 字段手册）
+
+- 目录 `docs/appstore-submission/`：`metadata-fields.md`（已出稿，逐字段填什么）+ `review-notes.md` + `screenshots/`（CC 出图）+ `reference/`（ASC 版本页 PDF 与转图）
+- 截图规格：**iPhone 13 Pro Max 模拟器**（1284×2778——在 ASC 6.5" 档接受列表内）；iPad 13" 档默认改 **iPhone-only**（先报告改法）
+- ASC 待改项：Sign-in required 取消勾选；Release 改 Manually release；Support URL 页待建（carelogue.ca/support）
+- CC 分工：出截图 + 装包 + 核对字段手册与 repo 现状的一致性
+
 ## ③ 提交与上线（以 owner-actions 为准）
 
 - 订阅产品 → Ready to Submit（Review Screenshot 上传）→ TF 内测（自己 + 太太）
