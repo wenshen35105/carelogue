@@ -6,11 +6,12 @@
 // writes nothing down: no request bodies, no replies, no identifiers beyond
 // the rate-limit counters, which hold only a hash and a number.
 //
-// The same Worker answers carelogue.ca/privacy and /terms, rendered from
-// docs/legal/*.md. Two hostnames, one deployment: the routes in wrangler.toml
-// decide which paths reach it, and this file dispatches on the path.
+// The same Worker answers carelogue.ca/privacy, /terms and /support, rendered
+// from docs/legal/*.md and docs/web/*.md. Two hostnames, one deployment: the
+// routes in wrangler.toml decide which paths reach it, and this file
+// dispatches on the path.
 //
-// The policy Markdown arrives as an argument rather than an import so this
+// The page Markdown arrives as an argument rather than an import so this
 // module stays plain JavaScript that `node --test` can exercise end to end;
 // src/worker.js is the bundled entry that supplies it.
 
@@ -47,7 +48,7 @@ const DEFAULTS = {
 };
 
 /**
- * @param {{privacy?: string, terms?: string}} documents  policy Markdown by name
+ * @param {{privacy?: string, terms?: string, support?: string}} documents  page Markdown by name
  */
 export function createWorker(documents = {}) {
   return {
@@ -64,7 +65,7 @@ export function createWorker(documents = {}) {
 /**
  * @param {Request} request
  * @param {Record<string, any>} env
- * @param {{privacy?: string, terms?: string}} documents
+ * @param {{privacy?: string, terms?: string, support?: string}} documents
  */
 async function handle(request, env, documents) {
   const url = new URL(request.url);

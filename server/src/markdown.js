@@ -1,5 +1,6 @@
-// A small Markdown renderer — just the subset docs/legal/*.md actually uses:
-// headings, paragraphs, bold, bullet and numbered lists, tables and rules.
+// A small Markdown renderer — just the subset docs/legal/*.md and
+// docs/web/support.md actually use: headings, paragraphs, bold, links, bullet
+// and numbered lists, tables and rules.
 //
 // Hand-rolled for the same reason as the rest of this Worker: no dependencies
 // to audit, and the input is our own text, not user content. Everything is
@@ -15,11 +16,16 @@ function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
+/** A link's target may only be one of these — anything else stays plain text. */
+const LINK_SCHEMES = /^(https?:|mailto:)/i;
+
 /** Inline formatting, applied to already-escaped text. */
 function inline(text) {
   return escapeHtml(text)
     .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (whole, label, href) =>
+      LINK_SCHEMES.test(href) ? `<a href="${href}">${label}</a>` : whole);
 }
 
 const CJK = /[　-〿㐀-䶿一-鿿＀-￯]/;

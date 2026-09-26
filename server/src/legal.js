@@ -1,6 +1,6 @@
-// The two policy pages (carelogue.ca/privacy and /terms), rendered from the
-// same Markdown the repo keeps under docs/legal/ so the app, the App Store
-// listing and the web copy can never drift apart.
+// The site's text pages (carelogue.ca/privacy, /terms and /support), rendered
+// from the same Markdown the repo keeps under docs/legal/ and docs/web/ so the
+// app, the App Store listing and the web copy can never drift apart.
 //
 // Styling follows the app's own palette (CLAUDE.md): warm rice-paper canvas,
 // white cards, apricot accent, system fonts — with the Nocturne values under
@@ -12,11 +12,21 @@ import { renderMarkdown, titleOf } from './markdown.js';
 export const LEGAL_ROUTES = {
   '/privacy': 'privacy',
   '/terms': 'terms',
+  '/support': 'support',
 };
 
-const NAV = {
-  privacy: { path: '/terms', label: '使用条款 · Terms' },
-  terms: { path: '/privacy', label: '隐私政策 · Privacy' },
+/** Masthead label for each page. */
+const PAGES = {
+  privacy: '隐私政策 · Privacy',
+  terms: '使用条款 · Terms',
+  support: '支持 · Support',
+};
+
+/** The pages each masthead links to, in order. */
+const OTHERS = {
+  privacy: ['terms', 'support'],
+  terms: ['privacy', 'support'],
+  support: ['privacy', 'terms'],
 };
 
 const STYLE = `
@@ -131,16 +141,17 @@ footer a { color: var(--ink-soft); }
 `.trim();
 
 /**
- * One policy page, ready to serve.
+ * One site page, ready to serve.
  *
- * @param {string} markdown  the document, as committed under docs/legal/
- * @param {keyof typeof NAV} document  which page this is
+ * @param {string} markdown  the document, as committed under docs/legal/ or docs/web/
+ * @param {keyof typeof OTHERS} document  which page this is
  * @returns {string} a complete HTML document
  */
 export function renderLegalPage(markdown, document) {
   const title = titleOf(markdown);
   const body = renderMarkdown(markdown);
-  const other = NAV[document];
+  const others = OTHERS[document].map((page) =>
+    `<a class="other" href="/${page}">${PAGES[page]} →</a>`).join('');
 
   return `<!DOCTYPE html>
 <html lang="zh-Hans">
@@ -156,7 +167,7 @@ export function renderLegalPage(markdown, document) {
 <div class="wrap">
 <header class="masthead">
 <a class="brand" href="/privacy">Carelogue</a>
-<a class="other" href="${other.path}">${other.label} →</a>
+${others}
 </header>
 <main>
 ${body}

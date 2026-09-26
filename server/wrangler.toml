@@ -27,8 +27,9 @@ WINDOW_SECONDS = "3600"
 binding = "RATE_LIMIT"
 id = "eced6d50e1d3463a8f7ed888d2385b82"
 
-# The policy pages are bundled as text (docs/legal/*.md) and rendered by the
-# Worker at carelogue.ca/privacy and /terms.
+# The site's text pages are bundled as text (docs/legal/*.md and
+# docs/web/*.md) and rendered by the Worker at carelogue.ca/privacy, /terms
+# and /support.
 [[rules]]
 type = "Text"
 globs = ["**/*.md"]
@@ -46,6 +47,10 @@ zone_name = "carelogue.ca"
 
 [[routes]]
 pattern = "carelogue.ca/terms"
+zone_name = "carelogue.ca"
+
+[[routes]]
+pattern = "carelogue.ca/support"
 zone_name = "carelogue.ca"
 
 # Secrets, never in this file:

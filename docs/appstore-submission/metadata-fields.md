@@ -13,7 +13,7 @@
 | 4 | **Promotional Text** | 170 | EN：`Log visits, translate reports, record appointments — your health journey in plain words, kept private on your device.` ｜ 中文：`记录就诊、看懂报告、录下面诊——用大白话管好健康，数据留在你的设备上。` | 📝 |
 | 5 | **Description** | 4,000 | 见下方 §C 全文草案（EN + 中文） | 📝 |
 | 6 | **Keywords** | 100 | EN：`care log,health journal,medical records,doctor visit,symptom,reports,ai,plain words,family`（90 字符；规则：逗号分隔、**逗号后不加空格**） | 📝 |
-| 7 | **Support URL** | — | `https://carelogue.ca/support` | ⏳ 页面待建 |
+| 7 | **Support URL** | — | `https://carelogue.ca/support` | ✅ 已上线（2026-09-26，`docs/web/support.md` 经 Worker 渲染） |
 | 8 | Marketing URL | — | 先留空（或 `https://carelogue.ca`） | 📝 |
 | 9 | Version | — | `1.0` | ✅ |
 | 10 | **Copyright** | 200 | `© 2026 Jiajin Lin` | 📝 |
@@ -37,7 +37,7 @@
 | 年龄分级 | 按问卷照实——**逐题答案见下方「年龄分级问卷」** | ⏳ 填问卷 |
 | App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；1.0 共享功能不改变结论（走用户自己的 iCloud，不经我们）；与 `docs/legal/` 隐私政策一致（2026/09/25 已补「共享功能」章节） | ⏳ 填问卷 |
 | 价格与地区 | ✅ **已设（2026-09-25）：仅 United States + Canada**——白名单方式（比全选减中国更稳：避开欧盟 DSA、韩国分级、巴西评级等合规填报；扩展随时可改、无需重审）。Price Schedule 保持 Free，收费走订阅 | ✅ 已办 |
-| 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选）。⚠️ 仓库里的 `Carelogue.storekit` 只是 UI 测试夹具（无试用期、无家庭共享）；「首周免费 + 家庭共享」要在 **ASC 订阅配置里真的开**，否则改文案（见 review-notes 警示） | 配置中 |
+| 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选）。⚠️ 仓库里的 `Carelogue.storekit` 只是 UI 测试夹具（无试用期、无家庭共享）；「首周免费 + 家庭共享」要在 **ASC 订阅配置里真的开**，否则改文案（见 review-notes 警示） | ✅ 已办 |
 
 ## B2. 年龄分级问卷答案（ASC · App Information → Age Ratings）
 
@@ -123,12 +123,12 @@ Carelogue 是记录工具，不提供诊断或医疗建议——请始终咨询�
 ## D. 提交前 checklist
 
 - [x] 截图 6.5" 就位（1284×2778，iPhone 13 Pro Max 模拟器出图；`ASCScreenshotUITests` / `ASCScreenshotEnglishUITests` 生成，中英各 7 张）
-- [ ] ASC 里分别上传：English (Canada) 传 `en-CA/`，简体中文 传 `zh-Hans/`
+- [x] ASC 里分别上传：English (Canada) 传 `en-CA/`，简体中文 传 `zh-Hans/`
 - [x] iPad 决策落地：已核实工程为 iPhone-only，Xcode 无需改动；构建上传后 ASC 的 iPad 13" 档自动消失
 - [x] Sign-in required 取消勾选
 - [x] Release 方式改为 Manually release
-- [ ] Support URL 页上线（carelogue.ca/support）
-- [ ] 构建上传 + Add Build
+- [x] Support URL 页上线（carelogue.ca/support，2026-09-26）
+- [x] 构建上传 + Add Build
 - [x] 订阅产品 Ready to Submit + 版本页勾选
 - [x] 隐私标签 + 年龄分级完成
 - [x] Notes 粘贴（review-notes.md）

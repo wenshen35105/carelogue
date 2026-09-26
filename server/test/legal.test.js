@@ -9,10 +9,12 @@ import { renderLegalPage } from '../src/legal.js';
 import { createWorker } from '../src/index.js';
 
 const LEGAL = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'docs', 'legal');
+const WEB = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'docs', 'web');
 const privacy = readFileSync(join(LEGAL, 'privacy-policy.md'), 'utf8');
 const terms = readFileSync(join(LEGAL, 'terms-of-service.md'), 'utf8');
+const support = readFileSync(join(WEB, 'support.md'), 'utf8');
 
-const worker = createWorker({ privacy, terms });
+const worker = createWorker({ privacy, terms, support });
 const get = (path, method = 'GET') =>
   worker.fetch(new Request(`https://carelogue.ca${path}`, { method }), {});
 
@@ -58,6 +60,18 @@ test('escapes markup instead of passing it through', () => {
   assert.match(html, /&amp; more/);
 });
 
+test('renders links, and only for web and mail schemes', () => {
+  const html = renderMarkdown([
+    'Email [support@carelogue.ca](mailto:support@carelogue.ca) or see',
+    '[the policy](https://carelogue.ca/privacy) and',
+    '[bad](javascript:alert(1)).',
+  ].join('\n'));
+  assert.match(html, /<a href="mailto:support@carelogue\.ca">support@carelogue\.ca<\/a>/);
+  assert.match(html, /<a href="https:\/\/carelogue\.ca\/privacy">the policy<\/a>/);
+  assert.ok(!html.includes('<a href="javascript:'), 'only whitelisted schemes link');
+  assert.match(html, /\[bad\]\(javascript:alert\(1\)\)/, 'the rest stays literal, escaped');
+});
+
 // --- Pages
 
 test('the page carries the document, the palette and a link to the other one', () => {
@@ -75,10 +89,20 @@ test('titleOf reads the document heading', () => {
   assert.equal(titleOf(terms), 'Carelogue 使用条款 · Terms of Use');
 });
 
+test('the support page carries the FAQ, the contact and links to both policies', () => {
+  const html = renderLegalPage(support, 'support');
+  assert.match(html, /<title>Carelogue 支持 · Support — Carelogue<\/title>/);
+  assert.match(html, /常见问题/);
+  assert.match(html, /Frequently asked questions/);
+  assert.match(html, /<a href="mailto:support@carelogue\.ca">/);
+  assert.match(html, /href="\/privacy"/, 'links to privacy');
+  assert.match(html, /href="\/terms"/, 'links to terms');
+});
+
 // --- Routes
 
-test('serves both policies as HTML', async () => {
-  for (const [path, marker] of [['/privacy', '隐私'], ['/terms', '使用条款']]) {
+test('serves every page as HTML', async () => {
+  for (const [path, marker] of [['/privacy', '隐私'], ['/terms', '使用条款'], ['/support', '常见问题']]) {
     const response = await get(path);
     assert.equal(response.status, 200, path);
     assert.equal(response.headers.get('content-type'), 'text/html; charset=utf-8');
