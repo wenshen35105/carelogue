@@ -12,6 +12,8 @@
 - 实施计划：`docs/ck-share-study.md` 第四节（7 步，5–6 天）；参考实现 framara/CloudKitSharing——**当骨架与坑清单，不当依赖**
 - 测试：双真机 × 两个 Apple ID（你的 + 太太的）；模拟器代替不了
 - 已含尾巴：她的本地副本并进共享（2–3 天）
+- **无 iCloud 降级**：共享入口对未登录 iCloud 的用户优雅提示（不静默失败）；顺手修 VisitRecordingCard 隐私文案对无 iCloud 用户的不准确表述；补该路径 UI 测试
+- **UI 面**：大头是系统 UI（UICloudSharingController：邀请/管理/接受/撤销）；自研仅三小件——共享入口、共享状态标记、若干文案（用现有设计语言，完成后截图过目即可）
 - 原 T38（只读快照 → 完整导出/导入）两版均撤销：改走 CKShare 直连，不走导出路线
 
 
