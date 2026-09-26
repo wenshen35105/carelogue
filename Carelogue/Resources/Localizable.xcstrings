@@ -3958,6 +3958,23 @@
         }
       }
     },
+    "这段旅程的共享已经结束。点右上角共享按钮可重新发起。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This journey is no longer shared. Tap the share button to start sharing again."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这段旅程的共享已经结束。点右上角共享按钮可重新发起。"
+          }
+        }
+      }
+    },
     "最近 %@": {
       "extractionState": "manual",
       "localizations": {

@@ -152,6 +152,17 @@ struct ShareInfoSheet: View {
                         return
                     }
                     SharePresenter.presentManager(for: share, journey: journey)
+                } catch let error as CKError
+                where error.code == .unknownItem || error.code == .zoneNotFound || error.code == .permissionFailure {
+                    // The share is gone server-side while the local row still
+                    // says shared (a stop that landed on the server but never
+                    // rolled back through here). Reporting that as "can't
+                    // reach iCloud" (TestFlight 1.0 (6)) strands the journey
+                    // on a manage button that can never succeed. Fold the
+                    // local state to ended; the share button starts a fresh
+                    // share.
+                    ShareChannel.endShare(journey: journey, in: modelContext)
+                    failure = String(localized: "这段旅程的共享已经结束。点右上角共享按钮可重新发起。")
                 } catch {
                     failure = String(localized: "暂时连不上 iCloud，请稍后再试。")
                 }
