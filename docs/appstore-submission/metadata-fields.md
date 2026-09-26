@@ -54,8 +54,13 @@
 | Capabilities · **Messaging and Chat** | **No** | 无用户间通信功能 |
 | Capabilities · **Advertising** | **No** | 无任何广告 |
 
-- 内容描述符（Violence / Sexual Content / Profanity / Horror / Drugs / Gambling / Medical 等）：全部按实际选 **None/无**；若问卷含医疗信息类描述符，如实填"记录工具展示"（无频率问题）。
-- 预计输出分级：4+–12+ 区间（以 Apple 自动计算为准）。
+- **内容描述符逐项**（None / Infrequent / Frequent）：
+  - **Mature Themes**：Profanity or Crude Humor = **None**；Horror/Fear Themes = **None**；Alcohol, Tobacco, or Drug Use or References = **None**
+  - **Medical or Wellness**：Health or Wellness Topics = **None**；**Medical or Treatment Information = Infrequent**（展示医疗记录 + 教育性解释；不提供诊断/治疗指导。注：Apple 新规 **Frequent 医疗内容 → 16+**）
+  - **Sexuality or Nudity**：Mature or Suggestive Themes / Sexual Content or Nudity / Graphic Sexual Content and Nudity = **None**（全）
+  - **Violence**：Cartoon or Fantasy Violence / Realistic Violence / Prolonged Graphic or Sadistic Realistic Violence / Guns or Other Weapons = **None**（全）
+  - **Chance-Based Activities**：Gambling / Simulated Gambling / Contests / Loot Boxes = **None**（全）
+- **分级档位（2025 新制）**：4+ / 9+ / 13+ / 16+ / 18+（旧 12+ / 17+ 已移除）；填写后 ASC 即时显示自动计算结果，13+ 或 16+ 均可接受。
 - **相关**：App Information 里另有 **Regulated Medical Device Status** 声明——选**非受监管医疗器械**（app 明确不做诊断/治疗，文案已全程声明）。
 
 ## C. Description 全文草案
