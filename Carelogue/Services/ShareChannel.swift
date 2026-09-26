@@ -662,7 +662,12 @@ enum ShareChannel {
         let id = uuid(fromRecordName: record.recordID.recordName) ?? UUID()
         var journey = findJourney(id: id, context: context)
         if journey == nil {
-            let fresh = Journey(id: id, name: "", template: .custom, createdAt: Date.now, updatedAt: Date.now)
+            // A record this device has never seen must lose its first
+            // timestamp race — the remote `updatedAt` is in the past, so a
+            // "now" stamp would make applyRemote skip the very copy that
+            // should fill the journey in (TestFlight 1.0 (5): the accepted
+            // journey came up empty, without even its title).
+            let fresh = Journey(id: id, name: "", template: .custom, createdAt: Date.now, updatedAt: .distantPast)
             context.insert(fresh)
             journey = fresh
         }
@@ -676,6 +681,9 @@ enum ShareChannel {
         var log = findLog(id: id, context: context)
         if log == nil {
             let fresh = Log(id: id)
+            // Same first-race rule as journeys: a never-seen record starts
+            // at the distant past so the remote values win the copy below.
+            fresh.updatedAt = .distantPast
             context.insert(fresh)
             journey.add(fresh)
             log = fresh
