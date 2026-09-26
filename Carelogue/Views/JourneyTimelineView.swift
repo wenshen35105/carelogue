@@ -45,7 +45,6 @@ struct JourneyTimelineView: View {
     @State private var showingChart = false
     // T39 share entry state.
     @State private var showingShareInfo = false
-    @State private var showingNewShare = false
     @State private var needsICloud = false
 
     private var measurements: [Log] {
@@ -146,21 +145,6 @@ struct JourneyTimelineView: View {
         .sheet(isPresented: $showingShareInfo) {
             ShareInfoSheet(journey: journey)
         }
-        .sheet(isPresented: $showingNewShare) {
-            CloudSharingSheet(
-                controller: UICloudSharingController(preparationHandler: { _, handler in
-                    Task { @MainActor in
-                        do {
-                            let share = try await ShareChannel.prepare(journey: journey, context: modelContext)
-                            handler(share, ShareChannel.container, nil)
-                        } catch {
-                            handler(nil, nil, error)
-                        }
-                    }
-                }),
-                journey: journey
-            )
-        }
         .alert(String(localized: "需要登录 iCloud"), isPresented: $needsICloud) {
             Button(String(localized: "好"), role: .cancel) {}
         } message: {
@@ -181,7 +165,7 @@ struct JourneyTimelineView: View {
         } else if !CloudSync.hasICloudAccount {
             needsICloud = true
         } else if !ShareChannel.simulated {
-            showingNewShare = true
+            SharePresenter.presentNewShare(for: journey, context: modelContext)
         }
     }
 

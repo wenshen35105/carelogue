@@ -98,4 +98,18 @@ final class ShareUITests: CarelogueUITestCase {
         XCTAssertTrue(element(containing: "你的设备与 iCloud 私有库").exists)
         XCTAssertFalse(element(containing: "只保存在这台设备上").exists)
     }
+
+    /// Signed in, not yet shared: the share button must bring up a sharing
+    /// sheet with something in it. (TestFlight 1.0 (2): the system
+    /// controller wrapped in a SwiftUI sheet came up as an empty dialog.)
+    func testNewShareShowsSharingOptions() {
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-icloud-account"])
+        openSeededJourney()
+
+        app.buttons["timeline.share"].tap()
+        RunLoop.current.run(until: Date.now.addingTimeInterval(3))
+        screenshot("T39-new-share-sheet")
+        let sheet = app.otherElements["ActivityListView"]
+        XCTAssertTrue(sheet.waitForExistence(timeout: 8), "No sharing options on screen")
+    }
 }

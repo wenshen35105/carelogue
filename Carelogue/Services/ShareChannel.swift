@@ -278,6 +278,8 @@ enum ShareChannel {
         }
 
         let share = CKShare(rootRecord: records[0])
+        // What the invite and the system share UI show as the item's name.
+        share[CKShare.SystemFieldKey.title] = journey.name
         records.append(share)
         _ = try await save(records, to: database)
 

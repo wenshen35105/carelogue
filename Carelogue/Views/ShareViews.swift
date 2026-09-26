@@ -37,7 +37,6 @@ struct ShareInfoSheet: View {
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @State private var showingManager = false
     @State private var working = false
     @State private var failure: String?
 
@@ -73,16 +72,6 @@ struct ShareInfoSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "完成")) { dismiss() }
-                }
-            }
-            .sheet(isPresented: $showingManager, onDismiss: { failure = nil }) {
-                if let share = fetchedShare {
-                    CloudSharingSheet(
-                        controller: UICloudSharingController(share: share, container: ShareChannel.container),
-                        journey: journey
-                    )
-                } else {
-                    ProgressView().padding(40)
                 }
             }
             .alert(String(localized: "共享暂不可用"), isPresented: Binding(
@@ -144,7 +133,7 @@ struct ShareInfoSheet: View {
 
     /// Opens the system controller on the existing share (participants,
     /// revoke, remove me). It needs the fetched CKShare, so the button's task
-    /// stores it first and only then presents the sheet.
+    /// fetches it first and only then presents the controller.
     private var manageButton: some View {
         Button {
             failure = nil
@@ -162,8 +151,7 @@ struct ShareInfoSheet: View {
                         failure = String(localized: "暂时连不上 iCloud，请稍后再试。")
                         return
                     }
-                    fetchedShare = share
-                    showingManager = true
+                    SharePresenter.presentManager(for: share, journey: journey)
                 } catch {
                     failure = String(localized: "暂时连不上 iCloud，请稍后再试。")
                 }
@@ -185,55 +173,98 @@ struct ShareInfoSheet: View {
         .buttonStyle(PressableStyle())
         .accessibilityIdentifier("share.info.manage")
     }
-
-    @State private var fetchedShare: CKShare?
 }
 
-/// SwiftUI wrapper for the system sharing controller. The coordinator keeps
-/// the delegate alive and routes "sharing stopped" back into ShareChannel.
-struct CloudSharingSheet: UIViewControllerRepresentable {
-    let controller: UICloudSharingController
+/// Presents the system sharing UI straight from UIKit (T39). Both system
+/// controllers expect to be presented modally themselves: wrapped in a
+/// SwiftUI `.sheet` through a representable they came up as an empty dialog
+/// (TestFlight 1.0 (2)).
+@MainActor
+enum SharePresenter {
+    /// Kept alive while the manage controller is up: its delegate is weak.
+    private static var coordinator: ManageCoordinator?
+
+    /// New share: the system share sheet with a CKShare item. The share is
+    /// only created once the user picks how to send the invite.
+    static func presentNewShare(for journey: Journey, context: ModelContext) {
+        let preparation = SharePreparation(journey: journey, context: context)
+        let provider = NSItemProvider()
+        provider.registerCKShare(container: ShareChannel.container) {
+            try await preparation.run()
+        }
+        let configuration = UIActivityItemsConfiguration(itemProviders: [provider])
+        // The sheet's header names the journey instead of a generic
+        // "Collaboration".
+        let title = journey.name
+        configuration.metadataProvider = { key in key == .title ? title : nil }
+        let controller = UIActivityViewController(activityItemsConfiguration: configuration)
+        present(controller)
+    }
+
+    /// Existing share: participants, revoke, remove me.
+    static func presentManager(for share: CKShare, journey: Journey) {
+        let controller = UICloudSharingController(share: share, container: ShareChannel.container)
+        let coordinator = ManageCoordinator(journey: journey)
+        self.coordinator = coordinator
+        controller.delegate = coordinator
+        present(controller)
+    }
+
+    private static func present(_ controller: UIViewController) {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let scene = scenes.first { $0.activationState == .foregroundActive } ?? scenes.first
+        guard var top = scene?.keyWindow?.rootViewController else { return }
+        while let presented = top.presentedViewController { top = presented }
+        // iPad would need an anchor; the app is iPhone-only, this is a guard.
+        controller.popoverPresentationController?.sourceView = top.view
+        top.present(controller, animated: true)
+    }
+}
+
+/// Carries the journey into the share item's @Sendable preparation closure;
+/// the work itself happens back on the main actor.
+@MainActor
+private final class SharePreparation: @unchecked Sendable {
+    let journey: Journey
+    let context: ModelContext
+
+    init(journey: Journey, context: ModelContext) {
+        self.journey = journey
+        self.context = context
+    }
+
+    func run() async throws -> CKShare {
+        try await ShareChannel.prepare(journey: journey, context: context)
+    }
+}
+
+/// Routes "sharing stopped" from the manage controller back into ShareChannel.
+private final class ManageCoordinator: NSObject, UICloudSharingControllerDelegate {
     let journey: Journey
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator(journey: journey)
+    init(journey: Journey) {
+        self.journey = journey
     }
 
-    func makeUIViewController(context: Context) -> UICloudSharingController {
-        controller.delegate = context.coordinator
-        return controller
+    func itemTitle(for csc: UICloudSharingController) -> String? {
+        journey.name
     }
 
-    func updateUIViewController(_ controller: UICloudSharingController, context: Context) {}
-
-    final class Coordinator: NSObject, UICloudSharingControllerDelegate {
-        let journey: Journey
-
-        init(journey: Journey) {
-            self.journey = journey
+    /// Owner stopped sharing, or the participant removed themselves —
+    /// either way this device is out of the channel now.
+    func cloudSharingControllerDidStopSharing(_ csc: UICloudSharingController) {
+        Task { @MainActor in
+            guard let context = CarelogueApp.modelContainer?.mainContext else { return }
+            await ShareChannel.stopSharing(journey: journey, in: context)
         }
-
-        func itemTitle(for csc: UICloudSharingController) -> String? {
-            journey.name
-        }
-
-        /// Owner stopped sharing, or the participant removed themselves —
-        /// either way this device is out of the channel now.
-        func cloudSharingControllerDidStopSharing(_ csc: UICloudSharingController) {
-            Task { @MainActor in
-                guard let context = CarelogueApp.modelContainer?.mainContext else { return }
-                await ShareChannel.stopSharing(journey: journey, in: context)
-            }
-        }
-
-        /// Participants changed (invite accepted, someone removed): nothing
-        /// to do — the zone already holds the full tree for the newcomer.
-        func cloudSharingControllerDidSaveShare(_ csc: UICloudSharingController) {}
-
-        /// The system controller surfaces save failures itself; nothing local
-        /// needs rolling back — the next sync re-attempts whatever did not
-        /// land.
-        func cloudSharingController(_ csc: UICloudSharingController,
-                                    failedToSaveShareWithError error: Error) {}
     }
+
+    /// Participants changed: nothing to do — the zone already holds the full
+    /// tree for a newcomer.
+    func cloudSharingControllerDidSaveShare(_ csc: UICloudSharingController) {}
+
+    /// The system controller surfaces save failures itself; the next sync
+    /// re-attempts whatever did not land.
+    func cloudSharingController(_ csc: UICloudSharingController,
+                                failedToSaveShareWithError error: Error) {}
 }
