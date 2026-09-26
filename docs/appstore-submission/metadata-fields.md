@@ -34,10 +34,29 @@
 | App 名称 | `Catalogue`（若被占 → 加副题 `Catalogue: Care Log`） | ✅ 已建 |
 | 副标题 Subtitle | `Health records, made clear`（24/30） | 📝 |
 | 主 / 副类别 | 主：Health & Fitness；副：Medical | 📝 建议 |
-| 年龄分级 | 按问卷照实：无暴力/成人内容；含 Medical/Treatment Information（工具性展示）→ 预计 12+ | ⏳ 填问卷 |
+| 年龄分级 | 按问卷照实——**逐题答案见下方「年龄分级问卷」** | ⏳ 填问卷 |
 | App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；与 `docs/legal/` 隐私政策一致 | ⏳ 填问卷 |
 | 价格与地区 | 免费 + 订阅；地区：全球**除中国大陆**（已决：不做中国区） | 📝 建议 |
 | 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选） | 配置中 |
+
+## B2. 年龄分级问卷答案（ASC · App Information → Age Ratings）
+
+2025-07 新版问卷（新增 In-App Controls / Capabilities 区块）+ **2026-09 起强制的社交媒体声明**。
+
+| 问题 | 答案 | 理由（对照 Apple 定义） |
+|---|---|---|
+| In-App Controls · **Parental Controls** | **No** | 无家长控制工具 |
+| In-App Controls · **Age Assurance** | **No** | 无年龄验证机制（未用 Declared Age Range API） |
+| Capabilities · **Unrestricted Web Access** | **No** | app 内无浏览器；法律/订阅链接用系统 Safari 打开 |
+| Capabilities · **User-Generated Content** | **No** | 用户内容不广泛分发（私人库 + 定向共享给受邀个人） |
+| Capabilities · **Social Media** | **No** | 无 feed / 发现 / 转发扩散机制（2026-09 起此题为必答） |
+| Capabilities · **Social Media Disabled for Users Under 13** | **No** | 无社交媒体，未调用 Declared Age Range API——不声明豁免（答完上题若无此问则忽略） |
+| Capabilities · **Messaging and Chat** | **No** | 无用户间通信功能 |
+| Capabilities · **Advertising** | **No** | 无任何广告 |
+
+- 内容描述符（Violence / Sexual Content / Profanity / Horror / Drugs / Gambling / Medical 等）：全部按实际选 **None/无**；若问卷含医疗信息类描述符，如实填"记录工具展示"（无频率问题）。
+- 预计输出分级：4+–12+ 区间（以 Apple 自动计算为准）。
+- **相关**：App Information 里另有 **Regulated Medical Device Status** 声明——选**非受监管医疗器械**（app 明确不做诊断/治疗，文案已全程声明）。
 
 ## C. Description 全文草案
 
