@@ -73,7 +73,7 @@
 
 ## D. 发布前（M5，内测之后）
 
-- [ ] 其余见 `docs/appstore-checklist.md` 的 ⏳ 项（截图素材、描述、审核备注、`ALLOW_SANDBOX` 审核期保持 1 等）
+- [ ] 其余见两处：`docs/appstore-submission/`（**提审材料包**：逐字段手册 + 截图 + 备注）＋ `docs/appstore-checklist.md` 的 ⏳ 项（`ALLOW_SANDBOX` 审核期保持 1、内部通道下线）
 
 ## E. 出一个 TestFlight 构建
 

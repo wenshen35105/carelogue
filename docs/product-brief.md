@@ -43,7 +43,7 @@
   - 同一 iCloud 账号（夫妻等）：CloudKit 私有库自动跨设备同步（MVP 免费天然）
   - 不同账号（父母等）：MVP = "导出分享"（摘要/报告 → PDF 或加密包，经 iMessage/微信）；v1.1 = CloudKit 共享（CKShare，需对方 Apple 设备）
   - 跨平台（Android/Web）时的路线：E2E 加密中转（server 只见密文）——v2+，非 MVP
-  - 权限模型待定：默认"选择性共享"（按 Journey / 按卡片选可见范围），不是整库授权
+  - 权限模型（2026-09-25 定）：**按 Journey 选择性共享**（共享孕期，不共享全部）；参与者**可读写**——CloudKit 现状不支持只读角色（T39 实施中，见 `ck-share-study.md`）
 
 ## 功能集
 

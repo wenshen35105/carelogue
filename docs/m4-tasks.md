@@ -60,7 +60,7 @@
 
 ---
 
-## 待办清单（你手动，按顺序）
+## 待办清单（你手动，按顺序）✅ 4 条已全部完成（2026-09-25 核对）
 1. **DeepInfra**：注册 + 充值（$5–10 起）→ 生成 API key → **存 Mac 本地**（不进 git、不发聊天）；部署时设进 Cloudflare secrets
 2. **Cloudflare**：注册（免费）→（可选）顺手注册域名 carelogue.ca（~$12–15/年）；开发时在 Mac 上 `wrangler login`
 3. **Apple**：App Store Connect 三查——① Paid Apps 协议 ② 银行 + 税表 ③ 建 app 记录（bundle ID）

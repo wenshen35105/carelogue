@@ -1,7 +1,7 @@
 # Carelogue · App Store 审核要素自检（T28）
 
 > 对着 App Review Guidelines 里与本应用有关的条目逐项过。✅ = 代码/文档里已经落地；
-> ⏳ = 等你手动完成（账号、域名、素材）。M5 上架前再整体复核一次。
+> ⏳ = 等你手动完成（账号、域名、素材）。M6 提审前再整体复核一次。
 
 ## 订阅（Guideline 3.1.1 / 3.1.2）
 
@@ -22,7 +22,7 @@
 | 项 | 状态 | 落点 |
 |---|---|---|
 | 隐私政策链接在 App 内可达 | ✅ | 设置页页脚、同意弹窗、订阅页 |
-| 隐私政策托管在可访问的 URL | ✅ / ✅ | 页面已由 Worker 直出（`/privacy`，从 `docs/legal/privacy-policy.md` 渲染）；剩域名路由：`wrangler.toml` 三条 `[[routes]]` 取消注释 + redeploy |
+| 隐私政策托管在可访问的 URL | ✅ | 页面已由 Worker 直出（`/privacy`，从 `docs/legal/privacy-policy.md` 渲染），线上 200 |
 | 使用条款（EULA）可达 | ✅ / ⏳ | 同上（`/terms`，源自 `docs/legal/terms-of-service.md`）|
 | 首次使用前的数据流向说明与同意 | ✅ | `ConsentSheet`（每台设备一次，可撤回）|
 | 相机权限用途说明（双语）| ✅ | `InfoPlist.xcstrings` 的 `NSCameraUsageDescription` |
@@ -48,10 +48,8 @@
 
 ## 提交前还要准备（M5）
 
-- ⏳ 截图（6.7" / 6.5" 各一组，中英）
-- ⏳ App 描述、关键词、What's New（中英）
-- ⏳ 支持网址、营销网址、联系邮箱（与隐私政策一致：`support@carelogue.ca`）
-- ⏳ 审核备注：说明 AI 解释需要订阅，并提供沙盒账号或说明如何用沙盒购买
+- 素材与逐字段填写 → **见 `docs/appstore-submission/`**（截图、描述、关键词、URL、审核备注、隐私标签/分级问卷、Sign-in/Release 设置——含逐字段手册与 checklist）
+  - 遗留决策：App Store 页面是否加 **zh-Hans 本地化**（若加 → 补中文文案与中文截图套；中文 Description 已备）
 - ⏳ `server/wrangler.toml` 的 `ALLOW_SANDBOX`：**审核期间保持 `"1"`**（审核员用沙盒购买，关掉订阅就不解锁）；上架且内测收尾后再评估改 `"0"`（保留的风险仅限自己创建的 ASC 沙盒测试员）
 - ⏳ 内部通道下线（T30 双保险第二道）：`cd server && npx wrangler secret delete INTERNAL_ACCESS_KEY`
   → `npx wrangler secret list` 里不再出现它；客户端那半边本来就只在 Debug 编译路径里，Release 产物 `strings` 查不到
