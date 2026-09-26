@@ -14,9 +14,9 @@
 ## B. 认证过审后（按序）
 
 1. [x] Xcode → Settings → Accounts 登录开发者账号 ✅（随 TestFlight 上传流程已验证——构建已传到 `1.0 (8)`）
-2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）——TestFlight 安装已覆盖真机安装；若没做过 Xcode 直装且不需要调试，可勾掉跳过
-3. [ ] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23。可与 T39 双机联调（§顶部）同场做
-4. [ ] App Store Connect：
+2. [x] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）——TestFlight 安装已覆盖真机安装；若没做过 Xcode 直装且不需要调试，可勾掉跳过
+3. [x] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23。可与 T39 双机联调（§顶部）同场做
+4. [x] App Store Connect：
    - [x] **bundle id 迁移**（✅ 已定：换为 `ca.carelogue.app`）——顺序：① developer.apple.com 接受待签协议（新账号必做）② Identifiers 页面把列表切到 **iCloud Containers**（独立分类，不在 App ID 里）先建 `iCloud.ca.carelogue.app`（Description: Carelogue）→ 回 App IDs 新建 `ca.carelogue.app`（勾 iCloud + CloudKit，Configure 里勾上刚建的容器） ③ ~~CC 改 repo~~ **✅ 已完成 2026-09-24** ④ Xcode Run 验证（报错兜底：账号移除重加 / 清 DerivedData）⑤ 之后才给太太和各设备装
      - ⚠️ **拼写以 `carelogue` 为准**（域名 carelogue.ca）——此前文档里的 `ca.carelolgue.app` 是笔误（多一个 `l`），已订正。在 Apple 后台建 identifier 时务必照订正后的拼写填，**建完即锁定**
      - repo 侧已全部对齐：app `ca.carelogue.app`、UI tests `ca.carelogue.app.uitests`、iCloud container `iCloud.ca.carelogue.app`、订阅 product id `ca.carelogue.app.plus.monthly`、server 的 `BUNDLE_ID` / `PRODUCT_IDS`
@@ -25,10 +25,10 @@
      - **Canada Tax Form 细节**：要 **BN（9 位数字）+ RT（4 位数字，如 0001）**——**个人无公司也要**（⚠️ 这是 CRA **税务账号**、**不是注册公司**；注册表不问雇主、与 IBM 无关）：CRA 官网搜 **Business Registration Online**（用 SIN 在线免费办；安省用真名经营无需先做省注册）→ 回来填（BN 填 9 位、RT 只填 4 位数字，**别带字母**）→ Preview → **Certify & Submit**；同页 **U.S. Tax Information 人人都要填**（即使不在美国）。注册后按期做 GST/HST 申报（App Store 部分由 Apple 代收代缴——即此表作用；首次申报建议找会计过一遍）
    - [x] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
    - [x] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
-5. [ ] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
+5. [x] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
 6. [x] **CloudKit schema 部署到 Production** ✅ 2026-09-25——CloudKit Console → 容器 `iCloud.ca.carelogue.app` → Development 环境 → Deploy Schema Changes → 目标 Production。
    **这是 TestFlight 的前置条件，不是发布前才做的事**：TestFlight / App Store 构建走的是 **Production** 容器（Release 产物的 `com.apple.developer.icloud-container-environment` = `Production`），而 Production 里没有 schema 时**不会自动建记录类型**（自动建只发生在 Development），结果是本地能存、同步静默失败。数据不丢，但同步这块等于没测。
-   - [ ] **T39 共享的记录类型再部署一次**（9/25 那次部署早于 T39，不含 `Journey` / `Log` / `Artifact`——没有它们，TestFlight 里创建共享必然失败）：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development，再在 Console 里 Deploy Schema Changes → Production。以后 `ShareChannel` 每加一个字段，都要重走这两步。
+   - [x] **T39 共享的记录类型再部署一次**（9/25 那次部署早于 T39，不含 `Journey` / `Log` / `Artifact`——没有它们，TestFlight 里创建共享必然失败）：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development，再在 Console 里 Deploy Schema Changes → Production。以后 `ShareChannel` 每加一个字段，都要重走这两步。
 7. [x] **TestFlight 首个构建** ✅ 2026-09-25 上传 `1.0 (1)`（流程见下方 §E）
 8. [x] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）。走 TestFlight 免开 Developer Mode（Xcode 直装才需要）。顺序：你自己先装一遍跑通 Smoke + 同步，再邀请她
 
@@ -73,7 +73,7 @@
 - [ ] **真机验一次面诊录音**（T32，只有真机能验）：装上 Debug 构建 → 任一「就诊」记录 → 开始录音 → 说两分钟 → 完成 → 看本地转写出不出文字 → 整理成总结。
   重点看两件事：① 中英混着说（"胎心 152，NT ultrasound"）转写准不准 ② 一小时录音的体积（预期 ≈ 11MB）。
   **按卡内验收**：最好就是下次产检真录一次，太太一起看看总结和「我的疑问」大字版能不能用。
-- [ ] **拍一个小项**：解释可"附带档案信息"（过敏/长期用药，默认开启；隐私政策已披露、设置可关）——① 同意弹窗要不要也补一句透明说明？（建议：补）② 默认值"开"还是"关"？（建议：开）回一句即可
+- [x] **拍一个小项**：解释可"附带档案信息"（过敏/长期用药，默认开启；隐私政策已披露、设置可关）——① 同意弹窗要不要也补一句透明说明？（建议：补）② 默认值"开"还是"关"？（建议：开）回一句即可
 
 ## D. 发布前（提审动作，M6 · 2026-09-26 收拢）
 
