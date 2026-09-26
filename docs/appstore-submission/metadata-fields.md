@@ -36,7 +36,7 @@
 | 主 / 副类别 | 主：Health & Fitness；副：Medical | 📝 建议 |
 | 年龄分级 | 按问卷照实——**逐题答案见下方「年龄分级问卷」** | ⏳ 填问卷 |
 | App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；与 `docs/legal/` 隐私政策一致 | ⏳ 填问卷 |
-| 价格与地区 | 免费 + 订阅（Price Schedule 保持 Free）；地区：全球**除中国大陆**——操作：Pricing and Availability → App Availability → **Manage** → 取消勾选 **China mainland**（保留其余全选）→ Save。注：China mainland 与 Hong Kong/Macao/Taiwan 为分开条目，勿混 | ⏳ 待办（2 分钟） |
+| 价格与地区 | ✅ **已设（2026-09-25）：仅 United States + Canada**——白名单方式（比全选减中国更稳：避开欧盟 DSA、韩国分级、巴西评级等合规填报；扩展随时可改、无需重审）。Price Schedule 保持 Free，收费走订阅 | ✅ 已办 |
 | 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选） | 配置中 |
 
 ## B2. 年龄分级问卷答案（ASC · App Information → Age Ratings）
