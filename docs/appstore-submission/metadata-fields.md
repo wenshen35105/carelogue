@@ -62,7 +62,8 @@
   - **Sexuality or Nudity**：Mature or Suggestive Themes / Sexual Content or Nudity / Graphic Sexual Content and Nudity = **None**（全）
   - **Violence**：Cartoon or Fantasy Violence / Realistic Violence / Prolonged Graphic or Sadistic Realistic Violence / Guns or Other Weapons = **None**（全）
   - **Chance-Based Activities**：Gambling / Simulated Gambling / Contests / Loot Boxes = **None**（全）
-- **分级档位（2025 新制）**：4+ / 9+ / 13+ / 16+ / 18+（旧 12+ / 17+ 已移除）；填写后 ASC 即时显示自动计算结果，13+ 或 16+ 均可接受。
+- **分级档位（2025 新制）**：4+ / 9+ / 13+ / 16+ / 18+（旧 12+ / 17+ 已移除）。
+- **最终取值（2026-09-25 已办）**：问卷答完后**手动提高到 16+**——官方支持（"set a higher age rating"）；医疗内容 + 成人工具，保守无副作用（分级只影响家长控制，不挡成人用户）。
 - **相关**：App Information 里另有 **Regulated Medical Device Status** 声明——选**非受监管医疗器械**（app 明确不做诊断/治疗，文案已全程声明）。
 
 ## C. Description 全文草案
