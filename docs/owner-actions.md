@@ -1,7 +1,7 @@
 # Carelogue · 待办（只有你能做的）
 
 > 其余全部已由 CC 完成（M4：T23–T28 已合入）。这份只列真正需要你动手的，按"什么时候能做"分组。
-> 更新：2026-09-24（认证通过；bundle id 迁移完成，repo 已全部对齐）
+> 更新：2026-09-25（CloudKit schema 已部署到 Production；TestFlight 首个构建 `1.0 (1)` 已上传，流程见 §E）
 
 ## ⏳ 唯一阻塞项
 
@@ -14,16 +14,19 @@
 2. [ ] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）
 3. [ ] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23
 4. [ ] App Store Connect：
-   - [ ] **bundle id 迁移**（✅ 已定：换为 `ca.carelogue.app`）——顺序：① developer.apple.com 接受待签协议（新账号必做）② Identifiers 页面把列表切到 **iCloud Containers**（独立分类，不在 App ID 里）先建 `iCloud.ca.carelogue.app`（Description: Carelogue）→ 回 App IDs 新建 `ca.carelogue.app`（勾 iCloud + CloudKit，Configure 里勾上刚建的容器） ③ ~~CC 改 repo~~ **✅ 已完成 2026-09-24** ④ Xcode Run 验证（报错兜底：账号移除重加 / 清 DerivedData）⑤ 之后才给太太和各设备装
+   - [x] **bundle id 迁移**（✅ 已定：换为 `ca.carelogue.app`）——顺序：① developer.apple.com 接受待签协议（新账号必做）② Identifiers 页面把列表切到 **iCloud Containers**（独立分类，不在 App ID 里）先建 `iCloud.ca.carelogue.app`（Description: Carelogue）→ 回 App IDs 新建 `ca.carelogue.app`（勾 iCloud + CloudKit，Configure 里勾上刚建的容器） ③ ~~CC 改 repo~~ **✅ 已完成 2026-09-24** ④ Xcode Run 验证（报错兜底：账号移除重加 / 清 DerivedData）⑤ 之后才给太太和各设备装
      - ⚠️ **拼写以 `carelogue` 为准**（域名 carelogue.ca）——此前文档里的 `ca.carelolgue.app` 是笔误（多一个 `l`），已订正。在 Apple 后台建 identifier 时务必照订正后的拼写填，**建完即锁定**
      - repo 侧已全部对齐：app `ca.carelogue.app`、UI tests `ca.carelogue.app.uitests`、iCloud container `iCloud.ca.carelogue.app`、订阅 product id `ca.carelogue.app.plus.monthly`、server 的 `BUNDLE_ID` / `PRODUCT_IDS`
-   - [ ] 建 app 记录（**SKU 填 `ca.carelogue.app`**；名字先试 `Carelogue`，被占则加副题，如 `Carelogue: Care Log`）+ 订阅产品（id：`ca.carelogue.app.plus.monthly`；$3.99/月，中英本地化——文案：Display Name `Carelogue Plus` / EN 描述 `AI explanations for your health records` / 中文描述 `用 AI 看懂你的健康记录`；**Introductory Offer 配法：订阅产品页 → Introductory Offers → Set Up → Type=`Free Trial`、Duration=`1 week`、Eligibility=`New Subscribers`、Countries=`Select All`**；multiseat 选 **No**；**Family Sharing 开关一并打开——你们各自 Apple ID 但太太在家庭组里：这是她共享你订阅的必经路径**）
-   - [ ] 签 Paid Apps 协议；填银行账户 + 税表（路径：ASC → **Business**（旧名 Agreements, Tax, and Banking）→ Agreements → **Paid Apps** 行 → **View and Agree to Terms**；随后 Contacts / Bank Accounts / Tax Forms 三件套填完才变绿）
+   - [x] 建 app 记录（**SKU 填 `ca.carelogue.app`**；名字先试 `Carelogue`，被占则加副题，如 `Carelogue: Care Log`）+ 订阅产品（id：`ca.carelogue.app.plus.monthly`；$3.99/月，中英本地化——文案：Display Name `Carelogue Plus` / EN 描述 `AI explanations for your health records` / 中文描述 `用 AI 看懂你的健康记录`；**Introductory Offer 配法：订阅产品页 → Introductory Offers → Set Up → Type=`Free Trial`、Duration=`1 week`、Eligibility=`New Subscribers`、Countries=`Select All`**；multiseat 选 **No**；**Family Sharing 开关一并打开——你们各自 Apple ID 但太太在家庭组里：这是她共享你订阅的必经路径**）
+   - [x] 签 Paid Apps 协议；填银行账户 + 税表（路径：ASC → **Business**（旧名 Agreements, Tax, and Banking）→ Agreements → **Paid Apps** 行 → **View and Agree to Terms**；随后 Contacts / Bank Accounts / Tax Forms 三件套填完才变绿）
      - **Canada Tax Form 细节**：要 **BN（9 位数字）+ RT（4 位数字，如 0001）**——**个人无公司也要**（⚠️ 这是 CRA **税务账号**、**不是注册公司**；注册表不问雇主、与 IBM 无关）：CRA 官网搜 **Business Registration Online**（用 SIN 在线免费办；安省用真名经营无需先做省注册）→ 回来填（BN 填 9 位、RT 只填 4 位数字，**别带字母**）→ Preview → **Certify & Submit**；同页 **U.S. Tax Information 人人都要填**（即使不在美国）。注册后按期做 GST/HST 申报（App Store 部分由 Apple 代收代缴——即此表作用；首次申报建议找会计过一遍）
    - [ ] 隐私问卷（照 `docs/legal/privacy-policy.md` 填）
    - [ ] 注册 **App Store Small Business Program**（15% 抽成；不注册默认 30%——早注册早生效）
 5. [ ] 真机沙盒订阅 → 完整跑一次解释（与 CC 配合）
-6. [ ] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）——**安装之前 bundle id 迁移必须已完成**（换 id = 新 app，旧 id 数据不会跟过去）；Xcode 直装需她手机**一次性开 Developer Mode**（设置 → 隐私与安全性 → 开发者模式 → 重启），走 TestFlight 则免此步
+6. [x] **CloudKit schema 部署到 Production** ✅ 2026-09-25——CloudKit Console → 容器 `iCloud.ca.carelogue.app` → Development 环境 → Deploy Schema Changes → 目标 Production。
+   **这是 TestFlight 的前置条件，不是发布前才做的事**：TestFlight / App Store 构建走的是 **Production** 容器（Release 产物的 `com.apple.developer.icloud-container-environment` = `Production`），而 Production 里没有 schema 时**不会自动建记录类型**（自动建只发生在 Development），结果是本地能存、同步静默失败。数据不丢，但同步这块等于没测。
+7. [x] **TestFlight 首个构建** ✅ 2026-09-25 上传 `1.0 (1)`（流程见下方 §E）
+8. [ ] **内测启动**（T29）：太太手机安装 → 建真实孕期 Journey → 开始用（发现问题丢微信即可）。走 TestFlight 免开 Developer Mode（Xcode 直装才需要）。顺序：你自己先装一遍跑通 Smoke + 同步，再邀请她
 
 ## C. 现在就能做（不等认证）
 
@@ -70,5 +73,57 @@
 
 ## D. 发布前（M5，内测之后）
 
-- [ ] **CloudKit schema 部署**：CloudKit Console 把 Development 环境 schema 一键 **Deploy 到 Production**——不做的话正式版用户同步全挂（经典坑）
 - [ ] 其余见 `docs/appstore-checklist.md` 的 ⏳ 项（截图素材、描述、审核备注、`ALLOW_SANDBOX` 审核期保持 1 等）
+
+## E. 出一个 TestFlight 构建
+
+日常更新就一条命令（`scripts/archive-testflight.local.sh`，gitignored 的本地助手）：
+
+```sh
+ASC_APPLE_ID=<你的邮箱> ASC_APP_PASSWORD='@keychain:ASC_UPLOAD' \
+  UPLOAD=1 scripts/archive-testflight.local.sh
+```
+
+archive → 导出 App Store `.ipa` → 自检产物 → validate → upload 一条走完。脚本每次自动递增
+`CURRENT_PROJECT_VERSION`（ASC 拒收重复的 build 号），**记得把 `project.pbxproj` 一起 commit**，
+这样仓库能看出哪个 build 发过。`MARKETING_VERSION` 不自动动——版本号是产品决定。
+`BUILD=7` 指定 build 号、`NO_BUMP=1` 不递增、不给 `UPLOAD=1` 就只出包不上传。
+
+### 一次性设置（都已完成，换机器时才需要重做）
+
+1. **Apple Distribution 证书**：`-allowProvisioningUpdates` 会自动签发，Xcode 登录开发者账号即可
+2. **钥匙串 partition list**——命令行 codesign 报 `errSecInternalComponent` 时：
+   ```sh
+   security unlock-keychain ~/Library/Keychains/login.keychain-db
+   security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
+     -k "<mac 登录密码>" ~/Library/Keychains/login.keychain-db
+   ```
+3. **出口合规**：`config/Carelogue-Info.plist` 里的 `ITSAppUsesNonExemptEncryption = false`
+   （只走 HTTPS，属豁免）——没有这个，每个构建都卡在 TestFlight 的「Missing Compliance」
+4. **专用密码**（不是 Apple ID 登录密码）：appleid.apple.com → 登录与安全 → 专用密码 → 生成，
+   存进钥匙串一次：
+   ```sh
+   xcrun altool --store-password-in-keychain-item --item ASC_UPLOAD \
+     -u <你的邮箱> -p '<专用密码>'
+   ```
+   ⚠️ `--item` 是必需的，尽管 `altool --help` 的示例里没写（Xcode 27 实测）
+
+### 上传之后
+
+- 查 processing 状态（比刷网页省事，`--wait` 会挂到出结果）：
+  ```sh
+  xcrun altool --build-status --delivery-id <上传输出里的 Delivery UUID> --wait \
+    -u <你的邮箱> -p '@keychain:ASC_UPLOAD'
+  ```
+- build 要过完 processing（5–30 分钟）才会出现在 ASC 的 TestFlight 标签页，之前那里是空的，正常
+- **`--validate-app` 过了不等于 processing 会过**：processing 阶段的拒绝（图标尺寸、entitlement 不匹配等）
+  只发邮件，网页上不一定显示。半小时还没动静就去查邮箱
+- ASC → TestFlight → **Internal Testing** 建组 → 加 Apple ID（内部测试员免 Apple 审核，加完立即可装）
+- TestFlight 构建里**没有内部通道**（Debug 专属，Release 二进制 `strings` 搜不到），AI 解释走
+  App Store 沙盒购买（`ALLOW_SANDBOX = "1"` 已开）
+
+### CC 做不了的部分
+
+CloudKit schema 部署和 ASC 上传都要你的 Apple 登录：CC 的 shell 在沙箱里，
+拿不到 login keychain 的签名私钥（`security` 直接返回 "User interaction is not allowed"），
+所以 codesign / archive / upload 这几步必须在你的交互式终端里跑（Claude Code 里用 `!` 前缀即可）。
