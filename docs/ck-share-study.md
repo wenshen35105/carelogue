@@ -156,7 +156,7 @@ Core Data 那边（`NSPersistentCloudKitContainer`）则一直是完整的：`sh
 ## 参考
 
 - SwiftData 的 `CloudKitDatabase` 选项：iOS 27 SDK 接口文件（本机核实，2026-09-23）
-- [framara/CloudKitSharing](https://github.com/framara/CloudKitSharing) — SwiftData + CKShare 的可用参考实现
+- [framara/CloudKitSharing](https://github.com/framara/CloudKitSharing) — SwiftData + CKShare 的可用参考实现（实况：7★、2026-02 一次性发布后无维护、自真实 app ToMe 抽取；自认无字段级冲突解决、仅读写权限。**当骨架与坑清单用，不当依赖**；关键做法已与本机 SDK/官方 API 交叉验证一致）
 - [delawaremathguy/CoreDataCloudKitShare](https://github.com/delawaremathguy/CoreDataCloudKitShare) — 官方路线（Core Data）的完整示例
 - [SwiftData, CloudKit Sharing between different users（Hacking with Swift 论坛）](https://www.hackingwithswift.com/forums/swiftui/swiftdata-cloudkit-sharing-between-different-users/27679)
 - [SwiftData with shared and private containers（Apple 开发者论坛）](https://developer.apple.com/forums/thread/756721)
