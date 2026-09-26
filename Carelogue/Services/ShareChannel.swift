@@ -671,7 +671,12 @@ enum ShareChannel {
             context.insert(fresh)
             journey = fresh
         }
-        applyRemote(record, to: journey!)
+        // A pre-existing row with an empty name is a hollow shell left by the
+        // 1.0 (5) import bug (first timestamp race lost, nothing copied):
+        // acceptance must refill it regardless of timestamps. A named row is
+        // real local state — last write wins as usual. (There is no
+        // delete-journey UI to clean such a shell up by hand.)
+        applyRemote(record, to: journey!, force: journey!.name.isEmpty)
         return journey!
     }
 
@@ -743,8 +748,8 @@ enum ShareChannel {
     /// Server-side field changes onto a local journey (never the share meta —
     /// that is local state describing the channel).
     @MainActor
-    private static func applyRemote(_ record: CKRecord, to journey: Journey) {
-        guard record[Field.updatedAt] as? Date ?? .distantPast > journey.updatedAt else { return }
+    private static func applyRemote(_ record: CKRecord, to journey: Journey, force: Bool = false) {
+        guard force || record[Field.updatedAt] as? Date ?? .distantPast > journey.updatedAt else { return }
         journey.name = record[Field.name] as? String ?? journey.name
         journey.templateRaw = record[Field.templateRaw] as? String ?? journey.templateRaw
         journey.statusRaw = record[Field.statusRaw] as? String ?? journey.statusRaw
