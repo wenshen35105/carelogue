@@ -7,12 +7,12 @@
 
 | # | 字段 | 限制 | 填什么 | 状态 |
 |---|---|---|---|---|
-| 1 | Screenshots · **iPhone 6.5"** | ≤10 张；1242×2688 / 2688×1242 / 1284×2778 / 2778×1284 | 套图 6–8 张（`screenshots/iphone-6.5/`）：旅程列表 / 时间线 / 报告+AI 解释 / 面诊录音 / 面诊总结 / 疑问翻译 / 订阅页 | ⏳ CC 出图 |
-| 2 | Screenshots · **iPad 13"** | ≤10 张 | **决策**：走 iPhone-only（推荐，iPad 适配留 v1.1；target 去掉 iPad）→ 该档免交 | ⏳ 拍板 |
+| 1 | Screenshots · **iPhone 6.5"** | ≤10 张；1242×2688 / 2688×1242 / 1284×2778 / 2778×1284 | 7 张 × 2 语言（`screenshots/iphone-6.5/en-CA/` → English (Canada)；`zh-Hans/` → 简体中文）：旅程列表 / 时间线 / 报告+AI 解释 / 面诊录音 / 面诊总结 / 疑问翻译 / 订阅页。每张说明见该目录 README | ✅ 已出图 |
+| 2 | Screenshots · **iPad 13"** | ≤10 张 | **决策**：走 iPhone-only（iPad 适配留 v1.1）→ 该档免交。✅ 2026/09/25 核实：工程已是 iPhone-only（`TARGETED_DEVICE_FAMILY = 1`），**Xcode 无需改动**；ASC 现在显示 iPad 13" 档只是因为还没传构建——iPhone-only 构建上传后该档自动消失 | ✅ 核实 |
 | 3 | App Previews | ≤3 视频 | 不做（选填） | ✅ |
 | 4 | **Promotional Text** | 170 | EN：`Log visits, translate reports, record appointments — your health journey in plain words, kept private on your device.` ｜ 中文：`记录就诊、看懂报告、录下面诊——用大白话管好健康，数据留在你的设备上。` | 📝 |
 | 5 | **Description** | 4,000 | 见下方 §C 全文草案（EN + 中文） | 📝 |
-| 6 | **Keywords** | 100 | EN：`care log,health journal,medical records,doctor visit,symptom,reports,ai,plain words,family`（≈95；规则：逗号分隔、**逗号后不加空格**） | 📝 |
+| 6 | **Keywords** | 100 | EN：`care log,health journal,medical records,doctor visit,symptom,reports,ai,plain words,family`（90 字符；规则：逗号分隔、**逗号后不加空格**） | 📝 |
 | 7 | **Support URL** | — | `https://carelogue.ca/support` | ⏳ 页面待建 |
 | 8 | Marketing URL | — | 先留空（或 `https://carelogue.ca`） | 📝 |
 | 9 | Version | — | `1.0` | ✅ |
@@ -31,13 +31,13 @@
 
 | 字段 | 填什么 | 状态 |
 |---|---|---|
-| App 名称 | `Catalogue`（若被占 → 加副题 `Catalogue: Care Log`） | ✅ 已建 |
+| App 名称 | `Carelogue`（与 ASC 现有 app 记录、bundle id `ca.carelogue.app` 一致；2026/09/25 定：全部文案统一用 Carelogue） | ✅ 已建 |
 | 副标题 Subtitle | `Health records, made clear`（24/30） | 📝 |
 | 主 / 副类别 | 主：Health & Fitness；副：Medical | 📝 建议 |
 | 年龄分级 | 按问卷照实——**逐题答案见下方「年龄分级问卷」** | ⏳ 填问卷 |
-| App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；与 `docs/legal/` 隐私政策一致 | ⏳ 填问卷 |
+| App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；1.0 共享功能不改变结论（走用户自己的 iCloud，不经我们）；与 `docs/legal/` 隐私政策一致（2026/09/25 已补「共享功能」章节） | ⏳ 填问卷 |
 | 价格与地区 | ✅ **已设（2026-09-25）：仅 United States + Canada**——白名单方式（比全选减中国更稳：避开欧盟 DSA、韩国分级、巴西评级等合规填报；扩展随时可改、无需重审）。Price Schedule 保持 Free，收费走订阅 | ✅ 已办 |
-| 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选） | 配置中 |
+| 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选）。⚠️ 仓库里的 `Carelogue.storekit` 只是 UI 测试夹具（无试用期、无家庭共享）；「首周免费 + 家庭共享」要在 **ASC 订阅配置里真的开**，否则改文案（见 review-notes 警示） | 配置中 |
 
 ## B2. 年龄分级问卷答案（ASC · App Information → Age Ratings）
 
@@ -71,7 +71,7 @@
 ### English (Canada)（主语言）
 
 ```
-Catalogue is a calm, private home for your health records.
+Carelogue is a calm, private home for your health records.
 
 Log doctor visits, test results, measurements and everyday notes in one timeline you actually understand. Point your camera at a paper report and Carelogue extracts the text on your device — then explains it in plain language: what the numbers mean, the terms translated, and questions worth asking your doctor next time.
 
@@ -79,54 +79,57 @@ Log doctor visits, test results, measurements and everyday notes in one timeline
 • Scan reports and lab results with your camera; text is extracted on your device
 • AI explanations in plain language — a summary, a term card and a question list for your doctor
 • Record appointments and get a written summary, with your questions translated for the conversation
-• Share a journey with family or your doctor (invite from the app)  ← 仅当共享功能随 1.0 上线则保留；否则删除（不可描述未上线功能）
+• Share a journey with family — the invite goes through your own iCloud, and both of you can view and edit
 • Bilingual: English and Simplified Chinese, side by side
 
 Privacy is the point:
 • Your records, attachments and recordings live on your device and in your own private iCloud. We can't read them.
+• Sharing a journey goes through Apple's iCloud too — never any other server.
 • Images never leave your device — only extracted text can be sent for an explanation, processed in real time and never stored.
 • Audio never goes to AI — transcription happens on your device.
 • No account, no tracking, no ads.
 
-Catalogue Plus (optional subscription, $3.99/month with a 1-week free trial) unlocks AI features. All record-keeping is free, forever.
+Carelogue Plus (optional subscription, $3.99/month with a 1-week free trial) unlocks AI features. All record-keeping is free, forever.
 
-Catalogue is a record-keeping tool. It doesn't provide diagnoses or medical advice — always talk to your doctor.
+Carelogue is a record-keeping tool. It doesn't provide diagnoses or medical advice — always talk to your doctor.
 ```
 
 ### 中文（zh-Hans 本地化时用）
 
 ```
-Catalogue 是你健康记录的安心去处。
+Carelogue 是你健康记录的安心去处。
 
-把就诊、检查、测量和随手记放进一条真正看得懂的时间线。对着纸质报告拍一张，Catalogue 会在你的设备上提取文字，再用大白话讲给你听：指标是什么意思、术语怎么翻译、下次见医生该问什么。
+把就诊、检查、测量和随手记放进一条真正看得懂的时间线。对着纸质报告拍一张，Carelogue 会在你的设备上提取文字，再用大白话讲给你听：指标是什么意思、术语怎么翻译、下次见医生该问什么。
 
 • 就诊记录、随手记、测量——一段旅程，一条时间线
 • 拍照扫描报告与化验单；文字在本机提取
 • AI 大白话解释——总结、术语卡，以及问医生的问题清单
 • 面诊录音与书面总结；你的疑问提前翻译好，给医生看
-• 把一段旅程分享给家人或医生（app 内发出邀请）  ← 同上：视共享功能是否随 1.0 上线
+• 把一段旅程分享给家人——邀请走你自己的 iCloud，双方都能查看和编辑
 • 中英双语并排显示
 
 隐私是底线：
 • 记录、附件与录音保存在你的设备和你自己的 iCloud 私有库——我们读不到
+• 共享旅程同样只经过 Apple 的 iCloud，不经任何其他服务器
 • 图像不离开设备——只有提取出的文字会被送去生成解释，实时处理、不留存
 • 音频不进 AI——转写在这台设备上完成
 • 无账号、无追踪、无广告
 
-Catalogue Plus（可选订阅，$3.99/月，首周免费）解锁 AI 功能；所有记录功能免费。
+Carelogue Plus（可选订阅，$3.99/月，首周免费）解锁 AI 功能；所有记录功能免费。
 
-Catalogue 是记录工具，不提供诊断或医疗建议——请始终咨询你的医生。
+Carelogue 是记录工具，不提供诊断或医疗建议——请始终咨询你的医生。
 ```
 
 ## D. 提交前 checklist
 
-- [ ] 截图 6.5" 就位（1284×2778，iPhone 13 Pro Max 模拟器出图）
-- [ ] iPad 决策落地（默认：改 iPhone-only）
-- [ ] Sign-in required 取消勾选
-- [ ] Release 方式改为 Manually release
+- [x] 截图 6.5" 就位（1284×2778，iPhone 13 Pro Max 模拟器出图；`ASCScreenshotUITests` / `ASCScreenshotEnglishUITests` 生成，中英各 7 张）
+- [ ] ASC 里分别上传：English (Canada) 传 `en-CA/`，简体中文 传 `zh-Hans/`
+- [x] iPad 决策落地：已核实工程为 iPhone-only，Xcode 无需改动；构建上传后 ASC 的 iPad 13" 档自动消失
+- [x] Sign-in required 取消勾选
+- [x] Release 方式改为 Manually release
 - [ ] Support URL 页上线（carelogue.ca/support）
 - [ ] 构建上传 + Add Build
-- [ ] 订阅产品 Ready to Submit + 版本页勾选
-- [ ] 隐私标签 + 年龄分级完成
-- [ ] Notes 粘贴（review-notes.md）
-- [ ] Contact Information 填好
+- [x] 订阅产品 Ready to Submit + 版本页勾选
+- [x] 隐私标签 + 年龄分级完成
+- [x] Notes 粘贴（review-notes.md）
+- [x] Contact Information 填好
