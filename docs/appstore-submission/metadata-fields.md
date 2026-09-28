@@ -68,6 +68,8 @@
 
 ## C. Description 全文草案
 
+> **2026-09-26 审后修**：描述末尾须含 ToS (EULA) 与 Privacy 链接（Guideline 3.1.2 自动检查；标准 Apple EULA）。
+
 ### English (Canada)（主语言）
 
 ```
@@ -92,6 +94,9 @@ Privacy is the point:
 Carelogue Plus (optional subscription, $3.99/month with a 1-week free trial) unlocks AI features. All record-keeping is free, forever.
 
 Carelogue is a record-keeping tool. It doesn't provide diagnoses or medical advice — always talk to your doctor.
+
+Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Privacy Policy: https://carelogue.ca/privacy
 ```
 
 ### 中文（zh-Hans 本地化时用）
@@ -118,6 +123,9 @@ Carelogue 是你健康记录的安心去处。
 Carelogue Plus（可选订阅，$3.99/月，首周免费）解锁 AI 功能；所有记录功能免费。
 
 Carelogue 是记录工具，不提供诊断或医疗建议——请始终咨询你的医生。
+
+使用条款 (EULA)：https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+隐私政策：https://carelogue.ca/privacy
 ```
 
 ## D. 提交前 checklist（2026-09-26 复核；改动 ASC 后过来打勾）
@@ -134,3 +142,4 @@ Carelogue 是记录工具，不提供诊断或医疗建议——请始终咨询�
 - [x] 隐私标签（2026-09-25）+ 年龄分级（2026-09-25，问卷后手动 16+）
 - [x] Notes 定稿（`review-notes.md`，提交时粘贴）
 - [ ] Contact Information 确认已填（字段 #16；ASC 若已填即完成）
+- [ ] **Description 补 ToS (EULA) + Privacy 链接**（2026-09-26 审核 3.1.2 自动检查）→ 改完 Resubmit

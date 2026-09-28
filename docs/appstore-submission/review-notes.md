@@ -13,7 +13,7 @@ Thank you for reviewing Carelogue. Below is the requested information.
 
 **2. Purpose and target audience.** Carelogue is a personal health-journey organizer for patients and families managing ongoing care (for example, a pregnancy). It addresses two problems: medical information scatters across visits, reports and notes; and medical language is hard to understand — especially for families navigating care in a second language. Value: everything is kept in one timeline, reports are explained in plain language, and users bring better questions to their doctor. Target audience: adults managing their own or a family member's care.
 
-**3. Setup and access.** No account, login, or credentials are required. The app works fully offline; data is stored on the device, with optional iCloud sync via the user's own Apple ID. Record-keeping features are free; AI features require the "Catalogue Plus" subscription. Typical flow: open the app → create a journey → add a visit, note, or report photo → tap "Explain" on a report. No sample files or credentials are needed.
+**3. Setup and access.** No account, login, or credentials are required. The app works fully offline; data is stored on the device, with optional iCloud sync via the user's own Apple ID. Record-keeping features are free; AI features require the "Carelogue Plus" subscription. Typical flow: open the app → create a journey → add a visit, note, or report photo → tap "Explain" on a report. No sample files or credentials are needed.
 
 **4. External services.**
 - Cloudflare Workers — stateless API forwarding for AI requests; no health data stored server-side.
@@ -26,7 +26,7 @@ Used on-device only: Apple Vision (OCR) and Apple Speech (transcription).
 
 **6. Regulated industry / protected material.** Not applicable. Carelogue is a personal record-keeping and comprehension tool; it provides no diagnosis, treatment advice, or clinical decision support, and is not a regulated medical device. No protected third-party material is included.
 
-**7. In-App Purchase overview.** One subscription: "Catalogue Plus" — auto-renewable, monthly, $3.99/month with a 1-week free trial — unlocking AI features (plain-language report explanations, medical-term cards, and visit summaries). All record-keeping features are free. Navigation: tapping any AI feature (for example, "Explain" on a report) presents the paywall; it is also reachable from Settings. The paywall displays the title, length, price, and links to Terms of Use and Privacy Policy.
+**7. In-App Purchase overview.** One subscription: "Carelogue Plus" — auto-renewable, monthly, $3.99/month with a 1-week free trial — unlocking AI features (plain-language report explanations, medical-term cards, and visit summaries). All record-keeping features are free. Navigation: tapping any AI feature (for example, "Explain" on a report) presents the paywall; it is also reachable from Settings. The paywall displays the title, length, price, and links to Terms of Use and Privacy Policy.
 
 **Additional notes.**
 - No account system exists: no registration, login, or account deletion is applicable. Settings → "Erase all data" deletes everything on the device; uninstalling the app also removes all data.
@@ -61,7 +61,7 @@ Used on-device only: Apple Vision (OCR) and Apple Speech (transcription).
 
 ### Step 3 · 核对三项（粘贴前必须与文本一致）
 
-a. **订阅配置**：ASC → 订阅 → Catalogue Plus → 确认「1 周免费试用」（Introductory Offer）与 Family Sharing 是否已配。英文文本第 7 条与附加第 3 条写了这两个——**没配就把对应句子删掉再贴**。
+a. **订阅配置**：ASC → 订阅 → Carelogue Plus → 确认「1 周免费试用」（Introductory Offer）与 Family Sharing 是否已配。英文文本第 7 条与附加第 3 条写了这两个——**没配就把对应句子删掉再贴**。
 b. **IAP 随版本提交**：版本页 → "In-App Purchases and Subscriptions" 区 → 确认此订阅与该 1.0 版本一起提交（模板预防点 3.1.1）。
 c. **CloudKit schema 部署 Production**：CloudKit Console → container `iCloud.ca.carelogue.app` → Deploy Schema to Production。sharing 功能在审核 build 与上架后走 Production 环境——不部署的话审核员测共享会失败。让 CC 做或你来做（只增 schema，操作前确认 development 环境已含全部 share 记录类型）。
 
