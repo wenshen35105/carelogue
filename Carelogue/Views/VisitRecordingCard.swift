@@ -168,6 +168,18 @@ struct VisitRecordingCard: View {
                     WaveformBars(levels: WaveformBars.shape(seed: artifact.id))
                         .frame(height: 18)
                 }
+
+                Button {
+                    share(artifact)
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Theme.accent)
+                        .frame(width: 44, height: 44)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("分享录音"))
+                .accessibilityIdentifier("recording.share")
             }
             .padding(Theme.Spacing.cardPadding)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -334,6 +346,33 @@ struct VisitRecordingCard: View {
         } catch let error as VisitError {
             failure = error.errorDescription
         } catch {
+            failure = error.localizedDescription
+        }
+    }
+
+    /// M7 T47: the recording leaves the app only when the user sends it —
+    /// AirDrop to a Mac, save to Files. The on-device transcript rides along
+    /// as a .txt next to it, so a bad transcription can be checked against
+    /// the audio it came from.
+    private func share(_ artifact: Artifact) {
+        let folder = FileManager.default.temporaryDirectory
+            .appendingPathComponent("share-\(artifact.id.uuidString)", isDirectory: true)
+        do {
+            try? FileManager.default.removeItem(at: folder)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            let audio = folder.appendingPathComponent(artifact.fileName.isEmpty ? "visit.m4a" : artifact.fileName)
+            try artifact.fileData.write(to: audio)
+            var files = [audio]
+            if let transcript = artifact.transcript, !transcript.isEmpty {
+                let text = audio.deletingPathExtension().appendingPathExtension("txt")
+                try transcript.write(to: text, atomically: true, encoding: .utf8)
+                files.append(text)
+            }
+            SharePresenter.presentFiles(files) {
+                try? FileManager.default.removeItem(at: folder)
+            }
+        } catch {
+            try? FileManager.default.removeItem(at: folder)
             failure = error.localizedDescription
         }
     }

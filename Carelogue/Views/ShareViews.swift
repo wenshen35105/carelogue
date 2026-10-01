@@ -389,6 +389,15 @@ enum SharePresenter {
         present(controller)
     }
 
+    /// Plain files through the system share sheet (M7 T47: a visit
+    /// recording and its transcript). `onFinish` runs once the sheet is
+    /// closed, sent or cancelled — the caller's temporary copies go then.
+    static func presentFiles(_ urls: [URL], onFinish: @escaping () -> Void) {
+        let controller = UIActivityViewController(activityItems: urls, applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, _, _, _ in onFinish() }
+        present(controller)
+    }
+
     private static func present(_ controller: UIViewController) {
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         let scene = scenes.first { $0.activationState == .foregroundActive } ?? scenes.first

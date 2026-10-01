@@ -63,7 +63,8 @@
   3. 24 kbps 对人耳够、对识别器偏低（次要，需数据证实）
   4. 喂给 AI 的转写是否完整（长录音分段/截断）
 - 步骤：
-  0. **先做「分享录音」**（2026-09-30 定）：app 装自 TestFlight，取不出容器 → 录音卡长按菜单加「分享录音 / Share Recording」（系统分享面板，可 AirDrop；同时附带当时的转写原文 .txt）。是正式功能（Release 可见），用户也可自留原音；先单独出一个 TF 构建拿到样本
+  0. ✅ 2026-09-30 **先做「分享录音」**：app 装自 TestFlight，取不出容器 → 录音卡长按菜单加「分享录音 / Share Recording」（系统分享面板，可 AirDrop；同时附带当时的转写原文 .txt）。是正式功能（Release 可见），用户也可自留原音；先单独出一个 TF 构建拿到样本
+     - **落地**：录音卡播放条右侧分享按钮（`recording.share`）→ 临时目录写 `<原文件名>.m4a` + 同名 `.txt` 转写 → `SharePresenter.presentFiles` 弹系统分享面板，关闭后清临时文件；`VisitRecordingUITests.testRecordingCanBeShared`；UI 全套浅/深各 54 过；截图 `docs/screenshots/T47-*.png`
   1. **拿原录音离线复现**：老板用上面的入口把那次录音 + 转写原文 AirDrop 到 Mac → `scripts/` 下写个 macOS 命令行小工具，用同一套 `SpeechAnalyzer` 跑多种配置（zh-CN / en / 双 locale 分段、不同 preset），出转写对比表——不用来回装机
   2. 定方案后改 app；并加转写质量闸：转写过短 / 明显乱码时在 UI 上提示，而不是把垃圾转写喂给 AI
 - 隐私：原录音只在本机/你的 Mac 上处理，**不进 repo**（`build/` 或 scratchpad 下，已 gitignore）

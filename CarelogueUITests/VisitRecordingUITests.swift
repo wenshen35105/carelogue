@@ -70,6 +70,23 @@ final class VisitRecordingUITests: CarelogueUITestCase {
         waitFor(app.buttons["recording.summaryLine"])
     }
 
+    /// M7 T47: a finished recording (and its transcript) can be sent out
+    /// through the system share sheet — AirDrop, Files.
+    func testRecordingCanBeShared() {
+        launch(["-uitest-reset", "-uitest-seed-recording"])
+        openSeededVisit()
+
+        let share = app.buttons["recording.share"]
+        waitFor(share)
+        XCTAssertEqual(share.label, t("分享录音", "Share Recording"))
+        share.tap()
+
+        let sheet = app.otherElements["ActivityListView"]
+        waitFor(sheet, timeout: 10)
+        sleep(1) // let the sheet settle before the screenshot
+        screenshot("T47-share-recording")
+    }
+
     /// 我的疑问: write in Chinese, translate, hand the phone over.
     func testQuestionsTranslateAndHandOff() {
         launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-ai", "success",

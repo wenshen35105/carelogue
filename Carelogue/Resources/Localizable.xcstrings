@@ -1816,6 +1816,23 @@
         }
       }
     },
+    "分享录音": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share Recording"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享录音"
+          }
+        }
+      }
+    },
     "分开保留 · Keep separate": {
       "extractionState": "manual",
       "localizations": {
