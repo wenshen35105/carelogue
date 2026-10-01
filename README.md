@@ -19,4 +19,4 @@ iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
 ## 当前进度
 
 - ✅ 命名（Carelogue）/ 术语表 v1 / 数据与同步架构 / 设计方向（Stitch 三屏）定稿
-- ⬜ M1：项目骨架 + 数据层 + CRUD（9 张卡，见 `docs/m1-tasks.md`）
+- ⬜ M1：项目骨架 + 数据层 + CRUD（9 张卡，见 `docs/releases/1.0/m1-tasks.md`）

@@ -30,7 +30,7 @@ final class MeasurementUITests: CarelogueUITestCase {
         XCTAssertTrue(app.buttons["全部 23"].exists)
 
         // 体温 1 sits behind the 图表 button at the end of the chip row (see
-        // docs/m2-bugs.md), so only its presence is checked here.
+        // docs/releases/1.0/m2-bugs.md), so only its presence is checked here.
         XCTAssertTrue(app.buttons["体温 1"].exists)
     }
 

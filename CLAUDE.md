@@ -3,12 +3,12 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：**M6 进行中**（1.0 提交准备）：T39 CKShare 真共享（代码完成，余 CloudKit schema 部署 + 双机联调 + 本地副本尾巴）+ T41 提审材料包（材料齐备，余 ASC 侧动作，见 `docs/appstore-submission/metadata-fields.md` §D）+ 发布流程按 owner-actions（§顶部=当前阻塞）；T40 产检真机验收不阻塞提审。
+当前阶段：**1.0 提审收尾（M6）+ 1.0.1 定义中（M7）**。M6（`docs/releases/1.0/m6-tasks.md`）：T39 CKShare 余 CloudKit schema 部署 + 双机联调；T41 余 ASC 侧动作（`docs/appstore-submission/metadata-fields.md` §D）；发布流程按 owner-actions（§顶部=当前阻塞）。M7（`docs/releases/1.0.1/m7-tasks.md`）：自用反馈修补批 T42–T47。
 
 ## 先读这些（按序）
 
 1. `docs/mvp-spec.md` — 功能蓝图、页面、数据模型、AI 契约（上级文档）
-2. `docs/m6-tasks.md` — **当前里程碑（草案）**；M5 卡 `docs/m5-tasks.md` 已完成（T30–T38）；M4 尾巴见 `docs/m4-tasks.md`；M1–M3 见各自文件
+2. `docs/releases/<版本>/` — 里程碑卡按发布版本归档：**1.0.1 = M7**（`releases/1.0.1/m7-tasks.md`，当前开发）；**1.0 = M1–M6**（`releases/1.0/`，M6 提审收尾中）。索引见 `docs/README.md`
 3. `docs/product-brief.md` — 定位与原则（背景）
 4. `docs/design-review.md` + `docs/design/stitch/` 三屏 PNG — UI 参照
 

@@ -14,7 +14,7 @@
 
 ````text
 我已在 Xcode 建好空的 iOS 工程（SwiftUI + SwiftData，iOS 17，名 Carelogue），代码在本仓库根目录。
-请先读 CLAUDE.md、docs/mvp-spec.md、docs/m1-tasks.md、docs/design-review.md，然后：
+请先读 CLAUDE.md、docs/mvp-spec.md、docs/releases/1.0/m1-tasks.md、docs/design-review.md，然后：
 1. 用 3 句话复述：项目是什么、M1 目标、你的工作流程；
 2. 开始 T1：建立 Models / Views / Services / Resources 分组，模板文件归位；确认 .gitignore 覆盖 Xcode 产物；
 3. 按 CLAUDE.md 的收尾要求输出（改动清单 + Smoke 自测 + 5 行 Swift 概念）；

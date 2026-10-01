@@ -15,7 +15,7 @@
 
 1. [x] Xcode → Settings → Accounts 登录开发者账号 ✅（随 TestFlight 上传流程已验证——构建已传到 `1.0 (8)`）
 2. [x] 两台 iPhone 各 Run 一次 Carelogue（Xcode 直装）——TestFlight 安装已覆盖真机安装；若没做过 Xcode 直装且不需要调试，可勾掉跳过
-3. [x] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/m4-tasks.md T23。可与 T39 双机联调（§顶部）同场做
+3. [x] 和 CC 一起验证 CloudKit 同步——**需同一 Apple ID 的两台设备**（你与太太各自 ID，两台手机无法互验；用你的 iPhone + 任意可登你 ID 的第二台设备；太太设备各验各的库）；细则见 docs/releases/1.0/m4-tasks.md T23。可与 T39 双机联调（§顶部）同场做
 4. [x] App Store Connect：
    - [x] **bundle id 迁移**（✅ 已定：换为 `ca.carelogue.app`）——顺序：① developer.apple.com 接受待签协议（新账号必做）② Identifiers 页面把列表切到 **iCloud Containers**（独立分类，不在 App ID 里）先建 `iCloud.ca.carelogue.app`（Description: Carelogue）→ 回 App IDs 新建 `ca.carelogue.app`（勾 iCloud + CloudKit，Configure 里勾上刚建的容器） ③ ~~CC 改 repo~~ **✅ 已完成 2026-09-24** ④ Xcode Run 验证（报错兜底：账号移除重加 / 清 DerivedData）⑤ 之后才给太太和各设备装
      - ⚠️ **拼写以 `carelogue` 为准**（域名 carelogue.ca）——此前文档里的 `ca.carelolgue.app` 是笔误（多一个 `l`），已订正。在 Apple 后台建 identifier 时务必照订正后的拼写填，**建完即锁定**
