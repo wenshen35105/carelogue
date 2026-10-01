@@ -80,7 +80,7 @@ struct ExplanationCard: View {
         let isIdle = explanation == nil && phase == nil
 
         VStack(alignment: .leading, spacing: 14) {
-            header(model: phase == .running ? nil : explanation?.model)
+            header
 
             if artifacts.count > 1 {
                 attachmentPicker
@@ -118,48 +118,19 @@ struct ExplanationCard: View {
         .accessibilityIdentifier("explain.card")
     }
 
-    private func header(model: String?) -> some View {
+    /// The model id is still stored with each explanation (for support),
+    /// but never shown — which model answered isn't the patient's concern.
+    private var header: some View {
         HStack(spacing: 10) {
             Image(systemName: "sparkles")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(Theme.accent)
                 .frame(width: 32, height: 32)
                 .background(Circle().fill(Theme.accentTint))
-            // Explained: the provider pill takes the gloss's place so the
-            // title never truncates. When title and pill don't share a row
-            // (the longer English title), the pill moves under the title
-            // rather than truncating either one.
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 10) {
-                    headerTitle(model: model)
-                    Spacer(minLength: 6)
-                    if let model { modelPill(model) }
-                }
-                VStack(alignment: .leading, spacing: 4) {
-                    headerTitle(model: model)
-                    if let model { modelPill(model) }
-                }
-            }
+            BilingualTitle(primary: String(localized: "白话解释（AI 生成）"),
+                           secondary: AppLanguage.gloss(String(localized: "AI Explained")))
+            Spacer(minLength: 0)
         }
-    }
-
-    private func headerTitle(model: String?) -> some View {
-        BilingualTitle(primary: String(localized: "白话解释（AI 生成）"),
-                       secondary: model == nil ? AppLanguage.gloss(String(localized: "AI Explained")) : nil)
-            .fixedSize(horizontal: true, vertical: false)
-    }
-
-    /// The model id as the relay reported it ("vendor/name" -> name), so the
-    /// card says what actually answered.
-    private func modelPill(_ model: String) -> some View {
-        Text(verbatim: model.split(separator: "/").last.map(String.init) ?? model)
-            .font(.caption.weight(.medium))
-            .foregroundStyle(Theme.accent)
-            .lineLimit(1)
-            .fixedSize()
-            .padding(.horizontal, 9)
-            .padding(.vertical, 4)
-            .background(Capsule().stroke(Theme.accent.opacity(0.4), lineWidth: 1))
     }
 
     /// Mutually exclusive attachment chips (thumbnail + name + ✓ if explained).

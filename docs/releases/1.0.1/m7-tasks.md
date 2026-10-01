@@ -26,11 +26,12 @@
 - 测量编辑器加 `备注` 区（同就诊样式）；详情页测量分支显示备注（若已有则只核对）
 - **验收**：建测量带备注 → 详情可见 → 编辑可改；UI 测试覆盖
 
-### T44 · 白话解释不再显示模型名
+### T44 · 白话解释不再显示模型名 ✅ 2026-09-30
 - 去掉 `ExplanationCard.modelPill`；标题统一为「白话解释 / AI Explained」
 - 顺查面诊总结（`VisitSummaryView`）等处有无同类露出，一并去掉
 - `model` 字段照常存（排障用），只是不展示
 - **验收**：解释卡、总结卡无模型名；截图过目
+- **落地**：`ExplanationCard` 删 `modelPill` + 其换行布局，标题恒为「白话解释（AI 生成）· AI Explained」；`ExplainUITests` 断言无模型名；UI 全套浅/深各 53 过（2 条真连 relay 跳过）；截图 `docs/screenshots/T44-explanation{,-dark}.png`
 
 ### T45 · 地点 / 医生联想输入（type-ahead）
 - 数据源：本库所有就诊 Log 的 `location` / `doctor`，去空、去重，按最近使用排序
@@ -62,9 +63,9 @@
   3. 24 kbps 对人耳够、对识别器偏低（次要，需数据证实）
   4. 喂给 AI 的转写是否完整（长录音分段/截断）
 - 步骤：
-  1. **拿原录音离线复现**：老板把那次录音（m4a）AirDrop 到 Mac → `scripts/` 下写个 macOS 命令行小工具，用同一套 `SpeechAnalyzer` 跑多种配置（zh-CN / en / 双 locale 分段、不同 preset），出转写对比表——不用来回装机
+  0. **先做「分享录音」**（2026-09-30 定）：app 装自 TestFlight，取不出容器 → 录音卡长按菜单加「分享录音 / Share Recording」（系统分享面板，可 AirDrop；同时附带当时的转写原文 .txt）。是正式功能（Release 可见），用户也可自留原音；先单独出一个 TF 构建拿到样本
+  1. **拿原录音离线复现**：老板用上面的入口把那次录音 + 转写原文 AirDrop 到 Mac → `scripts/` 下写个 macOS 命令行小工具，用同一套 `SpeechAnalyzer` 跑多种配置（zh-CN / en / 双 locale 分段、不同 preset），出转写对比表——不用来回装机
   2. 定方案后改 app；并加转写质量闸：转写过短 / 明显乱码时在 UI 上提示，而不是把垃圾转写喂给 AI
-  3. 如需在手机上取样：Debug 构建加「导出最近一次录音 + 原始转写」（只在 Debug，不进 Release）
 - 隐私：原录音只在本机/你的 Mac 上处理，**不进 repo**（`build/` 或 scratchpad 下，已 gitignore）
 - **验收**：同一段原录音，转写可读性明显提升（附前后对比）；低质量转写有提示
 
@@ -77,4 +78,4 @@
 
 ## 建议顺序
 
-T44 → T42 → T43 → T45（小卡一天内清掉）→ T47 调研（原录音已有，可并行）→ T46
+T44 → **T47 第 0 步「分享录音」**（早出 TF 构建才能拿到样本）→ T42 → T43 → T45 → T47 调研与修复 → T46

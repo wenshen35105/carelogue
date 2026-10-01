@@ -71,6 +71,8 @@ final class ExplainUITests: CarelogueUITestCase {
         XCTAssertGreaterThanOrEqual(app.buttons.matching(identifier: "explain.term").count, 3)
         XCTAssertEqual(app.descendants(matching: .any).matching(identifier: "explain.question").count, 3)
         XCTAssertTrue(element(containing: "不能替代医生的诊断").exists)
+        // M7 T44: which model answered is stored, never shown.
+        XCTAssertFalse(element(containing: "fake-model").exists)
         sleep(1) // let the state cross-fade finish before the screenshot
         screenshot("T20-state-explained")
 
