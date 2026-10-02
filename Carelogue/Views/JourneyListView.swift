@@ -10,6 +10,7 @@ struct JourneyListView: View {
     @State private var showingProfile = false
     @State private var renamingJourney: Journey?
     @State private var renameText = ""
+    @State private var deletingJourney: Journey?
     // T39: share notices (remote end / failed acceptance) and the
     // merge-into-share tail after an import.
     @State private var shareEnded = false
@@ -49,6 +50,15 @@ struct JourneyListView: View {
             }
             .sheet(isPresented: $showingProfile) {
                 ProfileView()
+            }
+            .confirmationDialog(deletingJourney.map { String(localized: "删除「\($0.name)」？") } ?? "",
+                                isPresented: isDeletingBinding, titleVisibility: .visible,
+                                presenting: deletingJourney) { journey in
+                Button("删除旅程", role: .destructive) { delete(journey) }
+                    .accessibilityIdentifier("journey.delete.confirm")
+                Button("取消", role: .cancel) {}
+            } message: { journey in
+                Text(deletionMessage(for: journey))
             }
             .alert("重命名 Journey", isPresented: isRenamingBinding) {
                 TextField("名称", text: $renameText)
@@ -147,7 +157,14 @@ struct JourneyListView: View {
                 .opacity(0)
             JourneyCard(journey: journey)
         }
-        .swipeActions(edge: .trailing) {
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            // M7 T50: confirmed in a dialog; a full swipe must not do it.
+            Button(role: .destructive) {
+                deletingJourney = journey
+            } label: {
+                Label("删除", systemImage: "trash")
+            }
+
             Button {
                 journey.status = journey.status == .active ? .done : .active
                 journey.updatedAt = .now
@@ -200,6 +217,38 @@ struct JourneyListView: View {
             get: { renamingJourney != nil },
             set: { if !$0 { renamingJourney = nil } }
         )
+    }
+
+    private var isDeletingBinding: Binding<Bool> {
+        Binding(
+            get: { deletingJourney != nil },
+            set: { if !$0 { deletingJourney = nil } }
+        )
+    }
+
+    private func deletionMessage(for journey: Journey) -> String {
+        var message = String(localized: "这段旅程里的 \(journey.allLogs.count) 条记录，连同照片、文件和录音都会删除，无法恢复。")
+        if journey.isShared {
+            message += "\n" + String(localized: "它正在共享：删除会断开共享，对方手机上已同步的内容不会被删除。")
+        }
+        return message
+    }
+
+    /// M7 T50. A visit of this journey still recording is thrown away first;
+    /// a shared journey is unshared (owner: the zone goes, ending it for
+    /// everyone; participant: this device leaves) before the local copy goes.
+    private func delete(_ journey: Journey) {
+        deletingJourney = nil
+        let session = VisitRecordingSession.shared
+        if session.log?.journey?.id == journey.id { session.discard() }
+        guard journey.isShared else {
+            modelContext.deleteJourney(journey)
+            return
+        }
+        Task { @MainActor in
+            await ShareChannel.stopSharing(journey: journey, in: modelContext)
+            modelContext.deleteJourney(journey)
+        }
     }
 
     private func commitRename() {

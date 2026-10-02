@@ -3,7 +3,7 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：**1.0 提审收尾（M6）+ 1.0.1 定义中（M7）**。M6（`docs/releases/1.0/m6-tasks.md`）：T39 CKShare 余 CloudKit schema 部署 + 双机联调；T41 余 ASC 侧动作（`docs/appstore-submission/metadata-fields.md` §D）；发布流程按 owner-actions（§顶部=当前阻塞）。M7（`docs/releases/1.0.1/m7-tasks.md`）：自用反馈修补批 T42–T48 代码完成（2026-10-01），余真机复核（见各卡「待真机复核」）。
+当前阶段：**1.0 提审收尾（M6）+ 1.0.1 定义中（M7）**。M6（`docs/releases/1.0/m6-tasks.md`）：T39 CKShare 余 CloudKit schema 部署 + 双机联调；T41 余 ASC 侧动作（`docs/appstore-submission/metadata-fields.md` §D）；发布流程按 owner-actions（§顶部=当前阻塞）。M7（`docs/releases/1.0.1/m7-tasks.md`）：自用反馈修补批 T42–T50 代码完成（2026-10-01），余真机复核（见各卡「待真机复核」）。
 
 ## 先读这些（按序）
 

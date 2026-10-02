@@ -1918,6 +1918,23 @@
         }
       }
     },
+    "删除「%@」？": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete “%@”?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除「%@」？"
+          }
+        }
+      }
+    },
     "删除后无法恢复": {
       "extractionState": "manual",
       "localizations": {
@@ -1931,6 +1948,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "删除后无法恢复"
+          }
+        }
+      }
+    },
+    "删除旅程": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Journey"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除旅程"
           }
         }
       }
@@ -2730,6 +2764,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "孕期 · 术后康复 · 慢病随访 · 年度体检"
+          }
+        }
+      }
+    },
+    "它正在共享：删除会断开共享，对方手机上已同步的内容不会被删除。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This journey is shared: deleting it ends the sharing. What has already synced to the other person's phone stays there."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "它正在共享：删除会断开共享，对方手机上已同步的内容不会被删除。"
           }
         }
       }
@@ -3597,6 +3648,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "撤回后不会再发送任何报告文字，报告页的 AI 解释入口会停用；已有的解释结果仍保留在本机。"
+          }
+        }
+      }
+    },
+    "播放进度": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback position"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放进度"
           }
         }
       }
@@ -6001,6 +6069,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "这段旅程还没有开启共享"
+          }
+        }
+      }
+    },
+    "这段旅程里的 %lld 条记录，连同照片、文件和录音都会删除，无法恢复。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All %lld entries in this journey, with their photos, files and recordings, will be deleted. This can't be undone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这段旅程里的 %lld 条记录，连同照片、文件和录音都会删除，无法恢复。"
           }
         }
       }

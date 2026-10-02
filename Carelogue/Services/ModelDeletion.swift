@@ -21,6 +21,16 @@ extension ModelContext {
         delete(log)
     }
 
+    /// Deletes a Journey with every Log and attachment in it (M7 T50). Same
+    /// rule as `deleteLog`: nothing is left to `.cascade`.
+    func deleteJourney(_ journey: Journey) {
+        for log in journey.allLogs {
+            deleteLog(log)
+        }
+        delete(journey)
+        try? save()
+    }
+
     /// What 清空所有数据 removed, so the UI can report it back.
     struct EraseSummary: Equatable {
         var journeys = 0
