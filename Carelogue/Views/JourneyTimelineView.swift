@@ -451,9 +451,10 @@ private struct LogCard: View {
         }
     }
 
+    /// Every kind carries a time since M7 T42 (encounters used to be
+    /// date-only in the editor).
     private var timestamp: String {
-        // Encounters only capture a date; quick notes carry a meaningful time.
-        log.kind == .encounter ? log.occurredAt.shortDay : log.occurredAt.shortDayTime
+        log.occurredAt.shortDayTime
     }
 
     @ViewBuilder
@@ -550,7 +551,7 @@ private struct UpcomingCard: View {
                     .foregroundStyle(Theme.accent)
                 BilingualTitle(primary: String(localized: "下次 · \(log.typeDisplayName)"), secondary: AppLanguage.gloss(String(localized: "(Upcoming)")))
                 Spacer(minLength: 8)
-                Text(log.occurredAt.shortDay)
+                Text(log.occurredAt.shortDayTime)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.accent)
             }

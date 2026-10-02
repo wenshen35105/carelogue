@@ -156,8 +156,11 @@ struct LogEditorView: View {
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
         }
 
-        Section("日期") {
-            DatePicker("日期", selection: $occurredAt, displayedComponents: .date)
+        // M7 T42: a visit has a time too (the field always held one; only
+        // the picker hid it).
+        Section("时间") {
+            DatePicker("就诊时间", selection: $occurredAt)
+                .accessibilityIdentifier("editor.encounterTime")
         }
 
         Section("地点 / 医生（可选）") {

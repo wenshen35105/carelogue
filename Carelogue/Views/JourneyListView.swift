@@ -341,7 +341,7 @@ private struct NextAppointmentBanner: View {
             IconBadge(systemName: "calendar.badge.clock", size: 36)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text("下次\(log.typeDisplayName)：\(log.occurredAt.shortDay)")
+                    Text("下次\(log.typeDisplayName)：\(log.occurredAt.shortDayTime)")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Theme.inkPrimary)
                     TagPill(text: log.daysUntilLabel, tinted: true)

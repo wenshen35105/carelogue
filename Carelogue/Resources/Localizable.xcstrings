@@ -2802,6 +2802,23 @@
         }
       }
     },
+    "就诊时间": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visit Time"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "就诊时间"
+          }
+        }
+      }
+    },
     "展开": {
       "extractionState": "manual",
       "localizations": {
