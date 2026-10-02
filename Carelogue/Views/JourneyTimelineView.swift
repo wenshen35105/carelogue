@@ -612,18 +612,27 @@ private struct MeasurementRow: View {
     let log: Log
 
     var body: some View {
-        HStack {
-            Text(LogTypePreset.displayName(log.type))
-                .font(.subheadline)
-                .foregroundStyle(Theme.inkPrimary)
-            Spacer()
-            Text(log.formattedValue)
-                .font(.subheadline.weight(.semibold))
-                .monospacedDigit()
-                .foregroundStyle(Theme.inkPrimary)
-            Text(log.occurredAt.shortDayTime)
-                .font(.caption)
-                .foregroundStyle(Theme.inkSecondary)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(LogTypePreset.displayName(log.type))
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.inkPrimary)
+                Spacer()
+                Text(log.formattedValue)
+                    .font(.subheadline.weight(.semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(Theme.inkPrimary)
+                Text(log.occurredAt.shortDayTime)
+                    .font(.caption)
+                    .foregroundStyle(Theme.inkSecondary)
+            }
+            // M7 T43: the reading's note, one line.
+            if let note = log.note?.trimmingCharacters(in: .whitespacesAndNewlines), !note.isEmpty {
+                Text(note)
+                    .font(.caption)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .lineLimit(1)
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)

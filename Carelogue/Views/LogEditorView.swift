@@ -355,6 +355,13 @@ struct LogEditorView: View {
         Section("时间") {
             DatePicker("发生时间", selection: $occurredAt)
         }
+
+        // M7 T43: context for a reading ("after a walk", "left arm").
+        Section("备注") {
+            TextEditor(text: $note)
+                .frame(minHeight: 80)
+                .accessibilityIdentifier("editor.measurementNote")
+        }
     }
 
     // MARK: - Actions
@@ -380,6 +387,7 @@ struct LogEditorView: View {
         case .measurement:
             log.value = Double(valueText)
             log.unit = unit
+            log.note = note
         case .quick:
             log.note = note
         }

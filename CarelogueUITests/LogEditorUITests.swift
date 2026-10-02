@@ -40,4 +40,33 @@ final class LogEditorUITests: CarelogueUITestCase {
         waitFor(app.navigationBars["详情"])
         XCTAssertTrue(element(containing: "14:05").exists)
     }
+
+    /// T43: a measurement takes a note, shown under its row and kept on edit.
+    func testMeasurementKeepsANote() {
+        launch(["-uitest-reset", "-uitest-seed-measurements"])
+        openJourney(journeyName)
+
+        startNewLog("测量")
+        let valueField = app.textFields["数值"]
+        valueField.tap()
+        valueField.typeText("72.5")
+        let note = app.textViews["editor.measurementNote"]
+        scrollTo(note)
+        note.tap()
+        note.typeText("饭后散步回来量的")
+        screenshot("T43-editor-note")
+        app.buttons["保存"].tap()
+
+        app.buttons["measurement.group"].tap()
+        let noteText = element(containing: "饭后散步回来量的")
+        waitFor(noteText)
+        screenshot("T43-row-note")
+
+        // Reopen: the note is still in the editor.
+        app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "饭后散步回来量的")).firstMatch.tap()
+        waitFor(app.navigationBars["编辑记录"])
+        let reopened = app.textViews["editor.measurementNote"]
+        scrollTo(reopened)
+        XCTAssertEqual(reopened.value as? String, "饭后散步回来量的")
+    }
 }
