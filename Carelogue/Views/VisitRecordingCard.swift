@@ -23,6 +23,10 @@ struct VisitRecordingCard: View {
     @State private var showingQuestions = false
     @State private var pendingConsent = false
     @State private var player = RecordingPlayer()
+    /// The last transcription came back with low confidence (M7 T47): kept,
+    /// but not sent to the AI until the user asks.
+    @State private var lowConfidence = false
+    @State private var confirmingRetranscribe = false
 
     enum Phase: Equatable {
         case idle
@@ -43,6 +47,14 @@ struct VisitRecordingCard: View {
                 recordedBody(recording)
             } else {
                 emptyBody
+            }
+
+            if lowConfidence && !isWorking {
+                Label("转写把握不高，可能不准确——可以先听一下录音，再决定要不要整理", systemImage: "exclamationmark.bubble")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.warning)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("recording.lowConfidence")
             }
 
             if let failure {
@@ -69,6 +81,15 @@ struct VisitRecordingCard: View {
         }
         .navigationDestination(isPresented: $showingQuestions) {
             VisitQuestionsView(log: log)
+        }
+        .confirmationDialog("重新转写这段录音？", isPresented: $confirmingRetranscribe, titleVisibility: .visible) {
+            Button("重新转写") {
+                if let recording { retranscribe(recording) }
+            }
+            .accessibilityIdentifier("recording.retranscribe.confirm")
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("会自动判断录音的语言重新转写，并替换现有的转写和 AI 整理。")
         }
         .sheet(isPresented: $pendingConsent) {
             ConsentSheet(
@@ -169,17 +190,27 @@ struct VisitRecordingCard: View {
                         .frame(height: 18)
                 }
 
-                Button {
-                    share(artifact)
+                Menu {
+                    Button {
+                        share(artifact)
+                    } label: {
+                        Label("分享录音", systemImage: "square.and.arrow.up")
+                    }
+                    .accessibilityIdentifier("recording.share")
+                    Button {
+                        confirmingRetranscribe = true
+                    } label: {
+                        Label("重新转写", systemImage: "arrow.clockwise")
+                    }
+                    .accessibilityIdentifier("recording.retranscribe")
                 } label: {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 16, weight: .semibold))
+                    Image(systemName: "ellipsis.circle")
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(Theme.accent)
                         .frame(width: 44, height: 44)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text("分享录音"))
-                .accessibilityIdentifier("recording.share")
+                .accessibilityLabel(Text("更多操作"))
+                .accessibilityIdentifier("recording.menu")
             }
             .padding(Theme.Spacing.cardPadding)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -296,17 +327,23 @@ struct VisitRecordingCard: View {
 
     private func transcribeThenTidy(_ artifact: Artifact) async {
         failure = nil
+        lowConfidence = false
         phase = .transcribing
         defer { if phase == .transcribing { phase = .idle } }
 
         do {
             let url = try writeTemporaryCopy(of: artifact)
             defer { try? FileManager.default.removeItem(at: url) }
-            let text = try await VisitTranscription.makeTranscriber()
-                .transcribe(fileURL: url, locale: VisitTranscription.preferredLocale)
-            artifact.transcript = text
+            let outcome = try await VisitTranscription.transcribe(
+                fileURL: url, with: VisitTranscription.makeTranscriber())
+            artifact.transcript = outcome.text
             log.updatedAt = .now
             try? modelContext.save()
+            if outcome.isLowConfidence {
+                lowConfidence = true
+                phase = .idle
+                return
+            }
         } catch let error as TranscriptionError {
             failure = error.errorDescription
             phase = .idle
@@ -318,6 +355,18 @@ struct VisitRecordingCard: View {
         }
 
         await tidyUp()
+    }
+
+    /// M7 T47: transcripts made before the language was detected (or lost to
+    /// a sync) can be redone. The old transcript and summary go — both came
+    /// from the text being replaced.
+    private func retranscribe(_ artifact: Artifact) {
+        if player.isPlaying(artifact) { player.toggle(artifact) }
+        artifact.transcript = nil
+        log.visitSummaryJSON = nil
+        log.updatedAt = .now
+        try? modelContext.save()
+        Task { await transcribeThenTidy(artifact) }
     }
 
     private func tidyUpTapped() {

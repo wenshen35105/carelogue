@@ -44,7 +44,10 @@ import UIKit
 ///                                 a microphone
 ///   -uitest-fake-transcript <m>   transcribe with a scripted recognizer
 ///                                 instead of the on-device one (T32):
-///                                 success | slow | fail | empty
+///                                 success | slow | fail | empty, and (M7
+///                                 T47) english — an English-speaking
+///                                 doctor, sure only in en — | low
+///                                 — unsure in every language
 ///   env INTERNAL_ACCESS_KEY=<key> unlock the internal channel at launch (T30),
 ///                                 so the relay chain can be driven unattended
 ///   -selftest-explain             explain the seeded report photo twice (needs
@@ -746,7 +749,8 @@ struct FakeAIService: AIService {
 struct FakeTranscriber: VisitTranscribing {
     let mode: String
 
-    func transcribe(fileURL: URL, locale: Locale) async throws -> String {
+    func transcribe(fileURL: URL, locale: Locale) async throws -> Transcription {
+        let isChinese = locale.language.languageCode == .chinese
         switch mode {
         case "fail":
             try await Task.sleep(for: .milliseconds(600))
@@ -754,13 +758,27 @@ struct FakeTranscriber: VisitTranscribing {
         case "empty":
             try await Task.sleep(for: .milliseconds(400))
             throw TranscriptionError.nothingRecognized
+        case "english":
+            try await Task.sleep(for: .milliseconds(500))
+            return isChinese ? Transcription(text: "comend in pramency I cane tive you prnchild", confidence: 0.49)
+                             : Transcription(text: Self.englishTranscript, confidence: 0.82)
+        case "low":
+            try await Task.sleep(for: .milliseconds(500))
+            return Transcription(text: isChinese ? "嗯 那个 呃" : "um the uh", confidence: 0.3)
         case "slow":
             try await Task.sleep(for: .seconds(4))
         default:
             try await Task.sleep(for: .milliseconds(700))
         }
-        return Self.sampleTranscript
+        return isChinese ? Transcription(text: Self.sampleTranscript, confidence: 0.89)
+                         : Transcription(text: ", , ,", confidence: 0.02)
     }
+
+    static let englishTranscript = """
+    It's recommended for all pregnant women in every pregnancy to protect you and your baby against whooping cough.
+    Also, every fall, the flu vaccine becomes available. I would recommend getting the flu vaccine.
+    Are you feeling any movement from baby yet? That's okay, it's still early.
+    """
 
     static let sampleTranscript = """
     医生：今天感觉怎么样？胎动有没有规律一些？

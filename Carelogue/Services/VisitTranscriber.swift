@@ -10,7 +10,15 @@ import Speech
 /// two-person, code-switched conversation), and on-device `SFSpeechRecognizer`
 /// below that.
 protocol VisitTranscribing: Sendable {
-    func transcribe(fileURL: URL, locale: Locale) async throws -> String
+    func transcribe(fileURL: URL, locale: Locale) async throws -> Transcription
+}
+
+/// One recognizer pass. `confidence` is the recognizer's own 0...1 certainty,
+/// averaged over the text (nil when it reports none) — it is how the
+/// language of a visit is told apart (M7 T47).
+struct Transcription: Sendable, Equatable {
+    let text: String
+    let confidence: Double?
 }
 
 enum TranscriptionError: LocalizedError, Equatable {
@@ -37,11 +45,31 @@ enum TranscriptionError: LocalizedError, Equatable {
 }
 
 enum VisitTranscription {
-    /// The recognizer's language. Follows the app language, which is also the
-    /// language the summary comes back in — a visit in Chinese with English
-    /// medical terms transcribes best with the Chinese model, and vice versa.
-    static var preferredLocale: Locale {
-        Locale(identifier: AppLanguage.isChinese ? "zh-CN" : "en-CA")
+    /// The languages a visit is tried in, the app language first (it wins a
+    /// tie). The visit's language is not the app's: a Chinese-speaking
+    /// patient in Canada hears English, and the Chinese model turns English
+    /// into noise (M7 T47 — a 5-minute visit came back unreadable).
+    static var candidateLocales: [Locale] {
+        let chinese = Locale(identifier: "zh-CN"), english = Locale(identifier: "en-CA")
+        return AppLanguage.isChinese ? [chinese, english] : [english, chinese]
+    }
+
+    /// How much of the recording is used to pick the language. Recordings not
+    /// much longer than this are simply transcribed whole in each language.
+    static let probeSeconds: Double = 60
+    /// Below this the transcript is kept but not sent to the AI on its own —
+    /// the card says the transcription may be unreliable.
+    static let lowConfidence: Double = 0.6
+
+    struct Outcome: Equatable {
+        let text: String
+        let locale: Locale
+        let confidence: Double?
+
+        var isLowConfidence: Bool {
+            guard let confidence else { return false }
+            return confidence < VisitTranscription.lowConfidence
+        }
     }
 
     static func makeTranscriber() -> any VisitTranscribing {
@@ -50,6 +78,69 @@ enum VisitTranscription {
         #endif
         if #available(iOS 26, *) { return AnalyzerTranscriber() }
         return LegacyTranscriber()
+    }
+
+    /// Transcribes a visit in whichever candidate language the recognizer is
+    /// most sure of: each language hears the opening minute, the winner
+    /// hears the whole recording.
+    static func transcribe(fileURL: URL, with transcriber: any VisitTranscribing) async throws -> Outcome {
+        let locales = candidateLocales
+        let duration = (try? audioDuration(of: fileURL)) ?? 0
+        let isShort = duration <= probeSeconds * 1.5
+        let probeURL = isShort ? fileURL : try makeProbe(of: fileURL, seconds: probeSeconds)
+        defer { if probeURL != fileURL { try? FileManager.default.removeItem(at: probeURL) } }
+
+        var trials: [Transcription?] = []
+        var firstError: Error?
+        for locale in locales {
+            do {
+                trials.append(try await transcriber.transcribe(fileURL: probeURL, locale: locale))
+            } catch {
+                trials.append(nil)
+                if firstError == nil { firstError = error }
+            }
+        }
+        guard let winner = pick(trials) else {
+            throw firstError ?? TranscriptionError.nothingRecognized
+        }
+
+        let full = isShort ? trials[winner]! : try await transcriber.transcribe(fileURL: fileURL, locale: locales[winner])
+        return Outcome(text: full.text, locale: locales[winner], confidence: full.confidence)
+    }
+
+    /// The index of the trial to keep: highest confidence, earliest on a tie
+    /// (the app language comes first). A trial without a confidence ranks
+    /// below any that has one; nil when every trial failed.
+    static func pick(_ trials: [Transcription?]) -> Int? {
+        var best: (index: Int, score: Double)?
+        for (index, trial) in trials.enumerated() {
+            guard let trial, !trial.text.isEmpty else { continue }
+            let score = trial.confidence ?? -1
+            if best == nil || score > best!.score { best = (index, score) }
+        }
+        return best?.index
+    }
+
+    private static func audioDuration(of url: URL) throws -> Double {
+        let file = try AVAudioFile(forReading: url)
+        return Double(file.length) / file.processingFormat.sampleRate
+    }
+
+    /// The opening `seconds` of a recording, as a temporary PCM file.
+    private static func makeProbe(of url: URL, seconds: Double) throws -> URL {
+        let source = try AVAudioFile(forReading: url)
+        let format = source.processingFormat
+        let frames = AVAudioFrameCount(min(Double(source.length), seconds * format.sampleRate))
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frames) else {
+            throw TranscriptionError.failed("probe")
+        }
+        try source.read(into: buffer, frameCount: frames)
+        let probeURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("probe-\(UUID().uuidString).caf")
+        let probe = try AVAudioFile(forWriting: probeURL, settings: format.settings,
+                                    commonFormat: format.commonFormat, interleaved: format.isInterleaved)
+        try probe.write(from: buffer)
+        return probeURL
     }
 
     /// Permission for the speech models. The recorder asks for the microphone
@@ -64,17 +155,28 @@ enum VisitTranscription {
     }
 }
 
+/// Character-weighted mean of per-piece confidences; nil when none reported.
+private func weightedConfidence(_ pieces: [(characters: Int, confidence: Double)]) -> Double? {
+    let total = pieces.reduce(0) { $0 + $1.characters }
+    guard total > 0 else { return nil }
+    return pieces.reduce(0) { $0 + Double($1.characters) * $1.confidence } / Double(total)
+}
+
 /// iOS 26+: the modern analyzer, which is built for exactly this — long audio,
 /// more than one speaker, and terms in a second language.
 @available(iOS 26, *)
 private struct AnalyzerTranscriber: VisitTranscribing {
-    func transcribe(fileURL: URL, locale: Locale) async throws -> String {
+    func transcribe(fileURL: URL, locale: Locale) async throws -> Transcription {
         guard SpeechTranscriber.isAvailable else { throw TranscriptionError.modelUnavailable }
         guard let supported = await SpeechTranscriber.supportedLocale(equivalentTo: locale) else {
             throw TranscriptionError.localeUnavailable
         }
 
-        let transcriber = SpeechTranscriber(locale: supported, preset: .transcription)
+        let preset = SpeechTranscriber.Preset.transcription
+        let transcriber = SpeechTranscriber(locale: supported,
+                                            transcriptionOptions: preset.transcriptionOptions,
+                                            reportingOptions: preset.reportingOptions,
+                                            attributeOptions: preset.attributeOptions.union([.transcriptionConfidence]))
         // The language model is downloaded once, by the OS, and then reused.
         if let installation = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) {
             try await installation.downloadAndInstall()
@@ -86,7 +188,11 @@ private struct AnalyzerTranscriber: VisitTranscribing {
             for try await result in transcriber.results {
                 text += result.text
             }
-            return String(text.characters)
+            let pieces = text.runs.compactMap { run -> (characters: Int, confidence: Double)? in
+                guard let confidence = run.transcriptionConfidence else { return nil }
+                return (text[run.range].characters.count, confidence)
+            }
+            return Transcription(text: String(text.characters), confidence: weightedConfidence(pieces))
         }
 
         do {
@@ -98,9 +204,10 @@ private struct AnalyzerTranscriber: VisitTranscribing {
             throw TranscriptionError.failed(error.localizedDescription)
         }
 
-        let text = try await collected.value.trimmingCharacters(in: .whitespacesAndNewlines)
+        let result = try await collected.value
+        let text = result.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { throw TranscriptionError.nothingRecognized }
-        return text
+        return Transcription(text: text, confidence: result.confidence)
     }
 }
 
@@ -108,7 +215,7 @@ private struct AnalyzerTranscriber: VisitTranscribing {
 /// sent to Apple either — if the device cannot do it locally, this fails
 /// rather than quietly falling back to the network.
 private struct LegacyTranscriber: VisitTranscribing {
-    func transcribe(fileURL: URL, locale: Locale) async throws -> String {
+    func transcribe(fileURL: URL, locale: Locale) async throws -> Transcription {
         guard SFSpeechRecognizer.authorizationStatus() == .authorized else {
             throw TranscriptionError.notAuthorized
         }
@@ -122,7 +229,7 @@ private struct LegacyTranscriber: VisitTranscribing {
         request.requiresOnDeviceRecognition = true
         request.shouldReportPartialResults = false
 
-        let text: String = try await withCheckedThrowingContinuation { continuation in
+        let result: Transcription = try await withCheckedThrowingContinuation { continuation in
             // A visit is minutes long, so only the final result is of interest;
             // `resume` must still happen exactly once on every path.
             let box = ResumeOnce(continuation)
@@ -130,29 +237,31 @@ private struct LegacyTranscriber: VisitTranscribing {
                 if let error {
                     box.fail(TranscriptionError.failed(error.localizedDescription))
                 } else if let result, result.isFinal {
-                    box.succeed(result.bestTranscription.formattedString)
+                    let best = result.bestTranscription
+                    let pieces = best.segments.map { (characters: $0.substring.count, confidence: Double($0.confidence)) }
+                    box.succeed(Transcription(text: best.formattedString, confidence: weightedConfidence(pieces)))
                 }
             }
         }
 
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = result.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw TranscriptionError.nothingRecognized }
-        return trimmed
+        return Transcription(text: trimmed, confidence: result.confidence)
     }
 }
 
 /// `recognitionTask`'s callback can fire more than once; a continuation may
 /// only be resumed once.
 private final class ResumeOnce: @unchecked Sendable {
-    private let continuation: CheckedContinuation<String, Error>
+    private let continuation: CheckedContinuation<Transcription, Error>
     private var done = false
     private let lock = NSLock()
 
-    init(_ continuation: CheckedContinuation<String, Error>) {
+    init(_ continuation: CheckedContinuation<Transcription, Error>) {
         self.continuation = continuation
     }
 
-    func succeed(_ value: String) {
+    func succeed(_ value: Transcription) {
         lock.lock(); defer { lock.unlock() }
         guard !done else { return }
         done = true

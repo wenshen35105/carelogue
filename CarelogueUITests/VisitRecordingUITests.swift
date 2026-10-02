@@ -70,21 +70,65 @@ final class VisitRecordingUITests: CarelogueUITestCase {
         waitFor(app.buttons["recording.summaryLine"])
     }
 
+    private func openRecordingMenu() {
+        let menu = app.buttons["recording.menu"]
+        waitFor(menu)
+        XCTAssertEqual(menu.label, t("更多操作", "More"))
+        menu.tap()
+    }
+
     /// M7 T47: a finished recording (and its transcript) can be sent out
     /// through the system share sheet — AirDrop, Files.
     func testRecordingCanBeShared() {
         launch(["-uitest-reset", "-uitest-seed-recording"])
         openSeededVisit()
 
-        let share = app.buttons["recording.share"]
-        waitFor(share)
-        XCTAssertEqual(share.label, t("分享录音", "Share Recording"))
-        share.tap()
+        openRecordingMenu()
+        waitFor(app.buttons["recording.share"])
+        XCTAssertEqual(app.buttons["recording.share"].label, t("分享录音", "Share Recording"))
+        screenshot("T47-recording-menu")
+        app.buttons["recording.share"].tap()
 
         let sheet = app.otherElements["ActivityListView"]
         waitFor(sheet, timeout: 10)
         sleep(1) // let the sheet settle before the screenshot
         screenshot("T47-share-recording")
+    }
+
+    /// M7 T47: an English-speaking doctor in a Chinese-language app. The
+    /// language with the confident transcript wins, so the visit goes on to
+    /// be summarised as usual.
+    func testRetranscribeDetectsTheVisitLanguage() {
+        launch(["-uitest-reset", "-uitest-seed-recording", "-uitest-fake-transcript", "english",
+                "-uitest-fake-ai", "success", "-ai.consent", "granted"])
+        openSeededVisit()
+
+        openRecordingMenu()
+        app.buttons["recording.retranscribe"].tap()
+        let confirm = app.buttons["recording.retranscribe.confirm"]
+        waitFor(confirm)
+        screenshot("T47-retranscribe-confirm")
+        confirm.tap()
+
+        waitFor(app.buttons["recording.summaryLine"], timeout: 20)
+        XCTAssertFalse(id("recording.lowConfidence").exists)
+    }
+
+    /// M7 T47: unsure in every language — the transcript is kept, the user is
+    /// told, and nothing goes to the AI until they ask.
+    func testLowConfidenceTranscriptWaitsForTheUser() {
+        launch(["-uitest-reset", "-uitest-seed-recording", "-uitest-fake-transcript", "low",
+                "-uitest-fake-ai", "success", "-ai.consent", "granted"])
+        openSeededVisit()
+
+        openRecordingMenu()
+        app.buttons["recording.retranscribe"].tap()
+        app.buttons["recording.retranscribe.confirm"].tap()
+
+        waitFor(id("recording.lowConfidence"), timeout: 15)
+        XCTAssertTrue(app.buttons["recording.summarize"].exists)
+        XCTAssertFalse(app.buttons["recording.summaryLine"].exists)
+        screenshot("T47-low-confidence")
     }
 
     /// 我的疑问: write in Chinese, translate, hand the phone over.

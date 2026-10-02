@@ -1425,6 +1425,23 @@
         }
       }
     },
+    "会自动判断录音的语言重新转写，并替换现有的转写和 AI 整理。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The recording's language is detected automatically. The current transcript and AI summary will be replaced."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "会自动判断录音的语言重新转写，并替换现有的转写和 AI 整理。"
+          }
+        }
+      }
+    },
     "体检": {
       "extractionState": "manual",
       "localizations": {
@@ -3975,6 +3992,40 @@
         }
       }
     },
+    "更多操作": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更多操作"
+          }
+        }
+      }
+    },
+    "转写把握不高，可能不准确——可以先听一下录音，再决定要不要整理": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The transcript may be inaccurate — the recognizer wasn't confident. Listen to the recording before deciding to summarize."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "转写把握不高，可能不准确——可以先听一下录音，再决定要不要整理"
+          }
+        }
+      }
+    },
     "这段旅程的共享已经结束。点右上角共享按钮可重新发起。": {
       "extractionState": "manual",
       "localizations": {
@@ -6069,6 +6120,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "重新解释"
+          }
+        }
+      }
+    },
+    "重新转写": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcribe Again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新转写"
+          }
+        }
+      }
+    },
+    "重新转写这段录音？": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcribe this recording again?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新转写这段录音？"
           }
         }
       }
