@@ -33,6 +33,14 @@ struct LogEditorView: View {
     @State private var importErrorMessage: String?
     @FocusState private var noteFieldFocused: Bool
 
+    /// M7 T45: every visit in the library, newest first — where and whom the
+    /// user has seen before, across all journeys.
+    @Query(filter: #Predicate<Log> { $0.kindRaw == "encounter" }, sort: \Log.occurredAt, order: .reverse)
+    private var pastVisits: [Log]
+    @FocusState private var focusedVisitField: VisitField?
+
+    private enum VisitField { case location, doctor }
+
     init(journey: Journey, kind: LogKind, existingLog: Log? = nil) {
         self.journey = journey
         self.kind = kind
@@ -165,7 +173,17 @@ struct LogEditorView: View {
 
         Section("地点 / 医生（可选）") {
             TextField("地点", text: $location)
+                .focused($focusedVisitField, equals: .location)
+                .submitLabel(.next)
+                .onSubmit { focusedVisitField = .doctor }
+            if focusedVisitField == .location {
+                suggestionRow(.location)
+            }
             TextField("医生", text: $doctor)
+                .focused($focusedVisitField, equals: .doctor)
+            if focusedVisitField == .doctor {
+                suggestionRow(.doctor)
+            }
         }
 
         Section("备注") {
@@ -174,6 +192,35 @@ struct LogEditorView: View {
         }
 
         attachmentSection
+    }
+
+    /// Places / doctors used before that fit what is typed so far; tapping
+    /// one fills the field (and moves on from 地点 to 医生).
+    @ViewBuilder
+    private func suggestionRow(_ field: VisitField) -> some View {
+        let history = pastVisits.map { field == .location ? $0.location : $0.doctor }
+        let options = VisitFieldSuggestions.rank(history, matching: field == .location ? location : doctor)
+        if !options.isEmpty {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(options, id: \.self) { option in
+                        ChipButton(title: option, isSelected: false) {
+                            switch field {
+                            case .location:
+                                location = option
+                                focusedVisitField = .doctor
+                            case .doctor:
+                                doctor = option
+                                focusedVisitField = nil
+                            }
+                        }
+                        .accessibilityIdentifier(field == .location ? "suggestion.location" : "suggestion.doctor")
+                    }
+                }
+                .padding(.vertical, 2)
+            }
+            .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+        }
     }
 
     // MARK: - Attachments
@@ -414,5 +461,27 @@ struct LogEditorView: View {
         modelContext.deleteLog(existingLog)
         try? modelContext.save()
         dismiss()
+    }
+}
+
+/// M7 T45: ranking for the 地点 / 医生 suggestions.
+enum VisitFieldSuggestions {
+    /// `history` is newest first. Values are trimmed and de-duplicated
+    /// ignoring case (the newest spelling wins). An empty query lists the
+    /// most recent; otherwise prefix matches come before matches inside the
+    /// text, and the value already typed in full is left out.
+    static func rank(_ history: [String?], matching query: String, limit: Int = 6) -> [String] {
+        var seen: Set<String> = []
+        let values = history.compactMap { value -> String? in
+            guard let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmed.isEmpty,
+                  seen.insert(trimmed.lowercased()).inserted else { return nil }
+            return trimmed
+        }
+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !needle.isEmpty else { return Array(values.prefix(limit)) }
+        let candidates = values.filter { $0.lowercased() != needle }
+        let prefix = candidates.filter { $0.lowercased().hasPrefix(needle) }
+        let inside = candidates.filter { !$0.lowercased().hasPrefix(needle) && $0.lowercased().contains(needle) }
+        return Array((prefix + inside).prefix(limit))
     }
 }

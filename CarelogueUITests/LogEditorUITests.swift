@@ -69,4 +69,42 @@ final class LogEditorUITests: CarelogueUITestCase {
         scrollTo(reopened)
         XCTAssertEqual(reopened.value as? String, "饭后散步回来量的")
     }
+
+    /// T45: places and doctors from earlier visits — in any journey — are
+    /// offered while typing, and a tap fills the field.
+    func testVisitFieldsSuggestEarlierValues() {
+        // The seeded visit (BC Women's Hospital, Dr. Chen) lives in this
+        // journey; Dr. Patel only in the demo's tooth-extraction journey.
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-seed-demo"])
+        openJourney(journeyName)
+
+        startNewLog("就诊")
+        selectChip("面诊")
+
+        let location = app.textFields["地点"]
+        scrollTo(location)
+        location.tap()
+        location.typeText("Women")
+        let placeChip = app.buttons.matching(identifier: "suggestion.location")
+            .matching(NSPredicate(format: "label == %@", "BC Women's Hospital")).firstMatch
+        waitFor(placeChip)
+        screenshot("T45-location-suggestions")
+        placeChip.tap()
+        XCTAssertEqual(location.value as? String, "BC Women's Hospital")
+
+        // Choosing a place moves on to 医生.
+        let doctor = app.textFields["医生"]
+        doctor.typeText("pat")
+        let doctorChip = app.buttons.matching(identifier: "suggestion.doctor")
+            .matching(NSPredicate(format: "label == %@", "Dr. Patel")).firstMatch
+        waitFor(doctorChip)
+        XCTAssertFalse(app.buttons.matching(identifier: "suggestion.doctor")
+            .matching(NSPredicate(format: "label == %@", "Dr. Chen")).firstMatch.exists)
+        screenshot("T45-doctor-suggestions")
+        doctorChip.tap()
+        XCTAssertEqual(doctor.value as? String, "Dr. Patel")
+
+        app.buttons["保存"].tap()
+        waitFor(element(containing: "Dr. Patel"))
+    }
 }

@@ -35,12 +35,13 @@
 - **验收**：解释卡、总结卡无模型名；截图过目
 - **落地**：`ExplanationCard` 删 `modelPill` + 其换行布局，标题恒为「白话解释（AI 生成）· AI Explained」；`ExplainUITests` 断言无模型名；UI 全套浅/深各 53 过（2 条真连 relay 跳过）；截图 `docs/screenshots/T44-explanation{,-dark}.png`
 
-### T45 · 地点 / 医生联想输入（type-ahead）
+### T45 · 地点 / 医生联想输入（type-ahead）✅ 2026-10-01
 - 数据源：本库所有就诊 Log 的 `location` / `doctor`，去空、去重，按最近使用排序
 - 交互：输入框聚焦时在下方列出候选（空输入 = 最近 N 个；有输入 = 前缀/包含匹配），点选填入；仍可自由输入新值
 - 范围：**全库**（不限当前旅程，2026-09-30 定）——同一家医院/医生常跨旅程
 - 共享旅程：候选含共享进来的记录（同一 SwiftData 库，自然包含）
 - **验收**：第二次建就诊能点选上次的地点和医生；UI 测试覆盖
+- **落地**：`@Query` 全库就诊（按时间倒序）→ `VisitFieldSuggestions.rank`（去空白、忽略大小写去重、前缀优先于包含、已完整输入的不再提示、最多 6 个）；聚焦时字段下方一排 pill，点选填入，地点选完/回车跳到医生；`LogEditorUITests.testVisitFieldsSuggestEarlierValues`（跨旅程取到 Dr. Patel）
 
 ---
 
