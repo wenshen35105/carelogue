@@ -146,6 +146,9 @@ enum VisitTranscription {
     /// Permission for the speech models. The recorder asks for the microphone
     /// separately; both are requested before the first recording starts.
     static func requestPermission() async -> Bool {
+        #if DEBUG
+        if UITestSupport.fakeTranscriber != nil { return true }
+        #endif
         if #available(iOS 26, *) { return true }  // SpeechAnalyzer needs no prompt
         return await withCheckedContinuation { continuation in
             SFSpeechRecognizer.requestAuthorization { status in

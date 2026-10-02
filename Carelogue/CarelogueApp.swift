@@ -25,6 +25,8 @@ struct CarelogueApp: App {
     var body: some Scene {
         WindowGroup {
             JourneyListView()
+                // M7 T46: the visit recorder and its bar, above every screen.
+                .visitRecordingHost()
                 .environment(\.locale, AppLanguage.locale)
                 .tint(Theme.accent)
                 // Loads the product and the current entitlement, and keeps

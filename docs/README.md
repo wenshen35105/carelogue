@@ -6,7 +6,7 @@
 ## 里程碑（按版本）
 | 版本 | 里程碑 | 状态 |
 |---|---|---|
-| **1.0.1** | `releases/1.0.1/m7-tasks.md` | **草案**：2026-09-30 自用反馈 6 条（T42–T47），不改 schema |
+| **1.0.1** | `releases/1.0.1/m7-tasks.md` | **代码完成**（2026-10-01）：自用反馈 6 条 T42–T47 + 共享同步 bug T48，不改 schema；余真机复核 |
 | **1.0** | `releases/1.0/m6-tasks.md` | **进行中**：T39 CKShare（代码完成，余 schema 部署/双机联调）· T40 产检真机验收 · T41 提审材料包（余 ASC 侧动作）· 发布流程指向 owner-actions |
 | 1.0 | `releases/1.0/m5-tasks.md` | 已完成（T30–T38；T38 撤销，见文内更新行） |
 | 1.0 | `releases/1.0/m1-tasks.md` … `m4-tasks.md` | 历史卡（均完成） |

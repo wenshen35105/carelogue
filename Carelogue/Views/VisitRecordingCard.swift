@@ -15,27 +15,24 @@ struct VisitRecordingCard: View {
 
     let log: Log
 
-    @State private var recorder = VisitRecorder()
-    @State private var showingRecorder = false
-    @State private var phase: Phase = .idle
-    @State private var failure: String?
+    /// M7 T46: recording and the work after it belong to the app-wide
+    /// session, so they carry on while the user looks elsewhere.
+    private var session: VisitRecordingSession { .shared }
     @State private var showingSummary = false
     @State private var showingQuestions = false
     @State private var pendingConsent = false
     @State private var player = RecordingPlayer()
-    /// The last transcription came back with low confidence (M7 T47): kept,
-    /// but not sent to the AI until the user asks.
-    @State private var lowConfidence = false
     @State private var confirmingRetranscribe = false
 
-    enum Phase: Equatable {
-        case idle
-        case transcribing
-        case summarizing
-    }
-
     private var recording: Artifact? { log.recording }
-    private var isWorking: Bool { phase != .idle }
+    private var phase: VisitRecordingSession.Phase? { session.phase(for: log) }
+    private var isWorking: Bool { phase != nil }
+    private var failure: String? { session.failure(for: log) }
+    /// The last transcription came back with low confidence (M7 T47): kept,
+    /// but not sent to the AI until the user asks.
+    private var lowConfidence: Bool { session.isLowConfidence(log) }
+    /// This visit is the one recording right now.
+    private var isRecordingHere: Bool { session.log?.id == log.id }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -71,11 +68,6 @@ struct VisitRecordingCard: View {
         .cardSurface()
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("recording.card")
-        .fullScreenCover(isPresented: $showingRecorder) {
-            VisitRecordingSheet(recorder: recorder, log: log) { finished in
-                save(finished)
-            }
-        }
         .navigationDestination(isPresented: $showingSummary) {
             VisitSummaryView(log: log)
         }
@@ -84,7 +76,10 @@ struct VisitRecordingCard: View {
         }
         .confirmationDialog("重新转写这段录音？", isPresented: $confirmingRetranscribe, titleVisibility: .visible) {
             Button("重新转写") {
-                if let recording { retranscribe(recording) }
+                if let recording {
+                    if player.isPlaying(recording) { player.toggle(recording) }
+                    session.retranscribe(recording, of: log)
+                }
             }
             .accessibilityIdentifier("recording.retranscribe.confirm")
             Button("取消", role: .cancel) {}
@@ -96,7 +91,7 @@ struct VisitRecordingCard: View {
                 onAccept: {
                     consentRaw = AISettings.Consent.granted.rawValue
                     pendingConsent = false
-                    Task { await tidyUp() }
+                    Task { await session.tidyUp(log) }
                 },
                 onDecline: { pendingConsent = false }
             )
@@ -128,9 +123,10 @@ struct VisitRecordingCard: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             Button {
-                start()
+                isRecordingHere ? session.expand() : start()
             } label: {
-                Label("开始录音 · Record", systemImage: "mic.fill")
+                Label(isRecordingHere ? String(localized: "正在录音 · 回到录音") : String(localized: "开始录音 · Record"),
+                      systemImage: isRecordingHere ? "waveform" : "mic.fill")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.onAccent)
                     .frame(maxWidth: .infinity)
@@ -303,100 +299,33 @@ struct VisitRecordingCard: View {
     // MARK: - Actions
 
     private func start() {
-        failure = nil
+        session.setFailure(nil, for: log)
+        // One microphone: a recording already running elsewhere comes back
+        // to the front instead (its screen names the visit).
+        if session.isRecording {
+            session.expand()
+            return
+        }
         Task {
             guard await VisitRecorder.requestPermission() else {
-                failure = VisitRecorder.RecorderError.microphoneDenied.errorDescription
+                session.setFailure(VisitRecorder.RecorderError.microphoneDenied.errorDescription, for: log)
                 return
             }
             _ = await VisitTranscription.requestPermission()
-            showingRecorder = true
+            session.open(for: log)
         }
-    }
-
-    private func save(_ finished: VisitRecorder.Recording) {
-        let artifact = Artifact(fileData: finished.data, fileName: finished.fileName,
-                                mime: Artifact.audioMime)
-        modelContext.insert(artifact)
-        log.add(artifact)
-        log.updatedAt = .now
-        try? modelContext.save()
-        player.remember(duration: finished.duration, for: artifact)
-        Task { await transcribeThenTidy(artifact) }
-    }
-
-    private func transcribeThenTidy(_ artifact: Artifact) async {
-        failure = nil
-        lowConfidence = false
-        phase = .transcribing
-        defer { if phase == .transcribing { phase = .idle } }
-
-        do {
-            let url = try writeTemporaryCopy(of: artifact)
-            defer { try? FileManager.default.removeItem(at: url) }
-            let outcome = try await VisitTranscription.transcribe(
-                fileURL: url, with: VisitTranscription.makeTranscriber())
-            artifact.transcript = outcome.text
-            log.updatedAt = .now
-            try? modelContext.save()
-            if outcome.isLowConfidence {
-                lowConfidence = true
-                phase = .idle
-                return
-            }
-        } catch let error as TranscriptionError {
-            failure = error.errorDescription
-            phase = .idle
-            return
-        } catch {
-            failure = error.localizedDescription
-            phase = .idle
-            return
-        }
-
-        await tidyUp()
-    }
-
-    /// M7 T47: transcripts made before the language was detected (or lost to
-    /// a sync) can be redone. The old transcript and summary go — both came
-    /// from the text being replaced.
-    private func retranscribe(_ artifact: Artifact) {
-        if player.isPlaying(artifact) { player.toggle(artifact) }
-        artifact.transcript = nil
-        log.visitSummaryJSON = nil
-        log.updatedAt = .now
-        try? modelContext.save()
-        Task { await transcribeThenTidy(artifact) }
     }
 
     private func tidyUpTapped() {
         guard aiEnabled else {
-            failure = VisitError.aiDisabled.errorDescription
+            session.setFailure(VisitError.aiDisabled.errorDescription, for: log)
             return
         }
         guard AISettings.Consent(rawValue: consentRaw) == .granted else {
             pendingConsent = true
             return
         }
-        Task { await tidyUp() }
-    }
-
-    /// The AI half. It is a separate step on purpose: a transcript that never
-    /// gets summarised is still a recording the user can read.
-    private func tidyUp() async {
-        guard aiEnabled, AISettings.Consent(rawValue: consentRaw) == .granted else {
-            phase = .idle
-            return
-        }
-        phase = .summarizing
-        defer { phase = .idle }
-        do {
-            _ = try await VisitAIService.summarize(log, in: modelContext)
-        } catch let error as VisitError {
-            failure = error.errorDescription
-        } catch {
-            failure = error.localizedDescription
-        }
+        Task { await session.tidyUp(log) }
     }
 
     /// M7 T47: the recording leaves the app only when the user sends it —
@@ -422,17 +351,10 @@ struct VisitRecordingCard: View {
             }
         } catch {
             try? FileManager.default.removeItem(at: folder)
-            failure = error.localizedDescription
+            session.setFailure(error.localizedDescription, for: log)
         }
     }
 
-    /// The transcriber reads a file; the attachment lives in the store.
-    private func writeTemporaryCopy(of artifact: Artifact) throws -> URL {
-        let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("transcribe-\(artifact.id.uuidString).m4a")
-        try artifact.fileData.write(to: url)
-        return url
-    }
 }
 
 // MARK: - Pieces
@@ -494,7 +416,7 @@ final class RecordingPlayer {
     }
 
     func duration(of artifact: Artifact) -> TimeInterval {
-        if let known = durations[artifact.id] { return known }
+        if let known = durations[artifact.id] ?? Self.recordedDurations[artifact.id] { return known }
         // The data comes out of the store with no filename, so the type has
         // to be spelled out or the duration reads as zero.
         let measured = (try? AVAudioPlayer(data: artifact.fileData,
@@ -503,8 +425,12 @@ final class RecordingPlayer {
         return measured
     }
 
-    func remember(duration: TimeInterval, for artifact: Artifact) {
-        durations[artifact.id] = duration
+    /// Durations known from the recorder itself (T46: the session saves
+    /// recordings, not the card), so a fresh recording never shows 0:00.
+    private static var recordedDurations: [UUID: TimeInterval] = [:]
+
+    static func rememberDuration(_ duration: TimeInterval, for id: UUID) {
+        recordedDurations[id] = duration
     }
 
     func toggle(_ artifact: Artifact) {
@@ -517,8 +443,12 @@ final class RecordingPlayer {
             return
         }
         player?.stop()
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
-        try? AVAudioSession.sharedInstance().setActive(true)
+        // T46: while a visit records, the session stays play-and-record —
+        // switching it to playback would stop the recording.
+        if !VisitRecordingSession.shared.isRecording {
+            try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+            try? AVAudioSession.sharedInstance().setActive(true)
+        }
         player = try? AVAudioPlayer(data: artifact.fileData, fileTypeHint: AVFileType.m4a.rawValue)
         playingID = artifact.id
         player?.play()

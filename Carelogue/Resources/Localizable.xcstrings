@@ -1272,6 +1272,23 @@
         }
       }
     },
+    "丢掉录音": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard Recording"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "丢掉录音"
+          }
+        }
+      }
+    },
     "丢掉这段录音？": {
       "extractionState": "manual",
       "localizations": {
@@ -3601,6 +3618,23 @@
         }
       }
     },
+    "收起，继续录音": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimize, keep recording"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收起，继续录音"
+          }
+        }
+      }
+    },
     "数值": {
       "extractionState": "manual",
       "localizations": {
@@ -4022,6 +4056,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "更多操作"
+          }
+        }
+      }
+    },
+    "正在录音 · 回到录音": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recording · Return to Recorder"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在录音 · 回到录音"
           }
         }
       }

@@ -7,12 +7,16 @@ import SwiftUI
 /// recording — and stays quiet otherwise. No marking, no counters (the Stitch
 /// screen's 标记医嘱重点 / N 重点 were its own invention; design-review T32
 /// note 2).
+///
+/// M7 T46: the chevron folds the screen into the recording bar rather than
+/// closing it — the recording keeps going while the user checks the
+/// journey or the questions to ask. Throwing a recording away is its own,
+/// confirmed action.
 struct VisitRecordingSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
-    let recorder: VisitRecorder
+    let session: VisitRecordingSession
     let log: Log
-    let onFinish: (VisitRecorder.Recording) -> Void
+
+    private var recorder: VisitRecorder { session.recorder }
 
     @State private var failure: String?
     @State private var showingDiscardConfirm = false
@@ -37,8 +41,7 @@ struct VisitRecordingSheet: View {
         .onAppear(perform: begin)
         .confirmationDialog("丢掉这段录音？", isPresented: $showingDiscardConfirm, titleVisibility: .visible) {
             Button("丢掉", role: .destructive) {
-                recorder.cancel()
-                dismiss()
+                session.discard()
             }
             Button("继续录音", role: .cancel) {}
         } message: {
@@ -51,14 +54,15 @@ struct VisitRecordingSheet: View {
     private var topBar: some View {
         HStack {
             Button {
-                showingDiscardConfirm = true
+                session.collapse()
             } label: {
                 Image(systemName: "chevron.down")
                     .font(.headline)
                     .foregroundStyle(Theme.inkSecondary)
+                    .frame(width: 44, height: 44, alignment: .leading)
             }
-            .accessibilityIdentifier("recordingSheet.close")
-            .accessibilityLabel("关闭")
+            .accessibilityIdentifier("recordingSheet.collapse")
+            .accessibilityLabel(Text("收起，继续录音"))
 
             Spacer()
 
@@ -78,9 +82,16 @@ struct VisitRecordingSheet: View {
             .accessibilityIdentifier("recordingSheet.status")
 
             Spacer()
-            Image(systemName: "mic")
-                .font(.headline)
-                .foregroundStyle(Theme.inkSecondary)
+            Button {
+                showingDiscardConfirm = true
+            } label: {
+                Image(systemName: "trash")
+                    .font(.headline)
+                    .foregroundStyle(Theme.inkSecondary)
+                    .frame(width: 44, height: 44, alignment: .trailing)
+            }
+            .accessibilityIdentifier("recordingSheet.discard")
+            .accessibilityLabel(Text("丢掉录音"))
         }
     }
 
@@ -220,11 +231,6 @@ struct VisitRecordingSheet: View {
     }
 
     private func finish() {
-        guard let finished = recorder.finish() else {
-            failure = String(localized: "这段录音太短了，没有保存")
-            return
-        }
-        onFinish(finished)
-        dismiss()
+        session.finish()
     }
 }

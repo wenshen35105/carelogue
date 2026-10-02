@@ -51,6 +51,7 @@ final class VisitRecorder {
     private var recorder: AVAudioRecorder?
     private var ticker: Timer?
     private var fileURL: URL?
+    private var interruptionObserver: NSObjectProtocol?
 
     /// Asks once, the first time someone taps 录音.
     static func requestPermission() async -> Bool {
@@ -96,6 +97,17 @@ final class VisitRecorder {
             throw RecorderError.sessionUnavailable
         }
 
+        // M7 T46: a call or Siri takes the microphone; the system pauses the
+        // recorder, and the screen should say so. The user resumes — a visit
+        // may have moved on, and only they know whether to carry on.
+        interruptionObserver = NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification, object: session, queue: .main
+        ) { [weak self] note in
+            guard let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  AVAudioSession.InterruptionType(rawValue: raw) == .began else { return }
+            Task { @MainActor [weak self] in self?.pause() }
+        }
+
         state = .recording
         elapsed = 0
         levels = []
@@ -112,6 +124,8 @@ final class VisitRecorder {
 
     func resume() {
         guard state == .paused, let recorder else { return }
+        // After an interruption the session has to be taken back first.
+        try? AVAudioSession.sharedInstance().setActive(true)
         guard recorder.record() else { return }
         state = .recording
         startTicking()
@@ -152,6 +166,8 @@ final class VisitRecorder {
     private func reset() {
         ticker?.invalidate()
         ticker = nil
+        if let interruptionObserver { NotificationCenter.default.removeObserver(interruptionObserver) }
+        interruptionObserver = nil
         if let fileURL { try? FileManager.default.removeItem(at: fileURL) }
         recorder = nil
         fileURL = nil

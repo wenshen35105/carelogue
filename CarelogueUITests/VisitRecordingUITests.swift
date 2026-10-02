@@ -131,6 +131,73 @@ final class VisitRecordingUITests: CarelogueUITestCase {
         screenshot("T47-low-confidence")
     }
 
+    /// M7 T46: fold the recorder away mid-visit, look at the questions and
+    /// the other journeys, then come back and stop — the recording is saved
+    /// to the visit it started on and processed while the user is elsewhere.
+    func testRecordingContinuesWhileBrowsing() {
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-transcript", "success",
+                "-uitest-fake-ai", "success", "-ai.consent", "granted"])
+        openSeededVisit()
+
+        app.buttons["recording.start"].tap()
+        waitFor(id("recordingSheet"), timeout: 10)
+        sleep(2)
+        app.buttons["recordingSheet.collapse"].tap()
+
+        let bar = id("recordingBar")
+        waitFor(bar)
+        XCTAssertTrue(app.buttons["recording.start"].label.contains(t("回到录音", "Return to Recorder")))
+        screenshot("T46-recording-bar")
+
+        // The questions page, with the bar still along the bottom.
+        app.buttons["recording.questions"].tap()
+        waitFor(app.navigationBars.firstMatch)
+        XCTAssertTrue(bar.exists)
+        screenshot("T46-questions-while-recording")
+
+        // All the way out to the journey list: still recording.
+        for _ in 0..<3 where !app.navigationBars["Journeys"].exists {
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+        }
+        waitFor(app.navigationBars["Journeys"])
+        XCTAssertTrue(bar.exists)
+
+        // Pause and resume from the bar.
+        app.buttons["recordingBar.pause"].tap()
+        waitFor(element(containing: t("已暂停", "Paused")))
+        app.buttons["recordingBar.pause"].tap()
+        sleep(1)
+
+        // Back to the full recorder, stop there.
+        app.buttons["recordingBar.open"].tap()
+        waitFor(app.buttons["recordingSheet.finish"])
+        app.buttons["recordingSheet.finish"].tap()
+        XCTAssertTrue(bar.waitForNonExistence(timeout: 5))
+
+        // The visit got its recording, transcript, and summary meanwhile.
+        openSeededVisit()
+        waitFor(app.buttons["recording.summaryLine"], timeout: 20)
+        XCTAssertTrue(app.buttons["recording.play"].exists)
+    }
+
+    /// M7 T46: throwing a recording away is its own confirmed action.
+    func testRecordingCanBeDiscarded() {
+        launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-transcript", "success"])
+        openSeededVisit()
+
+        app.buttons["recording.start"].tap()
+        waitFor(id("recordingSheet"), timeout: 10)
+        screenshot("T46-recorder")
+        app.buttons["recordingSheet.discard"].tap()
+        let discard = app.buttons[t("丢掉", "Discard")]
+        waitFor(discard)
+        discard.tap()
+
+        waitFor(app.buttons["recording.start"])
+        XCTAssertFalse(id("recordingBar").exists)
+        XCTAssertTrue(app.buttons["recording.start"].label.contains(t("开始录音", "Record")))
+    }
+
     /// 我的疑问: write in Chinese, translate, hand the phone over.
     func testQuestionsTranslateAndHandOff() {
         launch(["-uitest-reset", "-uitest-seed-visit", "-uitest-fake-ai", "success",

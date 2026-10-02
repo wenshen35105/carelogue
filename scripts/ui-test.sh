@@ -62,6 +62,10 @@ else
   echo "warning: Files storage not found; file-import test may fail" >&2
 fi
 
+# The recorder tests (M7 T46) record for real; grant the microphone up
+# front so no system prompt covers the screen.
+xcrun simctl privacy "$SIM_ID" grant microphone ca.carelogue.app 2>/dev/null || true
+
 # Skip the one-time keyboard "slide to type" tutorial that covers the UI.
 xcrun simctl spawn "$SIM_ID" defaults write com.apple.keyboard.preferences DidShowContinuousPathIntroduction -bool true
 
