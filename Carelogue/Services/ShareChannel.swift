@@ -178,6 +178,40 @@ enum ShareChannel {
 
     static func clearToken(for zoneID: CKRecordZone.ID) {
         UserDefaults.standard.removeObject(forKey: tokenKey(zoneID))
+        UserDefaults.standard.removeObject(forKey: echoKey(zoneID))
+    }
+
+    // MARK: - Own-write echoes (M7 T48)
+
+    /// The change tags of records this device saved, per zone. The change
+    /// token is stored before push runs, so the next pull hands our own saves
+    /// back as "remote changes" — and by then the local copy may have moved
+    /// on. A recording uploads, its transcript lands a moment later, and
+    /// applying the echo put the transcript back to nil (TestFlight 1.0:
+    /// a shared visit kept its summary but lost its transcript).
+    private static func echoKey(_ zoneID: CKRecordZone.ID) -> String {
+        "share.ownWrites.\(zoneID.zoneName).\(zoneID.ownerName)"
+    }
+
+    private static func rememberOwnWrites(_ records: [CKRecord]) {
+        for (zoneID, group) in Dictionary(grouping: records, by: { $0.recordID.zoneID }) {
+            var tags = UserDefaults.standard.dictionary(forKey: echoKey(zoneID)) as? [String: String] ?? [:]
+            for record in group {
+                tags[record.recordID.recordName] = record.recordChangeTag
+            }
+            UserDefaults.standard.set(tags, forKey: echoKey(zoneID))
+        }
+    }
+
+    /// True when the record is exactly what this device last saved. Either
+    /// way the remembered tag is spent: a different tag means someone wrote
+    /// after us, and that change must apply.
+    private static func consumeOwnEcho(_ record: CKRecord) -> Bool {
+        let key = echoKey(record.recordID.zoneID)
+        guard var tags = UserDefaults.standard.dictionary(forKey: key) as? [String: String],
+              let tag = tags.removeValue(forKey: record.recordID.recordName) else { return false }
+        UserDefaults.standard.set(tags, forKey: key)
+        return tag == record.recordChangeTag
     }
 
     // MARK: - Record builders
@@ -483,6 +517,7 @@ enum ShareChannel {
             for change in result.modificationResultsByID.values {
                 guard case .success(let modification) = change else { continue }
                 let record = modification.record
+                if consumeOwnEcho(record) { continue }
                 switch record.recordType {
                 case RecordType.journey:
                     applyRemote(record, to: journey)
@@ -647,6 +682,7 @@ enum ShareChannel {
                 throw error
             }
         }
+        rememberOwnWrites(result.saveResults.values.compactMap { try? $0.get() })
         let conflicted = result.saveResults.filter { _, outcome in
             if case .failure(let error) = outcome, (error as? CKError)?.code == .serverRecordChanged {
                 return true
@@ -673,6 +709,7 @@ enum ShareChannel {
                 throw error
             }
         }
+        rememberOwnWrites(retry.saveResults.values.compactMap { try? $0.get() })
     }
 
     // MARK: - Local store upserts
