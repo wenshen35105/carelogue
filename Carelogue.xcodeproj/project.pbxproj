@@ -313,7 +313,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Carelogue/Carelogue.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = A7Z9M6N48N;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
@@ -321,6 +321,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "config/Carelogue-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Carelogue;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo of a lab report or record to attach it. Photos stay on this device.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record your own appointment so you can review it at home. Recordings stay on this device and in your private iCloud.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Turn your recording into text on this device, so the notes can be tidied up without the audio ever leaving.";
@@ -366,7 +367,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Carelogue/Carelogue.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = A7Z9M6N48N;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
@@ -374,6 +375,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "config/Carelogue-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Carelogue;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo of a lab report or record to attach it. Photos stay on this device.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record your own appointment so you can review it at home. Recordings stay on this device and in your private iCloud.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Turn your recording into text on this device, so the notes can be tidied up without the audio ever leaving.";
