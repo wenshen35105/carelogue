@@ -179,11 +179,8 @@ struct VisitRecordingCard: View {
                 .accessibilityIdentifier("recording.play")
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(verbatim: player.duration(of: artifact).clockString)
-                        .font(.title3.weight(.semibold).monospacedDigit())
-                        .foregroundStyle(Theme.inkPrimary)
-                    WaveformBars(levels: WaveformBars.shape(seed: artifact.id))
-                        .frame(height: 18)
+                    timeLabel(artifact)
+                    scrubber(artifact)
                 }
 
                 Menu {
@@ -252,6 +249,47 @@ struct VisitRecordingCard: View {
                 .accessibilityIdentifier("recording.summarize")
             }
         }
+    }
+
+    /// Total length; "elapsed / total" once playback has started.
+    private func timeLabel(_ artifact: Artifact) -> some View {
+        let total = player.duration(of: artifact)
+        let text = player.isLoaded(artifact)
+            ? "\(player.position(of: artifact).clockString) / \(total.clockString)"
+            : total.clockString
+        return Text(verbatim: text)
+            .font(.title3.weight(.semibold).monospacedDigit())
+            .foregroundStyle(Theme.inkPrimary)
+            .accessibilityIdentifier("recording.time")
+    }
+
+    /// M7 T49: the waveform doubles as the seek bar — tap or drag along it;
+    /// the played part fills in.
+    private func scrubber(_ artifact: Artifact) -> some View {
+        let total = player.duration(of: artifact)
+        let fraction = total > 0 ? player.position(of: artifact) / total : 0
+        return GeometryReader { geometry in
+            WaveformBars(levels: WaveformBars.shape(seed: artifact.id),
+                         progress: player.isLoaded(artifact) ? fraction : nil)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            let width = max(geometry.size.width, 1)
+                            player.seek(artifact, to: min(max(value.location.x / width, 0), 1))
+                        }
+                )
+        }
+        .frame(height: 18)
+        .accessibilityElement()
+        .accessibilityLabel(Text("播放进度"))
+        .accessibilityValue(Text(verbatim: "\(player.position(of: artifact).clockString) / \(total.clockString)"))
+        .accessibilityAdjustableAction { direction in
+            let step: TimeInterval = direction == .increment ? 15 : -15
+            let target = min(max(player.position(of: artifact) + step, 0), total)
+            player.seek(artifact, to: total > 0 ? target / total : 0)
+        }
+        .accessibilityIdentifier("recording.scrubber")
     }
 
     private var questionsRow: some View {
@@ -365,18 +403,27 @@ struct VisitRecordingCard: View {
 struct WaveformBars: View {
     let levels: [Double]
     var tint: Color = Theme.accent
+    /// Playback position 0...1 (T49): bars up to it fill in solid, the rest
+    /// fade. Nil = no playback, the plain level shading.
+    var progress: Double? = nil
 
     var body: some View {
         GeometryReader { geometry in
             HStack(alignment: .center, spacing: 3) {
-                ForEach(Array(levels.enumerated()), id: \.offset) { _, level in
+                ForEach(Array(levels.enumerated()), id: \.offset) { index, level in
                     Capsule()
-                        .fill(tint.opacity(0.25 + 0.6 * level))
+                        .fill(tint.opacity(opacity(at: index, level: level)))
                         .frame(height: max(3, geometry.size.height * level))
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
+    }
+
+    private func opacity(at index: Int, level: Double) -> Double {
+        guard let progress else { return 0.25 + 0.6 * level }
+        let played = (Double(index) + 0.5) / Double(max(levels.count, 1)) <= progress
+        return played ? 0.95 : 0.22
     }
 
     static func shape(seed: UUID, count: Int = 22) -> [Double] {
@@ -433,16 +480,41 @@ final class RecordingPlayer {
         recordedDurations[id] = duration
     }
 
+    /// Where playback is (or was left), for the recording currently loaded.
+    private(set) var currentTime: TimeInterval = 0
+    private var ticker: Timer?
+
+    func isLoaded(_ artifact: Artifact) -> Bool { playingID == artifact.id && player != nil }
+
+    func position(of artifact: Artifact) -> TimeInterval {
+        playingID == artifact.id ? currentTime : 0
+    }
+
     func toggle(_ artifact: Artifact) {
         if isPlaying(artifact) {
             player?.pause()
+            stopTicking()
             return
         }
-        if playingID == artifact.id, let player {
-            player.play()
-            return
-        }
+        guard load(artifact) else { return }
+        player?.play()
+        startTicking()
+    }
+
+    /// M7 T49: jump to a fraction of the recording, playing or not.
+    func seek(_ artifact: Artifact, to fraction: Double) {
+        guard load(artifact), let player else { return }
+        player.currentTime = fraction * player.duration
+        currentTime = player.currentTime
+    }
+
+    /// Makes `artifact` the loaded recording (keeping its position when it
+    /// already is). False if the audio can't be read.
+    @discardableResult
+    private func load(_ artifact: Artifact) -> Bool {
+        if playingID == artifact.id, player != nil { return true }
         player?.stop()
+        stopTicking()
         // T46: while a visit records, the session stays play-and-record —
         // switching it to playback would stop the recording.
         if !VisitRecordingSession.shared.isRecording {
@@ -451,6 +523,26 @@ final class RecordingPlayer {
         }
         player = try? AVAudioPlayer(data: artifact.fileData, fileTypeHint: AVFileType.m4a.rawValue)
         playingID = artifact.id
-        player?.play()
+        currentTime = 0
+        return player != nil
+    }
+
+    private func startTicking() {
+        stopTicking()
+        ticker = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+            Task { @MainActor [weak self] in self?.tick() }
+        }
+    }
+
+    private func stopTicking() {
+        ticker?.invalidate()
+        ticker = nil
+    }
+
+    private func tick() {
+        guard let player else { return stopTicking() }
+        currentTime = player.currentTime
+        // Played to the end: AVAudioPlayer rewinds itself; the bar follows.
+        if !player.isPlaying { stopTicking() }
     }
 }

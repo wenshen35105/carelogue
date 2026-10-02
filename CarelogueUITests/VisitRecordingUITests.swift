@@ -131,6 +131,25 @@ final class VisitRecordingUITests: CarelogueUITestCase {
         screenshot("T47-low-confidence")
     }
 
+    /// M7 T49: the waveform is a seek bar — tapping halfway jumps there, and
+    /// the time reads "elapsed / total".
+    func testPlaybackCanSeek() {
+        launch(["-uitest-reset", "-uitest-seed-recording"])
+        openSeededVisit()
+
+        let scrubber = id("recording.scrubber")
+        waitFor(scrubber)
+        scrubber.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        let time = id("recording.time")
+        waitFor(time)
+        XCTAssertTrue(time.label.hasPrefix("0:01 /"), "Unexpected time after seeking: \(time.label)")
+        screenshot("T49-seek")
+
+        // Near the end.
+        scrubber.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: 0.5)).tap()
+        XCTAssertTrue(time.label.hasPrefix("0:02 /"), "Unexpected time after seeking again: \(time.label)")
+    }
+
     /// M7 T46: fold the recorder away mid-visit, look at the questions and
     /// the other journeys, then come back and stop — the recording is saved
     /// to the visit it started on and processed while the user is elsewhere.
