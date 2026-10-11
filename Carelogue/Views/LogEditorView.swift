@@ -499,6 +499,9 @@ struct LogEditorView: View {
             log.note = note
         }
         try? modelContext.save()
+        if existingLog == nil {
+            ReviewPrompt.newRecordSaved(logCount: (try? modelContext.fetchCount(FetchDescriptor<Log>())) ?? 0)
+        }
         dismiss()
     }
 

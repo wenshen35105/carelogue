@@ -14,6 +14,8 @@
 - **入口**：设置页常驻「喜欢 Carelogue？去评分」→ App Store 评价页深链（`itms-apps://...?action=write-review`）。
 - **红线**：不给任何回报/激励（Apple 明文禁止"激励评价"）；不用自定义弹窗假冒系统评分框。
 - **验收**：触发路径在模拟器可验证（真实弹窗由系统决定，只在真机出现）；不打扰正常使用流。
+- **✅ 代码完成（2026-10-11）**：`Services/ReviewPrompt.swift`——保存**新**记录且库内记录 ≥5、距上次请求 ≥90 天 → 记日期并在编辑器关闭 1.5s 后调 `AppStore.requestReview`；设置页常驻「喜欢 Carelogue？去评分」→ `apps.apple.com/app/id6815909128?action=write-review`。UI 测试 `ReviewPromptUITests`：第 5 条请求、第 6 条不请求、89 天不请求、91 天再请求（模拟器开发构建会真实弹出系统评分框，已截图验证）。
+  - CC 自定：「第 5 个 log」按**库内总记录数 ≥5** 判断（老用户已有很多记录 → 下一次新建即请求一次），只在新建时触发，编辑不触发；App Store ID 由 bundle id 查得 `6815909128`。
 
 ## T52 · 复诊提醒（本地通知）
 

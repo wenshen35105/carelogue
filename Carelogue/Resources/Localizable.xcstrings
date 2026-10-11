@@ -8090,6 +8090,40 @@
           }
         }
       }
+    },
+    "喜欢 Carelogue？去评分": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enjoying Carelogue? Rate It"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "喜欢 Carelogue？去评分"
+          }
+        }
+      }
+    },
+    "在 App Store 写下你的评价，帮更多人找到它": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write a review on the App Store and help others find it"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 App Store 写下你的评价，帮更多人找到它"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

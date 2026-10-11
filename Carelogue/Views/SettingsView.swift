@@ -44,6 +44,7 @@ struct SettingsView: View {
                 aiSection
                 privacySection
                 dataSection
+                reviewRow
                 footer
             }
             .padding(.horizontal, Theme.Spacing.margin)
@@ -136,6 +137,11 @@ struct SettingsView: View {
                 .padding(.horizontal, 4)
 
             #if DEBUG
+            Text(verbatim: "Review requests: \(UserDefaults.standard.integer(forKey: ReviewPrompt.requestCountKey))")
+                .font(.caption2)
+                .foregroundStyle(Theme.inkSecondary)
+                .padding(.horizontal, 4)
+                .accessibilityIdentifier("debug.reviewRequests")
             Text(verbatim: "Planned reminders: \(plannedReminders.count) · visits \(plannedReminders.filter { $0.hasPrefix(Reminders.visitPrefix) }.count) · doses \(plannedReminders.filter { $0.hasPrefix(Reminders.medicationPrefix) }.count)")
                 .font(.caption2)
                 .foregroundStyle(Theme.inkSecondary)
@@ -542,6 +548,36 @@ struct SettingsView: View {
         summary.isEmpty
             ? String(localized: "本机已经没有可清空的数据")
             : String(localized: "已清空 \(summary.journeys) 段旅程、\(summary.logs) 条记录、\(summary.artifacts) 份附件、\(summary.medications) 项用药")
+    }
+
+    /// M8 T51: always here, never pushed — the App Store's own review sheet.
+    private var reviewRow: some View {
+        Link(destination: ReviewPrompt.writeReviewURL) {
+            HStack(spacing: 14) {
+                Image(systemName: "star")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Theme.accent)
+                    .frame(width: 40, height: 40)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(Theme.accentTint))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("喜欢 Carelogue？去评分")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Theme.inkPrimary)
+                    Text("在 App Store 写下你的评价，帮更多人找到它")
+                        .font(.footnote)
+                        .foregroundStyle(Theme.inkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                // A Link centres multi-line labels by default.
+                .multilineTextAlignment(.leading)
+                Spacer(minLength: 8)
+                Image(systemName: "arrow.up.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Theme.inkSecondary)
+            }
+            .cardSurface()
+        }
+        .accessibilityIdentifier("settings.rateApp")
     }
 
     private var footer: some View {

@@ -60,6 +60,9 @@ import UIKit
 ///   -uitest-request-notifications ask for the notification permission at
 ///                                 launch, so a test can answer the alert up
 ///                                 front (the app itself never asks at launch)
+///   -uitest-review-asked-days-ago <n>
+///                                 (M8 T51) pretend the rating prompt was last
+///                                 asked for n days ago
 ///   -selftest-explain             explain the seeded report photo twice (needs
 ///                                 -uitest-seed-attachments, a way through the
 ///                                 relay — INTERNAL_ACCESS_KEY or a
@@ -127,6 +130,10 @@ enum UITestSupport {
         if arguments.contains("-uitest-seed-medication-soon") {
             let medication = Medication(name: "UITest 叶酸片", dose: "5 mg", reminderMinutes: [minuteSoon])
             context.insert(medication)
+        }
+        if let index = arguments.firstIndex(of: "-uitest-review-asked-days-ago"), index + 1 < arguments.count,
+           let days = Double(arguments[index + 1]) {
+            UserDefaults.standard.set(Date.now.addingTimeInterval(-days * 86_400), forKey: ReviewPrompt.lastRequestKey)
         }
         if arguments.contains("-uitest-request-notifications") {
             Task { @MainActor in await Reminders.requestPermissionIfNeeded() }
