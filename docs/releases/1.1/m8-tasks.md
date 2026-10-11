@@ -1,7 +1,7 @@
-# M8 · v1.1（生态整合批 · ✅ FINALIZED 2026-10-11）
+# M8 · v1.1（生态整合批 · ✅ 代码完成 2026-10-11）
 
 > 来源：2026-10-11 讨论（求好评 / 复诊提醒 / 用药提醒 / Apple Health / Journey 元数据与进度）+ backlog。
-> 状态：**✅ FINALIZED（2026-10-11）——CC 可以开工**。开工按「排期建议」顺序，一次一卡（流程照 CLAUDE.md：先复述理解+计划，确认后动手）。
+> 状态：**✅ 代码完成（2026-10-11）**——T51–T60 全部落地，每卡一个 commit；全量 UI 测试浅色 86/86（6 个截图用例适配后重跑通过）、深色 86/86；文档截图已按 demo 数据重拍。余：owner-actions「🆕 1.1（M8）提审前」各项（CloudKit schema 部署、HealthKit/App Group/Widget 签名、隐私政策上线、真机复核），以及 T54「提审风险」需老板知悉。
 > 约束：本地通知（不引入服务器，保持 local-first）；schema 变更随功能走（CloudKit 兼容：非 optional 默认值、无 unique）；UI 文案一律进 String Catalog（中英）。
 
 ---

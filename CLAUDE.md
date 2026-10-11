@@ -3,7 +3,7 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：**1.1 开发中（M8）**——1.0 / 1.0.1 已上架（App Store 1.0.1）。M8（`docs/releases/1.1/m8-tasks.md`）：生态整合批 T51–T60（求好评 / 复诊+用药提醒 / Apple Health / Journey 概要与目标日 / 血压双值 / Widget / 随手记附件 / MapKit 地点联想），按卡内「排期建议」顺序推进；schema 变更随卡走（卡内已授权）。M7（`docs/releases/1.0.1/m7-tasks.md`）余真机复核（见各卡「待真机复核」）。
+当前阶段：**1.1 代码完成（M8，2026-10-11）**——1.0 / 1.0.1 已上架（App Store 1.0.1）。M8（`docs/releases/1.1/m8-tasks.md`）：生态整合批 T51–T60 全部落地；余提审前动作（`docs/owner-actions.md`「🆕 1.1（M8）提审前」）与真机复核。工程结构新增：`CarelogueWidget/`（Widget 扩展 target）+ `Shared/`（app 与 Widget 共用代码，两个 target 都编译）。M7（`docs/releases/1.0.1/m7-tasks.md`）余真机复核（见各卡「待真机复核」）。
 
 ## 先读这些（按序）
 
