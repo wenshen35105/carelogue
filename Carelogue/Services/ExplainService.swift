@@ -187,11 +187,15 @@ enum ExplainService {
     }
 
     /// Journey name + Profile allergies / medications (spec §5b), unless
-    /// switched off in Settings. A field left nil is not encoded at all, so
+    /// switched off in Settings or the journey records someone else (T61). A field left nil is not encoded at all, so
     /// with the switch off the relay never receives it.
     private static func requestContext(for artifact: Artifact, in context: ModelContext) -> AIRequest.Context {
         var result = AIRequest.Context(journeyName: nonEmpty(artifact.log?.journey?.name))
-        if AISettings.includesProfile, let profile = try? context.fetch(FetchDescriptor<Profile>()).first {
+        // T61: the profile is this device owner's — never for a journey
+        // that records someone else.
+        let mayIncludeProfile = artifact.log?.journey?.mayIncludeMyProfile ?? true
+        if AISettings.includesProfile, mayIncludeProfile,
+           let profile = try? context.fetch(FetchDescriptor<Profile>()).first {
             result.allergies = nonEmpty(profile.allergies)
             result.medications = nonEmpty(profile.medications)
         }

@@ -4,8 +4,11 @@ import SwiftData
 
 // M8 T54 · Apple Health. Reading is per journey and only for the types the
 // user ticked; what comes in becomes ordinary measurement records in that
-// journey. Writing back (Settings, on by default) copies the measurements
-// recorded in Carelogue into Health. Nothing here talks to any server.
+// journey. Writing back copies the measurements recorded in a connected
+// journey into Health (Settings holds the master switch, on by default).
+// T61: all of it only on the device of the person the journey records —
+// a husband logging his wife's blood pressure never writes it as his own.
+// Nothing here talks to any server.
 
 /// The four readings Carelogue exchanges with Health.
 enum HealthMetric: String, CaseIterable, Codable, Identifiable {
@@ -86,7 +89,8 @@ enum HealthSync {
 
     static var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
-    /// Settings › Apple 健康 › 写入 Apple 健康 — on unless switched off.
+    /// Settings › Apple 健康 › 写入 Apple 健康 — the master switch, on unless
+    /// switched off. Writing also needs the journey connected here (T61).
     static var writeBackEnabled: Bool {
         UserDefaults.standard.object(forKey: writeBackKey) as? Bool ?? true
     }
@@ -104,7 +108,7 @@ enum HealthSync {
     /// writing back is on), saves the link and imports. Returns how many
     /// readings came in.
     static func connect(_ journey: Journey, metrics: [HealthMetric], context: ModelContext) async throws -> Int {
-        guard isAvailable, !metrics.isEmpty else { return 0 }
+        guard isAvailable, !metrics.isEmpty, journey.healthBelongsHere else { return 0 }
         let read = metrics.reduce(into: Set<HKObjectType>()) { $0.formUnion($1.readTypes) }
         let share = writeBackEnabled
             ? HealthMetric.allCases.reduce(into: Set<HKSampleType>()) { $0.formUnion($1.shareTypes) }
@@ -148,6 +152,13 @@ enum HealthSync {
     @discardableResult
     static func importNew(into journey: Journey, context: ModelContext) async -> Int {
         guard isAvailable, let link = link(for: journey) else { return 0 }
+        // The journey now records someone else (changed here or by another
+        // member): this device stops reading for it.
+        guard journey.healthBelongsHere else {
+            disconnect(journey)
+            return 0
+        }
+        await reconcileWriteBacks(in: journey, context: context)
         let since = start(of: journey)
         let known = Set(((try? context.fetch(FetchDescriptor<Log>(
             predicate: #Predicate { $0.healthSampleID != nil }
@@ -210,6 +221,7 @@ enum HealthSync {
     /// are never written back; nothing is asked for here — without write
     /// access it simply does nothing.
     static func didSave(_ log: Log, context: ModelContext) async {
+        guard let journey = log.journey, link(for: journey) != nil, journey.healthBelongsHere else { return }
         guard isAvailable, writeBackEnabled, log.kind == .measurement,
               let metric = HealthMetric(logType: log.type), let value = log.value,
               !(log.healthSampleID?.hasPrefix("in:") ?? false) else { return }
@@ -230,6 +242,42 @@ enum HealthSync {
             log.healthSampleID = nil
         }
         try? context.save()
+    }
+
+    /// A shared journey's other member may have changed a reading this
+    /// device wrote to Health; the change arrives through the share, not the
+    /// editor. On opening the journey, Health's copy catches up.
+    private static func reconcileWriteBacks(in journey: Journey, context: ModelContext) async {
+        for log in journey.allLogs where log.healthSampleID?.hasPrefix("out:") ?? false {
+            guard let id = log.healthSampleID.flatMap(sampleUUID),
+                  let metric = HealthMetric(logType: log.type) else { continue }
+            let stored = await storedReading(id, metric: metric)
+            let current = (log.value, log.diastolic, log.occurredAt)
+            if stored == nil || stored!.value != current.0 || stored!.diastolic != current.1
+                || abs(stored!.date.timeIntervalSince(current.2)) > 1 {
+                await didSave(log, context: context)
+            }
+        }
+    }
+
+    private static func storedReading(_ id: UUID, metric: HealthMetric) async -> Reading? {
+        let predicate = HKQuery.predicateForObject(with: id)
+        if metric == .bloodPressure {
+            let descriptor = HKSampleQueryDescriptor(
+                predicates: [.correlation(type: HKCorrelationType(.bloodPressure), predicate: predicate)],
+                sortDescriptors: [])
+            guard let correlation = (try? await descriptor.result(for: store))?.first else { return nil }
+            let systolic = correlation.objects(for: HKQuantityType(.bloodPressureSystolic)).first as? HKQuantitySample
+            let diastolic = correlation.objects(for: HKQuantityType(.bloodPressureDiastolic)).first as? HKQuantitySample
+            return Reading(id: id, date: correlation.startDate,
+                           value: systolic?.quantity.doubleValue(for: metric.hkUnit) ?? 0,
+                           diastolic: diastolic?.quantity.doubleValue(for: metric.hkUnit))
+        }
+        guard let type = metric.shareTypes.first as? HKQuantityType else { return nil }
+        let descriptor = HKSampleQueryDescriptor(predicates: [.quantitySample(type: type, predicate: predicate)],
+                                                 sortDescriptors: [])
+        guard let sample = (try? await descriptor.result(for: store))?.first else { return nil }
+        return Reading(id: id, date: sample.startDate, value: sample.quantity.doubleValue(for: metric.hkUnit))
     }
 
     /// Before a measurement is deleted: removes the copy Carelogue wrote.

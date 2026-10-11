@@ -51,6 +51,19 @@ final class Journey {
     var progressStartDate: Date? = nil
     var summaryItemsJSON: String? = nil
 
+    // MARK: - Subject (M8 T61)
+    //
+    // Whose health this journey records — not the same as who created it
+    // (a husband's journey about his wife's pregnancy). Both nil = not
+    // specified (every journey made before 1.1).
+    //
+    //   subjectName    how to call them ("太太", "小宝"); may be nil for "me"
+    //   subjectUserID  their CloudKit user record name — or this install's
+    //                  own id without iCloud — when they use Carelogue; nil
+    //                  for someone who doesn't (a child with no phone)
+    var subjectName: String? = nil
+    var subjectUserID: String? = nil
+
     // MARK: - CKShare metadata (T39, route B)
     //
     // All optional-with-defaults so the migration stays additive (schema

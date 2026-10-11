@@ -46,11 +46,15 @@ iCloud 同步由 Apple 提供，适用 Apple 的隐私政策；数据存放在�
 
 Carelogue 可以与 Apple「健康」交换四类测量：体重、血压、心率、体温。
 
+- **只在你本人的旅程里**：每段旅程可以写明「记录对象」（记录的是谁的健康）。只有
+  记录对象本人的 iPhone 能为这段旅程连接「健康」；共享旅程里，其他成员录入的测量
+  不会写入你的「健康」，你录入的也只写入你自己的。
 - **读取**：只在你为某段旅程打开「Apple 健康」并勾选类型后进行，而且只读你勾选的
   类型、只读这段旅程开始之后的数据（心率读取每日静息心率）。读到的数值会成为这段
   旅程里的测量记录，和你手动记录的测量一样存在你的设备和你自己的 iCloud 私有库。
-- **写入**：你在 Carelogue 记录的这四类测量会同时写入「健康」（设置 › Apple 健康，
-  默认开启，可关闭）；在 Carelogue 删除记录，它写入的那条也会从「健康」删除。
+- **写入**：你在已连接「健康」的旅程里记录的这四类测量会同时写入「健康」（设置 ›
+  Apple 健康，默认开启，可关闭）；在 Carelogue 删除记录，它写入的那条也会从「健康」
+  删除。
 - **不会离开你的设备与 iCloud**：来自「健康」的数据不会发送给我们的服务器、AI 服
   务或任何第三方，不用于广告、营销或数据挖掘，也不会出售。AI 解释只针对你主动选择
   的报告附件，不包含来自「健康」的读数。
@@ -68,7 +72,8 @@ Carelogue 可以与 Apple「健康」交换四类测量：体重、血压、心�
 ### 使用 AI 解释时会发生什么
 
 1. 报告里的文字**在你的设备上**用系统自带的文字识别提取出来；
-2. 只有这些文字（以及旅程名称，和你在设置里允许时的「过敏 / 长期用药」）经 HTTPS
+2. 只有这些文字（以及旅程名称，和你在设置里允许时的「过敏 / 长期用药」——仅限记录
+   你本人的旅程）经 HTTPS
    加密通道发送到我们的转发服务；
 3. 转发服务把它交给我们选用的 AI 服务，取回解释，再原样返回给你的设备；
 4. 解释结果保存在你的设备上。
@@ -168,13 +173,17 @@ signed in to iCloud). Notes:
 Carelogue can exchange four kinds of measurement with Apple Health: weight,
 blood pressure, heart rate and body temperature.
 
+- **Only for journeys about you**: each journey can say whose health it
+  records. Only that person's iPhone can connect the journey to Health; in a
+  shared journey, measurements other members record never go into your Health,
+  and the ones you record go only into yours.
 - **Reading** happens only after you turn on Apple Health for a journey and tick
   the types — only those types, and only from the journey's start (heart rate
   is the daily resting rate). Readings become measurements in that journey,
   stored like the ones you enter yourself: on your device and in your own
   private iCloud database.
-- **Writing**: the measurements of those four kinds you record in Carelogue are
-  also saved to Health (Settings › Apple Health; on by default, can be turned
+- **Writing**: the measurements of those four kinds you record in a journey
+  connected to Health are also saved to Health (Settings › Apple Health; on by default, can be turned
   off). Deleting a record in Carelogue removes the copy it wrote to Health.
 - **It never leaves your device and iCloud**: data from Health is not sent to
   our servers, to the AI service or to anyone else; it is not used for
@@ -201,7 +210,8 @@ blood pressure, heart rate and body temperature.
 1. The report's text is extracted **on your device** using the system's own text
    recognition;
 2. only that text (plus the journey name, and your allergies / medications if you
-   allow it in Settings) is sent over HTTPS to our relay;
+   allow it in Settings — only for journeys about you) is sent over HTTPS to our
+   relay;
 3. the relay passes it to the AI service we use, takes the reply, and returns it
    to your device;
 4. the explanation is stored on your device.

@@ -5177,23 +5177,6 @@
         }
       }
     },
-    "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sends the Allergies and Current Medications from your profile along, so explanations fit you better"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你"
-          }
-        }
-      }
-    },
     "解释时，Carelogue 会在这台设备上提取报告文字，仅把文字发送给我们选用的 AI 服务用于生成白话说明；照片和 PDF 原件不会离开设备。你可以随时在设置中撤回同意。": {
       "extractionState": "manual",
       "localizations": {
@@ -8805,23 +8788,6 @@
         }
       }
     },
-    "连接后，每次打开这段旅程都会自动带入新的读数。数据只在这台设备和你自己的 iCloud 里，不经过我们的服务器。可以随时在「设置 › 健康 › 数据访问与设备」里修改权限。": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Once connected, new readings come in each time you open this journey. They stay on this device and in your own iCloud, never on our servers. Change access any time in Settings › Health › Data Access & Devices."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "连接后，每次打开这段旅程都会自动带入新的读数。数据只在这台设备和你自己的 iCloud 里，不经过我们的服务器。可以随时在「设置 › 健康 › 数据访问与设备」里修改权限。"
-          }
-        }
-      }
-    },
     "Apple 健康": {
       "extractionState": "manual",
       "localizations": {
@@ -8907,36 +8873,393 @@
         }
       }
     },
-    "在 Carelogue 记录的体重、血压、心率、体温，同时保存到「健康」App。": {
+    "连接后，每次打开这段旅程都会自动带入新的读数；你在这段旅程里记录的测量也会写入你的「健康」（设置里可关）。数据只在这台设备和你自己的 iCloud 里，不经过我们的服务器。可以随时在「设置 › 健康 › 数据访问与设备」里修改权限。": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Weight, blood pressure, heart rate and temperature recorded in Carelogue are also saved to the Health app."
+            "value": "Once connected, new readings come in each time you open this journey, and the measurements you record in it are saved to your Health (you can turn that off in Settings). Data stays on this device and in your own iCloud, never on our servers. Change access any time in Settings › Health › Data Access & Devices."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在 Carelogue 记录的体重、血压、心率、体温，同时保存到「健康」App。"
+            "value": "连接后，每次打开这段旅程都会自动带入新的读数；你在这段旅程里记录的测量也会写入你的「健康」（设置里可关）。数据只在这台设备和你自己的 iCloud 里，不经过我们的服务器。可以随时在「设置 › 健康 › 数据访问与设备」里修改权限。"
           }
         }
       }
     },
-    "读取在每段旅程里单独开启：旅程右上角「…」› Apple 健康。": {
+    "这段旅程记录的是你本人的健康数据吗？": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reading is turned on per journey: the journey's … menu › Apple Health."
+            "value": "Is this journey about your own health?"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "读取在每段旅程里单独开启：旅程右上角「…」› Apple 健康。"
+            "value": "这段旅程记录的是你本人的健康数据吗？"
+          }
+        }
+      }
+    },
+    "是，记录的是我": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes, It's About Me"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "是，记录的是我"
+          }
+        }
+      }
+    },
+    "不是": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不是"
+          }
+        }
+      }
+    },
+    "没有连接。可以在「编辑概要与目标日 › 记录对象」里写明这段旅程是谁的。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not connected. You can say whose journey this is under Edit Summary & Target Date › Whose journey."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有连接。可以在「编辑概要与目标日 › 记录对象」里写明这段旅程是谁的。"
+          }
+        }
+      }
+    },
+    "确认后，这段旅程的记录对象会设为你；之后只有你的 iPhone 能为它连接 Apple 健康。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This journey will be marked as yours, and only your iPhone will be able to connect it to Apple Health."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认后，这段旅程的记录对象会设为你；之后只有你的 iPhone 能为它连接 Apple 健康。"
+          }
+        }
+      }
+    },
+    "这段旅程记录的是 %@ 的健康，只能在 TA 本人的 iPhone 上连接 Apple 健康。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This journey records %@'s health, so Apple Health can only be connected on their own iPhone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这段旅程记录的是 %@ 的健康，只能在 TA 本人的 iPhone 上连接 Apple 健康。"
+          }
+        }
+      }
+    },
+    "Apple 健康里的数据属于这台 iPhone 的主人。只在这段旅程记录的是你本人时连接。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The data in Apple Health belongs to this iPhone's owner. Connect only if this journey is about you."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 健康里的数据属于这台 iPhone 的主人。只在这段旅程记录的是你本人时连接。"
+          }
+        }
+      }
+    },
+    "其他成员录入的测量不会写入你的「健康」；你录入的测量只写入你自己的「健康」。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measurements other members record never go into your Health; the ones you record go only into your own."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他成员录入的测量不会写入你的「健康」；你录入的测量只写入你自己的「健康」。"
+          }
+        }
+      }
+    },
+    "记录对象可以在「编辑概要与目标日」里修改。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can change whose journey this is in Edit Summary & Target Date."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记录对象可以在「编辑概要与目标日」里修改。"
+          }
+        }
+      }
+    },
+    "我": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Me"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我"
+          }
+        }
+      }
+    },
+    "其他成员": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Another member"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他成员"
+          }
+        }
+      }
+    },
+    "记录对象": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记录对象"
+          }
+        }
+      }
+    },
+    "未指定": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not set"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未指定"
+          }
+        }
+      }
+    },
+    "我自己": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Me"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我自己"
+          }
+        }
+      }
+    },
+    "共享成员": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared member"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "共享成员"
+          }
+        }
+      }
+    },
+    "其他人": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Someone else"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他人"
+          }
+        }
+      }
+    },
+    "称呼（如 小宝、妈妈）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name (e.g. Mom, Leo)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "称呼（如 小宝、妈妈）"
+          }
+        }
+      }
+    },
+    "记录对象 · Whose journey": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whose journey"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记录对象 · Whose journey"
+          }
+        }
+      }
+    },
+    "这段旅程记录的是谁的健康。Apple 健康只能在记录对象本人的 iPhone 上连接；AI 解释只在记录对象是你本人时附带你的档案。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Whose health this journey records. Apple Health can only be connected on that person's own iPhone, and AI explanations add your profile only when the journey is about you."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这段旅程记录的是谁的健康。Apple 健康只能在记录对象本人的 iPhone 上连接；AI 解释只在记录对象是你本人时附带你的档案。"
+          }
+        }
+      }
+    },
+    "在已连接 Apple 健康的旅程里记录的体重、血压、心率、体温，同时保存到「健康」App。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weight, blood pressure, heart rate and temperature recorded in a journey connected to Apple Health are also saved to the Health app."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在已连接 Apple 健康的旅程里记录的体重、血压、心率、体温，同时保存到「健康」App。"
+          }
+        }
+      }
+    },
+    "每段旅程单独连接：旅程右上角「…」› Apple 健康，且只能在旅程记录对象本人的 iPhone 上连接。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each journey connects on its own — the journey's … menu › Apple Health — and only on the iPhone of the person it's about."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每段旅程单独连接：旅程右上角「…」› Apple 健康，且只能在旅程记录对象本人的 iPhone 上连接。"
+          }
+        }
+      }
+    },
+    "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你；只用于记录你本人的旅程": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sends your allergies and long-term medications along, so explanations fit you better — only for journeys about you"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你；只用于记录你本人的旅程"
           }
         }
       }

@@ -4,19 +4,6 @@ import XCTest
 /// the ticked types), readings come in once, and measurements recorded in
 /// Carelogue are written back — and removed again when deleted.
 final class HealthUITests: CarelogueUITestCase {
-    /// The Health permission sheet is drawn by another process and never
-    /// shows up in queries; it is only there the first time per install.
-    /// While it covers the app, our own connect button is not hittable —
-    /// then answer it by position (Turn On All, then Allow).
-    private func allowHealthAccess() {
-        sleep(3)
-        guard !app.buttons["health.connect"].isHittable else { return }
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.428)).tap()
-        sleep(1)
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.104)).tap()
-        sleep(2)
-    }
-
     private func openHealthSheet() {
         app.buttons["timeline.more"].tap()
         let item = app.buttons["timeline.health"]
@@ -31,8 +18,12 @@ final class HealthUITests: CarelogueUITestCase {
         openHealthSheet()
         screenshot("T54-link-sheet")
 
-        // Weight + blood pressure are ticked by default; connect.
+        // Weight + blood pressure are ticked by default; connect — the
+        // journey says nothing about whose it is yet, so claim it (T61).
         app.buttons["health.connect"].tap()
+        let claim = app.buttons["health.claim"]
+        waitFor(claim)
+        claim.tap()
         allowHealthAccess()
         let result = app.staticTexts["health.result"]
         waitFor(result, timeout: 10)

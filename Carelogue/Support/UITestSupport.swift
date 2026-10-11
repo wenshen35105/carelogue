@@ -60,6 +60,11 @@ import UIKit
 ///   -uitest-request-notifications ask for the notification permission at
 ///                                 launch, so a test can answer the alert up
 ///                                 front (the app itself never asks at launch)
+///   -uitest-seed-profile          (M8 T61) a Profile with allergies, for the
+///                                 附带档案 rule
+///   -uitest-subject-other <name>  (M8 T61) every seeded journey records
+///                                 someone else (that name)
+///   -uitest-identity <id>         (M8 T61) who "me" is on this device
 ///   -uitest-allow-rating-prompt   (with -uitest-reset) let the real system
 ///                                 rating prompt show; every other test run
 ///                                 only counts the request
@@ -142,6 +147,15 @@ enum UITestSupport {
         }
         if arguments.contains("-uitest-request-notifications") {
             Task { @MainActor in await Reminders.requestPermissionIfNeeded() }
+        }
+        if arguments.contains("-uitest-seed-profile") {
+            context.insert(Profile(allergies: "青霉素", medications: "叶酸"))
+        }
+        // After every seed, so all seeded journeys get it.
+        if let index = arguments.firstIndex(of: "-uitest-subject-other"), index + 1 < arguments.count {
+            for journey in (try? context.fetch(FetchDescriptor<Journey>())) ?? [] {
+                journey.setSubject(userID: nil, name: arguments[index + 1])
+            }
         }
         // After seeding, so the pinned journey exists to pin. (Also after
         // -uitest-seed-demo, whose first active journey is the one to stamp.)
@@ -754,6 +768,10 @@ struct FakeAIService: AIService {
             throw AIServiceError.timeout
         case "invalid":
             return "{\"summary_plain\": \"\"}"
+        case "profile-echo":
+            // M8 T61: says whether the device owner's profile was sent.
+            let sent = request.context.allergies != nil ? "[profile:yes]" : "[profile:no]"
+            return Self.sampleJSON.replacingOccurrences(of: "参考上限。", with: "参考上限。\(sent)")
         case "count":
             // Summary carries the request number, so a test can tell a cached
             // (throttled) result from a fresh one.

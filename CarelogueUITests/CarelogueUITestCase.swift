@@ -231,6 +231,19 @@ class CarelogueUITestCase: XCTestCase {
         toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
     }
 
+    /// The Health permission sheet is drawn by another process and never
+    /// shows up in queries; it is only there the first time per install.
+    /// While it covers the app, our own connect button is not hittable —
+    /// then answer it by position (Turn On All, then Allow).
+    func allowHealthAccess() {
+        sleep(3)
+        guard !app.buttons["health.connect"].isHittable else { return }
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.428)).tap()
+        sleep(1)
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.104)).tap()
+        sleep(2)
+    }
+
     // MARK: - Screenshots
 
     /// Attaches a screenshot to the test result and, when the runner has

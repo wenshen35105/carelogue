@@ -12,6 +12,8 @@
         "targetLabel"   STRING,
         "progressStartDate" TIMESTAMP,
         "summaryItemsJSON"  STRING,
+        "subjectName"       STRING,
+        "subjectUserID"     STRING,
         "createdAt"     TIMESTAMP,
         "updatedAt"     TIMESTAMP,
         GRANT WRITE TO "_creator",

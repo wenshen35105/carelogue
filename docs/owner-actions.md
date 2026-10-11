@@ -14,7 +14,7 @@
 ## 🆕 1.1（M8）提审前
 
 - [ ] **CloudKit schema 部署 Production**（SwiftData 新增：`Medication` / `MedicationIntake` 两个记录类型 + `Log.reminderJSON` 等新字段）：先用 Debug 构建在登录 iCloud 的设备上跑一遍（建一条用药、给一次就诊设提醒）让 Development 自动建出字段 → CloudKit Console → Deploy Schema Changes → Production。**不部署则 TestFlight / App Store 版同步静默失败**（同 §B.6）。后续卡如有新字段会追加在本节。
-- [ ] **CKShare 记录类型更新**（T57 给共享通道的 `Log` 加了 `diastolic`；T55/T56 给 `Journey` 加了 `targetDate` / `targetLabel` / `progressStartDate` / `summaryItemsJSON`）——脚本已改为把新字段并入已有记录类型：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development → Console Deploy Schema Changes → Production（同 §B.6 子项）。不做则 1.1 共享旅程里这些新字段不同步给对方（其余正常）。
+- [ ] **CKShare 记录类型更新**（T57 给共享通道的 `Log` 加了 `diastolic`；T55/T56/T61 给 `Journey` 加了 `targetDate` / `targetLabel` / `progressStartDate` / `summaryItemsJSON` / `subjectName` / `subjectUserID`）——脚本已改为把新字段并入已有记录类型：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development → Console Deploy Schema Changes → Production（同 §B.6 子项）。不做则 1.1 共享旅程里这些新字段不同步给对方（其余正常）。
 - [ ] **HealthKit 能力（T54）**：App ID `ca.carelogue.app` 勾 HealthKit（Xcode 自动签名首次真机 Run / Archive 时通常自动加上）。
 - [ ] **隐私政策上线（T54 前置①）**：`cd server && npm run deploy`，确认 `https://carelogue.ca/privacy` 出现「Apple 健康（HealthKit）」章节。**必须在提交 1.1 审核前完成**（HealthKit app 审核会查隐私政策）。
 - [ ] **隐私标签复核（T54 前置②）**：ASC → App Privacy。CC 结论维持 Data Not Collected（理由见 m8 T54 卡），你过目后不改即可。

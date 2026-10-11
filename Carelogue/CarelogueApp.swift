@@ -53,6 +53,8 @@ struct CarelogueApp: App {
             .task { Reminders.start(context: container.mainContext) }
             // M8 T58: the widget's snapshot, and its links back in.
             .task { WidgetPublisher.start(context: container.mainContext) }
+            // M8 T61: who "me" is, for a journey's subject.
+            .task { await MyIdentity.load() }
             .onOpenURL { AppRouter.shared.handle($0) }
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active else { return }

@@ -13,11 +13,25 @@ struct JourneySummaryChips: View {
     let journey: Journey
     let onEdit: () -> Void
 
+    /// T61: who the journey records — shown when it's someone else, or
+    /// when it's me in a shared journey (so both sides read it the same way).
+    private var subjectValue: String? {
+        switch journey.subject {
+        case .unspecified: return nil
+        case .me: return journey.isShared ? String(localized: "我") : nil
+        case .someoneElse(let name): return name ?? String(localized: "其他成员")
+        }
+    }
+
     var body: some View {
         let items = journey.summaryItems
-        if journey.targetDate != nil || !items.isEmpty {
+        let subject = subjectValue
+        if journey.targetDate != nil || !items.isEmpty || subject != nil {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
+                    if let subject {
+                        chip(icon: "person", key: String(localized: "记录对象"), value: subject)
+                    }
                     if let target = journey.targetDate {
                         chip(icon: "calendar",
                              key: journey.targetLabel ?? String(localized: "目标日"),
@@ -132,6 +146,10 @@ struct JourneySummaryEditor: View {
     /// Once the user picks a start by hand, a new target no longer moves it.
     @State private var startEdited: Bool
     @State private var items: [ItemDraft]
+    // T61: "unspecified" | "me" | "member:<userID>" | "other".
+    @State private var subjectTag: String
+    @State private var otherName: String
+    @State private var members: [SubjectCandidate] = []
 
     struct ItemDraft: Identifiable {
         let id = UUID()
@@ -151,6 +169,27 @@ struct JourneySummaryEditor: View {
             ?? journey.createdAt)
         _startEdited = State(initialValue: journey.progressStartDate != nil && journey.targetDate != nil)
         _items = State(initialValue: journey.summaryItems.map { ItemDraft(key: $0.key, value: $0.value) })
+        switch journey.subject {
+        case .unspecified:
+            _subjectTag = State(initialValue: "unspecified")
+            _otherName = State(initialValue: "")
+        case .me:
+            _subjectTag = State(initialValue: "me")
+            _otherName = State(initialValue: "")
+        case .someoneElse(let name):
+            _subjectTag = State(initialValue: journey.subjectUserID.map { "member:\($0)" } ?? "other")
+            _otherName = State(initialValue: journey.subjectUserID == nil ? (name ?? "") : "")
+        }
+    }
+
+    /// The members to offer: those CloudKit lists, plus the stored subject
+    /// even when the list can't be loaded (offline), so the picker can show it.
+    private var memberChoices: [SubjectCandidate] {
+        var list = members.filter { !MyIdentity.isMe($0.userID) }
+        if let id = journey.subjectUserID, !MyIdentity.isMe(id), !list.contains(where: { $0.userID == id }) {
+            list.append(SubjectCandidate(userID: id, name: journey.subjectName))
+        }
+        return list
     }
 
     private var template: JourneyTemplate { journey.template }
@@ -165,6 +204,7 @@ struct JourneySummaryEditor: View {
         NavigationStack {
             Form {
                 Group {
+                    subjectSection
                     targetSection
                     itemsSection
                 }
@@ -172,6 +212,7 @@ struct JourneySummaryEditor: View {
             }
             .warmFormChrome()
             .scrollDismissesKeyboard(.interactively)
+            .task { members = await SubjectCandidates.members(of: journey) }
             .navigationTitle(String(localized: "概要与目标日"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -180,9 +221,34 @@ struct JourneySummaryEditor: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("保存", action: save)
+                        .disabled(subjectTag == "other" && otherName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         .accessibilityIdentifier("summary.save")
                 }
             }
+        }
+    }
+
+    /// T61 · whose health this journey records.
+    @ViewBuilder
+    private var subjectSection: some View {
+        Section {
+            Picker("记录对象", selection: $subjectTag) {
+                Text("未指定").tag("unspecified")
+                Text("我自己").tag("me")
+                ForEach(memberChoices) { member in
+                    Text(member.name ?? String(localized: "共享成员")).tag("member:\(member.userID)")
+                }
+                Text("其他人").tag("other")
+            }
+            .accessibilityIdentifier("summary.subject")
+            if subjectTag == "other" {
+                TextField("称呼（如 小宝、妈妈）", text: $otherName)
+                    .accessibilityIdentifier("summary.subjectName")
+            }
+        } header: {
+            Text("记录对象 · Whose journey")
+        } footer: {
+            Text("这段旅程记录的是谁的健康。Apple 健康只能在记录对象本人的 iPhone 上连接；AI 解释只在记录对象是你本人时附带你的档案。")
         }
     }
 
@@ -283,8 +349,30 @@ struct JourneySummaryEditor: View {
             journey.progressStartDate = nil
         }
         journey.summaryItems = items.map { JourneySummaryItem(key: $0.key, value: $0.value) }
+        saveSubject()
         journey.updatedAt = .now
         try? modelContext.save()
         dismiss()
+    }
+
+    private func saveSubject() {
+        switch subjectTag {
+        case "unspecified":
+            journey.clearSubject()
+        case "me":
+            if journey.subject != .me {
+                journey.claimAsMine(name: members.first { MyIdentity.isMe($0.userID) }?.name)
+            }
+        case "other":
+            journey.setSubject(userID: nil, name: otherName)
+            if journey.subjectName == nil { journey.clearSubject() }
+        default:
+            let id = String(subjectTag.dropFirst("member:".count))
+            journey.setSubject(userID: id, name: memberChoices.first { $0.userID == id }?.name)
+        }
+        // Someone else's journey: this device stops reading Health for it.
+        if !journey.healthBelongsHere {
+            HealthSync.disconnect(journey)
+        }
     }
 }

@@ -174,7 +174,7 @@ struct SettingsView: View {
                         Text("写入 Apple 健康")
                             .font(.body.weight(.semibold))
                             .foregroundStyle(Theme.inkPrimary)
-                        Text("在 Carelogue 记录的体重、血压、心率、体温，同时保存到「健康」App。")
+                        Text("在已连接 Apple 健康的旅程里记录的体重、血压、心率、体温，同时保存到「健康」App。")
                             .font(.footnote)
                             .foregroundStyle(Theme.inkSecondary)
                     }
@@ -185,7 +185,7 @@ struct SettingsView: View {
             }
             .padding(.horizontal, Theme.Spacing.cardPadding)
             .cardSurface(padding: 0)
-            Label("读取在每段旅程里单独开启：旅程右上角「…」› Apple 健康。", systemImage: "info.circle")
+            Label("每段旅程单独连接：旅程右上角「…」› Apple 健康，且只能在旅程记录对象本人的 iPhone 上连接。", systemImage: "info.circle")
                 .font(.caption)
                 .foregroundStyle(Theme.inkSecondary)
                 .padding(.horizontal, 4)
@@ -221,7 +221,7 @@ struct SettingsView: View {
                         Text("附带档案信息")
                             .font(.body.weight(.semibold))
                             .foregroundStyle(Theme.inkPrimary)
-                        Text("解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你")
+                        Text("解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你；只用于记录你本人的旅程")
                             .font(.footnote)
                             .foregroundStyle(Theme.inkSecondary)
                     }

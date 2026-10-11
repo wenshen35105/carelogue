@@ -234,4 +234,23 @@ final class ExplainUITests: CarelogueUITestCase {
         sleep(1)
         screenshot("T31-real-explained-en")
     }
+
+    /// M8 T61: 附带档案 sends the device owner's profile only for a journey
+    /// about them — never for someone else's.
+    func testProfileOnlyForMyOwnJourney() {
+        let base = ["-uitest-reset", "-uitest-seed-attachments", "-uitest-seed-profile",
+                    "-uitest-fake-ai", "profile-echo", "-ai.includeProfile", "<true/>"]
+        launch(base)
+        openSeededEncounter()
+        tapExplain(app.buttons["explain.button"])
+        waitFor(id("explain.summary"), timeout: 10)
+        XCTAssertTrue(id("explain.summary").label.contains("[profile:yes]"), id("explain.summary").label)
+
+        app.terminate()
+        launch(base + ["-uitest-subject-other", "小宝"])
+        openSeededEncounter()
+        tapExplain(app.buttons["explain.button"])
+        waitFor(id("explain.summary"), timeout: 10)
+        XCTAssertTrue(id("explain.summary").label.contains("[profile:no]"), id("explain.summary").label)
+    }
 }
