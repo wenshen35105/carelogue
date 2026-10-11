@@ -60,6 +60,9 @@ import UIKit
 ///   -uitest-request-notifications ask for the notification permission at
 ///                                 launch, so a test can answer the alert up
 ///                                 front (the app itself never asks at launch)
+///   -uitest-allow-rating-prompt   (with -uitest-reset) let the real system
+///                                 rating prompt show; every other test run
+///                                 only counts the request
 ///   -uitest-review-asked-days-ago <n>
 ///                                 (M8 T51) pretend the rating prompt was last
 ///                                 asked for n days ago
@@ -86,6 +89,8 @@ enum UITestSupport {
             for key in UserDefaults.standard.dictionaryRepresentation().keys where key.hasPrefix("reminders.") || key.hasPrefix("review.") {
                 UserDefaults.standard.removeObject(forKey: key)
             }
+            // Kept for the whole test, relaunches included (M8 T51).
+            UserDefaults.standard.set(!arguments.contains("-uitest-allow-rating-prompt"), forKey: ReviewPrompt.suppressKey)
             InternalAccess.setCredential(nil)
             for key in UserDefaults.standard.dictionaryRepresentation().keys where key.hasPrefix("ai.") {
                 UserDefaults.standard.removeObject(forKey: key)
@@ -336,9 +341,9 @@ enum UITestSupport {
                     value: weight, unit: "kg"),
                 to: pregnancy, context: context)
         }
-        for (index, value) in [114.0, 118, 111].enumerated() {
+        for (index, reading) in [(114.0, 72.0), (118, 76), (111, 70)].enumerated() {
             add(Log(kind: .measurement, type: "血压", occurredAt: day(-10 * index - 3, hour: 8),
-                    value: value, unit: "mmHg"),
+                    value: reading.0, unit: "mmHg", diastolic: reading.1),
                 to: pregnancy, context: context)
         }
         add(Log(kind: .measurement, type: "体温", occurredAt: day(-4, hour: 21),
@@ -519,10 +524,11 @@ enum UITestSupport {
                     occurredAt: calendar.date(byAdding: .day, value: -7 * (20 - i) - 2, to: .now)!,
                     value: 58.0 + Double(i) * 0.5, unit: "kg"), to: journey, context: context)
         }
-        for (i, value) in [114.0, 118, 111].enumerated() {
+        // The oldest blood pressure predates T57: systolic only.
+        for (i, reading) in [(114.0, 72.0), (118, 76), (111, nil)].enumerated() {
             add(Log(kind: .measurement, type: "血压",
                     occurredAt: calendar.date(byAdding: .day, value: -10 * i - 3, to: .now)!,
-                    value: value, unit: "mmHg"), to: journey, context: context)
+                    value: reading.0, unit: "mmHg", diastolic: reading.1), to: journey, context: context)
         }
         add(Log(kind: .measurement, type: "体温",
                 occurredAt: calendar.date(byAdding: .day, value: -4, to: .now)!,

@@ -37,6 +37,36 @@ struct MeasurementChartView: View {
         points.last?.unit ?? ""
     }
 
+    /// M8 T57: blood pressure draws two lines, systolic and diastolic.
+    private var isBloodPressure: Bool { selectedType == LogTypePreset.bloodPressure }
+
+    /// One plotted reading: which line it belongs to, and where.
+    private struct Point: Identifiable {
+        let id: String
+        let series: String
+        let date: Date
+        let value: Double
+    }
+
+    private static var systolicName: String { String(localized: "收缩压") }
+    private static var diastolicName: String { String(localized: "舒张压") }
+
+    /// Every reading to plot. Old single-value blood pressures only add to
+    /// the systolic line.
+    private func plotted(_ points: [Log]) -> [Point] {
+        points.flatMap { log -> [Point] in
+            guard let value = log.value else { return [] }
+            guard isBloodPressure else {
+                return [Point(id: log.id.uuidString, series: typeName, date: log.occurredAt, value: value)]
+            }
+            var result = [Point(id: "\(log.id.uuidString)-s", series: Self.systolicName, date: log.occurredAt, value: value)]
+            if let diastolic = log.diastolic {
+                result.append(Point(id: "\(log.id.uuidString)-d", series: Self.diastolicName, date: log.occurredAt, value: diastolic))
+            }
+            return result
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -50,11 +80,6 @@ struct MeasurementChartView: View {
                     } else {
                         summaryCard(points)
                         chartCard(points)
-                    }
-                    if selectedType == "血压" {
-                        Label("血压暂按收缩压单值记录，舒张压可写在备注里", systemImage: "info.circle")
-                            .font(.caption)
-                            .foregroundStyle(Theme.inkSecondary)
                     }
                 }
                 .padding(Theme.Spacing.margin)
@@ -109,7 +134,7 @@ struct MeasurementChartView: View {
                 BilingualTitle(primary: typeName, secondary: String(localized: "· 最新 Latest"))
             }
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text(Self.format(latest.value ?? 0))
+                Text(latest.formattedNumber ?? Self.format(latest.value ?? 0))
                     .font(.system(size: 34, weight: .semibold))
                     .monospacedDigit()
                     .foregroundStyle(Theme.inkPrimary)
@@ -117,51 +142,67 @@ struct MeasurementChartView: View {
                     .font(.subheadline)
                     .foregroundStyle(Theme.inkSecondary)
                 Spacer(minLength: 8)
-                if values.count >= 2, let first = values.first, let last = values.last {
+                if !isBloodPressure, values.count >= 2, let first = values.first, let last = values.last {
                     let delta = last - first
                     TagPill(text: String(localized: "较首次 \(delta >= 0 ? "+" : "−")\(Self.format(abs(delta)))\(unit)"), tinted: true)
                 }
             }
-            Text("\(points.count) 次记录 · 最低 \(Self.format(values.min() ?? 0)) · 最高 \(Self.format(values.max() ?? 0)) · 最近 \(latest.occurredAt.shortDay)")
-                .font(.footnote)
-                .foregroundStyle(Theme.inkSecondary)
+            if isBloodPressure {
+                let diastolics = points.compactMap(\.diastolic)
+                Text("\(points.count) 次记录 · 收缩压 \(Self.range(values)) · 舒张压 \(diastolics.isEmpty ? "--" : Self.range(diastolics)) · 最近 \(latest.occurredAt.shortDay)")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.inkSecondary)
+            } else {
+                Text("\(points.count) 次记录 · 最低 \(Self.format(values.min() ?? 0)) · 最高 \(Self.format(values.max() ?? 0)) · 最近 \(latest.occurredAt.shortDay)")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.inkSecondary)
+            }
         }
         .cardSurface()
     }
 
     private func chartCard(_ points: [Log]) -> some View {
-        let values = points.compactMap(\.value)
+        let plotted = plotted(points)
+        let values = plotted.map(\.value)
         let yDomain = Self.paddedDomain(min: values.min() ?? 0, max: values.max() ?? 0)
         let xDomain = Self.dateDomain(points.map(\.occurredAt))
+        let series = isBloodPressure ? [Self.systolicName, Self.diastolicName] : [typeName]
 
         return VStack(alignment: .leading, spacing: 12) {
-            Chart(points) { log in
-                AreaMark(
-                    x: .value("日期", log.occurredAt),
-                    yStart: .value("基线", yDomain.lowerBound),
-                    yEnd: .value(typeName, log.value ?? 0)
-                )
-                .foregroundStyle(LinearGradient(
-                    colors: [Theme.accent.opacity(0.18), Theme.accent.opacity(0)],
-                    startPoint: .top, endPoint: .bottom
-                ))
-                .interpolationMethod(.monotone)
+            Chart(plotted) { point in
+                // The area fill only under a single line; two would muddy it.
+                if !isBloodPressure {
+                    AreaMark(
+                        x: .value("日期", point.date),
+                        yStart: .value("基线", yDomain.lowerBound),
+                        yEnd: .value(typeName, point.value)
+                    )
+                    .foregroundStyle(LinearGradient(
+                        colors: [Theme.accent.opacity(0.18), Theme.accent.opacity(0)],
+                        startPoint: .top, endPoint: .bottom
+                    ))
+                    .interpolationMethod(.monotone)
+                }
 
                 LineMark(
-                    x: .value("日期", log.occurredAt),
-                    y: .value(typeName, log.value ?? 0)
+                    x: .value("日期", point.date),
+                    y: .value(typeName, point.value),
+                    series: .value("系列", point.series)
                 )
-                .foregroundStyle(Theme.accent)
+                .foregroundStyle(by: .value("系列", point.series))
                 .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 .interpolationMethod(.monotone)
 
                 PointMark(
-                    x: .value("日期", log.occurredAt),
-                    y: .value(typeName, log.value ?? 0)
+                    x: .value("日期", point.date),
+                    y: .value(typeName, point.value)
                 )
-                .foregroundStyle(Theme.accent)
+                .foregroundStyle(by: .value("系列", point.series))
                 .symbolSize(points.count > 30 ? 12 : 30)
             }
+            .chartForegroundStyleScale(domain: series, range: [Theme.accent, Theme.inkSecondary].prefix(series.count).map { $0 })
+            .chartLegend(isBloodPressure ? .visible : .hidden)
+            .chartLegend(position: .top, alignment: .leading)
             .chartXScale(domain: xDomain)
             .chartYScale(domain: yDomain)
             .chartXAxis {
@@ -195,6 +236,11 @@ struct MeasurementChartView: View {
         value.truncatingRemainder(dividingBy: 1) == 0
             ? String(format: "%.0f", value)
             : String(format: "%.1f", value)
+    }
+
+    /// "110–128".
+    private static func range(_ values: [Double]) -> String {
+        "\(format(values.min() ?? 0))–\(format(values.max() ?? 0))"
     }
 
     /// Adds headroom so a flat or single-value series doesn't hug the edges.

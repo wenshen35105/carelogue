@@ -73,6 +73,8 @@ enum LogTypePreset {
         ("体重", "kg"), ("血压", "mmHg"), ("体温", "°C"), ("自定义", "")
     ]
     static let custom = "自定义"
+    /// The one type recorded as two readings (M8 T57).
+    static let bloodPressure = "血压"
 
     static func displayName(_ raw: String) -> String {
         switch raw {
@@ -115,11 +117,21 @@ extension Log {
     }
 
     var formattedValue: String {
-        guard let value else { return "--" }
-        let numberString = value.truncatingRemainder(dividingBy: 1) == 0
-            ? String(format: "%.0f", value)
-            : String(format: "%.1f", value)
-        return "\(numberString)\(unit ?? "")"
+        guard let number = formattedNumber else { return "--" }
+        return "\(number)\(unit ?? "")"
+    }
+
+    /// "65.5", or "120/80" for a blood pressure with both readings (T57).
+    var formattedNumber: String? {
+        guard let value else { return nil }
+        guard let diastolic else { return Self.format(value) }
+        return "\(Self.format(value))/\(Self.format(diastolic))"
+    }
+
+    static func format(_ number: Double) -> String {
+        number.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", number)
+            : String(format: "%.1f", number)
     }
 
     /// An encounter dated on a future day is treated as an upcoming

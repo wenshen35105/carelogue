@@ -87,6 +87,7 @@ enum ShareChannel {
         static let doctor = "doctor"
         static let value = "value"
         static let unit = "unit"
+        static let diastolic = "diastolic"
         static let visitSummaryJSON = "visitSummaryJSON"
         static let questionsJSON = "questionsJSON"
         static let fileName = "fileName"
@@ -100,7 +101,7 @@ enum ShareChannel {
         /// Everything except the binary — what pull and diff fetches ask for.
         static let metadataKeys: [CKRecord.FieldKey] = [
             name, templateRaw, statusRaw, type, kindRaw, occurredAt, note, location, doctor,
-            value, unit, visitSummaryJSON, questionsJSON, fileName, mime, aiExplainJSON,
+            value, unit, diastolic, visitSummaryJSON, questionsJSON, fileName, mime, aiExplainJSON,
             transcript, createdAt, updatedAt,
         ]
     }
@@ -259,6 +260,7 @@ enum ShareChannel {
         record[Field.doctor] = log.doctor
         record[Field.value] = log.value
         record[Field.unit] = log.unit
+        record[Field.diastolic] = log.diastolic
         record[Field.visitSummaryJSON] = log.visitSummaryJSON
         record[Field.questionsJSON] = log.questionsJSON
         record[Field.createdAt] = log.createdAt
@@ -761,6 +763,7 @@ enum ShareChannel {
             log!.doctor = remote[Field.doctor] as? String
             log!.value = remote[Field.value] as? Double
             log!.unit = remote[Field.unit] as? String
+            log!.diastolic = remote[Field.diastolic] as? Double
             log!.visitSummaryJSON = remote[Field.visitSummaryJSON] as? String
             log!.questionsJSON = remote[Field.questionsJSON] as? String
             log!.createdAt = remote[Field.createdAt] as? Date ?? log!.createdAt

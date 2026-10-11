@@ -30,6 +30,7 @@
         "doctor"           STRING,
         "value"            DOUBLE,
         "unit"             STRING,
+        "diastolic"        DOUBLE,
         "visitSummaryJSON" STRING,
         "questionsJSON"    STRING,
         "createdAt"        TIMESTAMP,

@@ -84,6 +84,9 @@
   - **趋势图**（已有 `MeasurementChartView`）：血压类型支持**双线**（收缩/舒张）。
   - 旧数据：保留原值（视作收缩压）、舒张压留空；**不做**从备注里解析。
 - **验收**：新建血压 → 时间线/详情显示 "120/80"；趋势图双线；旧单值记录正常显示不崩。
+- **✅ 代码完成（2026-10-11）**：`Log.diastolic`（schema 新增，可选）；编辑器选「血压」时数值区变为「收缩压（高压）/ 舒张压（低压）」两栏；时间线行/测量组/详情统一 "120/80mmHg"；趋势图血压 = 双线 + 图例，摘要改为「收缩压 111–120 · 舒张压 72–80」（删去旧的"舒张压写备注"提示）；旧单值记录只进收缩压线。CKShare 通道同步 `diastolic` 字段（`config/cloudkit/share-record-types.ckdb` 已加，⚠️ 需老板重走 schema 导入+部署，见 owner-actions）。UI 测试 `MeasurementUITests.testBloodPressureDualValues`。
+  - CC 自定：血压不显示「较首次 ±」（双值没有单一差值）。
+  - 附带修正：T51 的系统评分框会盖住其他 UI 测试（种子数据 ≥5 条），UI 测试默认只计数不弹（`-uitest-allow-rating-prompt` 才真弹）。
 
 ## T58 · 主屏 Widget
 

@@ -51,4 +51,54 @@ final class MeasurementUITests: CarelogueUITestCase {
         app.buttons["完成"].tap()
         XCTAssertTrue(app.navigationBars["趋势 · Trends"].waitForNonExistence(timeout: 5))
     }
+
+    /// M8 T57: blood pressure takes two readings, shows "120/80" and draws
+    /// two lines; a reading saved before 1.1 (systolic only) still shows.
+    func testBloodPressureDualValues() {
+        launch(["-uitest-reset", "-uitest-seed-measurements"])
+        openJourney(journeyName)
+
+        startNewLog("测量")
+        selectChip("血压")
+        let systolic = app.textFields["editor.systolic"]
+        waitFor(systolic)
+        systolic.tap()
+        systolic.typeText("120")
+        let diastolic = app.textFields["editor.diastolic"]
+        diastolic.tap()
+        diastolic.typeText("80")
+        screenshot("T57-editor")
+        app.buttons["保存"].tap()
+        waitFor(element(containing: "最近 血压 120/80mmHg"))
+
+        app.buttons["measurement.group"].tap()
+        waitFor(app.buttons["全部 25"])
+        selectChip("血压 4")
+        let rows = app.buttons.matching(identifier: "measurement.row")
+        waitForCount(rows, 4)
+        XCTAssertTrue(element(containing: "120/80mmHg").exists)
+        XCTAssertTrue(element(containing: "118/76mmHg").exists)
+        XCTAssertTrue(element(containing: "111mmHg").exists, "Legacy single-value reading missing")
+        screenshot("T57-rows")
+
+        // Editing brings both readings back.
+        rows.firstMatch.tap()
+        waitFor(app.navigationBars["编辑记录"])
+        XCTAssertEqual(app.textFields["editor.systolic"].value as? String, "120")
+        XCTAssertEqual(app.textFields["editor.diastolic"].value as? String, "80")
+        app.buttons["取消"].tap()
+
+        app.buttons["查看图表"].tap()
+        waitFor(app.navigationBars["趋势 · Trends"])
+        waitFor(element(containing: "4 次记录 · 收缩压 111–120 · 舒张压 72–80"))
+        XCTAssertTrue(app.staticTexts["120/80"].exists)
+        waitFor(element(containing: "舒张压"))
+        screenshot("T57-chart")
+        app.buttons["完成"].tap()
+
+        // Persisted.
+        relaunch()
+        openJourney(journeyName)
+        waitFor(element(containing: "最近 血压 120/80mmHg"))
+    }
 }

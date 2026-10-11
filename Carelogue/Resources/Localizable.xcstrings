@@ -5177,23 +5177,6 @@
         }
       }
     },
-    "血压暂按收缩压单值记录，舒张压可写在备注里": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Blood pressure is recorded as systolic only for now; note diastolic in the note"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "血压暂按收缩压单值记录，舒张压可写在备注里"
-          }
-        }
-      }
-    },
     "解释时一并发送档案里的「过敏」「长期用药」，让解释更贴合你": {
       "extractionState": "manual",
       "localizations": {
@@ -8121,6 +8104,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "在 App Store 写下你的评价，帮更多人找到它"
+          }
+        }
+      }
+    },
+    "收缩压（高压）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Systolic (upper)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收缩压（高压）"
+          }
+        }
+      }
+    },
+    "舒张压（低压）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diastolic (lower)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "舒张压（低压）"
+          }
+        }
+      }
+    },
+    "收缩压": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Systolic"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收缩压"
+          }
+        }
+      }
+    },
+    "舒张压": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diastolic"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "舒张压"
+          }
+        }
+      }
+    },
+    "%lld 次记录 · 收缩压 %@ · 舒张压 %@ · 最近 %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entries: %lld · Systolic %@ · Diastolic %@ · Latest %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 次记录 · 收缩压 %@ · 舒张压 %@ · 最近 %@"
           }
         }
       }

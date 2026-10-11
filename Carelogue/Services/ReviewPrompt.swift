@@ -12,6 +12,9 @@ enum ReviewPrompt {
     static let lastRequestKey = "review.lastRequestedAt"
     /// Debug builds count requests so UI tests can see them happen.
     static let requestCountKey = "review.requestCount"
+    /// Set by UI tests (Debug only): count the request, skip the system
+    /// prompt, so it never covers the screen of an unrelated test.
+    static let suppressKey = "review.suppressSystemPrompt"
 
     /// The App Store page's "write a review" sheet (Settings row).
     static let writeReviewURL = URL(string: "https://apps.apple.com/app/id6815909128?action=write-review")!
@@ -34,6 +37,9 @@ enum ReviewPrompt {
             let scene = UIApplication.shared.connectedScenes
                 .compactMap { $0 as? UIWindowScene }
                 .first { $0.activationState == .foregroundActive }
+            #if DEBUG
+            if UserDefaults.standard.bool(forKey: suppressKey) { return }
+            #endif
             if let scene { AppStore.requestReview(in: scene) }
         }
     }

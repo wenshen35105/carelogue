@@ -22,9 +22,12 @@ final class Log {
     var location: String? = nil
     var doctor: String? = nil
 
-    /// Measurement-only.
+    /// Measurement-only. For 血压, `value` is the systolic reading.
     var value: Double? = nil
     var unit: String? = nil
+    /// 血压 only (M8 T57): the diastolic reading. Readings saved before 1.1
+    /// have none — they stay single-value, shown as the systolic alone.
+    var diastolic: Double? = nil
 
     /// Encounter-only (T32), both JSON-encoded and both optional so the
     /// CloudKit schema stays additive:
@@ -85,6 +88,7 @@ final class Log {
         doctor: String? = nil,
         value: Double? = nil,
         unit: String? = nil,
+        diastolic: Double? = nil,
         visitSummaryJSON: String? = nil,
         questionsJSON: String? = nil,
         createdAt: Date = .now,
@@ -100,6 +104,7 @@ final class Log {
         self.doctor = doctor
         self.value = value
         self.unit = unit
+        self.diastolic = diastolic
         self.visitSummaryJSON = visitSummaryJSON
         self.questionsJSON = questionsJSON
         self.createdAt = createdAt

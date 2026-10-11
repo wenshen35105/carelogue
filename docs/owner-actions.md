@@ -14,6 +14,7 @@
 ## 🆕 1.1（M8）提审前
 
 - [ ] **CloudKit schema 部署 Production**（SwiftData 新增：`Medication` / `MedicationIntake` 两个记录类型 + `Log.reminderJSON` 等新字段）：先用 Debug 构建在登录 iCloud 的设备上跑一遍（建一条用药、给一次就诊设提醒）让 Development 自动建出字段 → CloudKit Console → Deploy Schema Changes → Production。**不部署则 TestFlight / App Store 版同步静默失败**（同 §B.6）。后续卡如有新字段会追加在本节。
+- [ ] **CKShare 记录类型更新**（T57 给共享通道的 `Log` 加了 `diastolic` 字段）：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development → Console Deploy Schema Changes → Production（同 §B.6 子项）。不做则 1.1 共享旅程里的血压舒张压不同步给对方（其余正常）。
 - [ ] 真机复核：就诊提醒 / 用药提醒到点弹出、通知上「已服用」打卡（模拟器已自动验证，真机走一遍即可）。
 
 ## B. 认证过审后（按序）

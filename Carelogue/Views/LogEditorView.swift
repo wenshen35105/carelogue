@@ -18,6 +18,7 @@ struct LogEditorView: View {
     @State private var location: String
     @State private var doctor: String
     @State private var valueText: String
+    @State private var diastolicText: String
     @State private var unit: String
     @State private var measurementCategory: String
     @State private var showingDeleteConfirm = false
@@ -54,7 +55,8 @@ struct LogEditorView: View {
         _note = State(initialValue: existingLog?.note ?? "")
         _location = State(initialValue: existingLog?.location ?? "")
         _doctor = State(initialValue: existingLog?.doctor ?? "")
-        _valueText = State(initialValue: existingLog?.value.map { String($0) } ?? "")
+        _valueText = State(initialValue: existingLog?.value.map { Log.format($0) } ?? "")
+        _diastolicText = State(initialValue: existingLog?.diastolic.map { Log.format($0) } ?? "")
         _unit = State(initialValue: existingLog?.unit ?? (kind == .measurement ? "kg" : ""))
 
         let offsets = existingLog?.reminderOffsets
@@ -453,8 +455,18 @@ struct LogEditorView: View {
         }
 
         Section("数值") {
-            TextField("数值", text: $valueText)
-                .keyboardType(.decimalPad)
+            if type == LogTypePreset.bloodPressure {
+                // M8 T57: both readings, labelled the way a cuff shows them.
+                TextField("收缩压（高压）", text: $valueText)
+                    .keyboardType(.decimalPad)
+                    .accessibilityIdentifier("editor.systolic")
+                TextField("舒张压（低压）", text: $diastolicText)
+                    .keyboardType(.decimalPad)
+                    .accessibilityIdentifier("editor.diastolic")
+            } else {
+                TextField("数值", text: $valueText)
+                    .keyboardType(.decimalPad)
+            }
             TextField("单位（如 kg）", text: $unit)
         }
 
@@ -493,6 +505,7 @@ struct LogEditorView: View {
             applyAttachmentChanges(to: log)
         case .measurement:
             log.value = Double(valueText)
+            log.diastolic = type == LogTypePreset.bloodPressure ? Double(diastolicText) : nil
             log.unit = unit
             log.note = note
         case .quick:

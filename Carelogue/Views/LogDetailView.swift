@@ -30,7 +30,7 @@ struct LogDetailView: View {
 
                 if log.kind == .measurement, let value = log.value {
                     card {
-                        Text(verbatim: "\(value.formatted(.number.locale(AppLanguage.locale))) \(log.unit ?? "")")
+                        Text(verbatim: "\(log.diastolic.map { "\(value.formatted(.number.locale(AppLanguage.locale)))/\($0.formatted(.number.locale(AppLanguage.locale)))" } ?? value.formatted(.number.locale(AppLanguage.locale))) \(log.unit ?? "")")
                             .font(.title.weight(.semibold))
                             .foregroundStyle(Theme.inkPrimary)
                     }
