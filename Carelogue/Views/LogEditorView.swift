@@ -26,7 +26,7 @@ struct LogEditorView: View {
     @State private var reminderOn: Bool
     @State private var reminderDrafts: [ReminderOffsetDraft]
 
-    // Attachments (encounter only). New files stay in memory until 保存;
+    // Attachments (visits, and quick notes since M8 T59). New files stay in memory until 保存;
     // removals of already-saved artifacts are applied on 保存 as well.
     @State private var pendingAttachments: [PendingAttachment] = []
     @State private var removedArtifactIDs: Set<UUID> = []
@@ -97,6 +97,7 @@ struct LogEditorView: View {
                 .listRowBackground(Theme.card)
             }
             .warmFormChrome()
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle(existingLog == nil ? String(localized: "新建记录") : String(localized: "编辑记录"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -147,8 +148,10 @@ struct LogEditorView: View {
             } message: {
                 Text(importErrorMessage ?? "")
             }
+            // A new quick note opens with the keyboard up; an edit doesn't,
+            // so its attachments (T59) aren't hidden behind it.
             .onAppear {
-                if kind == .quick {
+                if kind == .quick && existingLog == nil {
                     noteFieldFocused = true
                 }
             }
@@ -425,6 +428,9 @@ struct LogEditorView: View {
         Section("时间") {
             DatePicker("发生时间", selection: $occurredAt)
         }
+
+        // M8 T59: a photo of a rash, a pill box, a discharge note.
+        attachmentSection
     }
 
     // MARK: - Measurement
@@ -510,6 +516,7 @@ struct LogEditorView: View {
             log.note = note
         case .quick:
             log.note = note
+            applyAttachmentChanges(to: log)
         }
         try? modelContext.save()
         if existingLog == nil {

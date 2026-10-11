@@ -122,7 +122,9 @@ final class AttachmentUITests: CarelogueUITestCase {
         waitForCount(editorRows, 2, timeout: 15)
 
         // Files: pick two PDFs from On My iPhone.
-        app.buttons["从文件添加（PDF / 图片）"].tap()
+        let filesButton = app.buttons["从文件添加（PDF / 图片）"]
+        scrollTo(filesButton) // below the reminder section since M8 T52
+        filesButton.tap()
         let reportA = app.cells["report_a, pdf"]
         let reportB = app.cells["report_b, pdf"]
         revealInDocumentPicker(reportA)
@@ -148,5 +150,53 @@ final class AttachmentUITests: CarelogueUITestCase {
         waitForCount(images, 2)
         waitForCount(files, 2)
         screenshot("T10-detail-after-relaunch")
+    }
+
+    /// M8 T59: a quick note takes photos too — through the same picker, the
+    /// same gallery, removable in the editor.
+    func testQuickNoteAttachment() throws {
+        launch(["-uitest-reset", "-uitest-seed-upcoming"])
+        openJourney("UITest 复诊")
+        startNewLog("随手记")
+        app.textViews.firstMatch.typeText("右手腕起了一片红疹")
+
+        let editorRows = app.descendants(matching: .any).matching(identifier: "editor.attachment")
+        let photosButton = app.buttons["从相册添加"]
+        scrollTo(photosButton)
+        photosButton.tap()
+        let photos = app.scrollViews.otherElements.images
+        XCTAssertTrue(photos.firstMatch.waitForExistence(timeout: 10), "Photo picker shows no photos")
+        photos.element(boundBy: 0).tap()
+        tapFirstExisting([app.buttons["Add"], app.buttons["添加"], app.navigationBars.buttons["Add"]])
+        waitForCount(editorRows, 1, timeout: 15)
+        screenshot("T59-quick-editor")
+        app.buttons["保存"].tap()
+
+        // Timeline card counts it; the detail page shows it.
+        waitFor(element(containing: "附件 1 份"))
+        app.staticTexts["右手腕起了一片红疹"].tap()
+        waitFor(app.navigationBars["详情"])
+        scrollTo(images.firstMatch)
+        waitForCount(images, 1)
+        screenshot("T59-quick-detail")
+
+        // Survives a relaunch, then the editor removes it.
+        relaunch()
+        openJourney("UITest 复诊")
+        waitFor(element(containing: "附件 1 份"))
+        app.staticTexts["右手腕起了一片红疹"].tap()
+        waitFor(app.navigationBars["详情"])
+        app.buttons["编辑"].tap()
+        waitFor(app.navigationBars["编辑记录"])
+        let row = editorRows.firstMatch
+        scrollTo(row)
+        row.swipeLeft()
+        tapFirstExisting([app.buttons["Delete"], app.buttons["删除"]])
+        waitForCount(editorRows, 0)
+        app.buttons["保存"].tap()
+        waitFor(app.navigationBars["详情"])
+        waitForCount(images, 0)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(element(containing: "附件 1 份").waitForNonExistence(timeout: 5))
     }
 }
