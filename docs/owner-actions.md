@@ -17,6 +17,7 @@
   1. Debug 构建装到登录了 iCloud 的手机 → 设置 › Internal Access ›「Initialize CloudKit schema (Development)」（一次性把私有库全部类型与字段建进 Development：`CD_Medication` / `CD_MedicationIntake`，`CD_Log` 的 `CD_diastolic` / `CD_reminderJSON` / `CD_healthSampleID`，`CD_Journey` 的目标日 / 概要 / 记录对象等字段）。光靠随手用 app 会漏掉平时为空的字段
   2. 共享通道：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh`（把 `Log.diastolic` 与 `Journey` 的 `targetDate` / `targetLabel` / `progressStartDate` / `summaryItemsJSON` / `subjectName` / `subjectUserID` 并入已有的 `Journey` / `Log` 类型）
   3. CloudKit Console → Development → Deploy Schema Changes：确认清单只有「新增」→ Deploy to Production
+  - **2026-10-11 diff 复核（CC）**：纯新增，可部署。顺带发现 **Production 自 9/26 起缺 `CD_Profile` 整个类型、`CD_Log.CD_questionsJSON`、`CD_Artifact.CD_transcript`**（9/26 部署前 Debug 里没用到这三项）→ 1.0 / 1.0.1 用户在**自己多台设备间**同步档案、「我的疑问」、录音转写一直静默失败（共享通道不受影响，它的类型里有这些字段）。本次部署会一并补上，1.0.1 用户无需更新 app 即生效。
   4. 传 1.1 TestFlight；先用 你(1.1) + 太太(1.0.1) 测一次共享旅程（她改带舒张压的血压，看你这边舒张压是否保留），再把她升到 1.1 测一次
 - [ ] **HealthKit 能力（T54）**：App ID `ca.carelogue.app` 勾 HealthKit（Xcode 自动签名首次真机 Run / Archive 时通常自动加上）。
 - [ ] **隐私政策上线（T54 前置①）**：`cd server && npm run deploy`，确认 `https://carelogue.ca/privacy` 出现「Apple 健康（HealthKit）」章节。**必须在提交 1.1 审核前完成**（HealthKit app 审核会查隐私政策）。
