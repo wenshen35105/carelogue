@@ -21,6 +21,9 @@ struct LogEditorView: View {
     @State private var unit: String
     @State private var measurementCategory: String
     @State private var showingDeleteConfirm = false
+    // M8 T52: this visit's reminder times; off = none.
+    @State private var reminderOn: Bool
+    @State private var reminderDrafts: [ReminderOffsetDraft]
 
     // Attachments (encounter only). New files stay in memory until 保存;
     // removals of already-saved artifacts are applied on 保存 as well.
@@ -53,6 +56,10 @@ struct LogEditorView: View {
         _doctor = State(initialValue: existingLog?.doctor ?? "")
         _valueText = State(initialValue: existingLog?.value.map { String($0) } ?? "")
         _unit = State(initialValue: existingLog?.unit ?? (kind == .measurement ? "kg" : ""))
+
+        let offsets = existingLog?.reminderOffsets
+        _reminderOn = State(initialValue: offsets != nil)
+        _reminderDrafts = State(initialValue: ReminderOffsetDraft.drafts(offsets ?? []))
 
         let presetNames = LogTypePreset.measurement.map(\.name).filter { $0 != LogTypePreset.custom }
         if let existingType = existingLog?.type, presetNames.contains(existingType) {
@@ -171,6 +178,8 @@ struct LogEditorView: View {
                 .accessibilityIdentifier("editor.encounterTime")
         }
 
+        reminderSection
+
         Section("地点 / 医生（可选）") {
             TextField("地点", text: $location)
                 .focused($focusedVisitField, equals: .location)
@@ -192,6 +201,56 @@ struct LogEditorView: View {
         }
 
         attachmentSection
+    }
+
+    /// M8 T52: off by default; switching it on fills in the defaults from
+    /// Settings and is the moment the notification permission is asked for.
+    @ViewBuilder
+    private var reminderSection: some View {
+        Section {
+            Toggle(isOn: Binding(
+                get: { reminderOn },
+                set: { on in
+                    reminderOn = on
+                    guard on else { return }
+                    if reminderDrafts.isEmpty {
+                        reminderDrafts = ReminderOffsetDraft.drafts(ReminderSettings.visitDefaults)
+                    }
+                    Task { await Reminders.requestPermissionIfNeeded() }
+                }
+            )) {
+                Label("提醒我", systemImage: "bell")
+            }
+            .tint(Theme.accent)
+            .accessibilityIdentifier("editor.reminderToggle")
+
+            if reminderOn {
+                ForEach($reminderDrafts) { $draft in
+                    ReminderOffsetRow(offset: $draft.offset)
+                }
+                .onDelete { reminderDrafts.remove(atOffsets: $0) }
+
+                Button {
+                    reminderDrafts.append(ReminderOffsetDraft(offset: ReminderOffsetDraft.suggestion(after: reminderDrafts)))
+                } label: {
+                    Label("添加提醒时间", systemImage: "plus.circle")
+                }
+                .accessibilityIdentifier("editor.addReminder")
+            }
+        } header: {
+            Text("提醒 · Reminder")
+        } footer: {
+            if reminderOn {
+                VStack(alignment: .leading, spacing: 8) {
+                    if occurredAt <= .now {
+                        Text("就诊时间已过，不会再提醒。")
+                    } else {
+                        Text("到点会收到通知：就诊名称、时间和地点。左滑可删除某个时间。")
+                    }
+                    NotificationPermissionNote()
+                }
+            }
+        }
     }
 
     /// Places / doctors used before that fit what is typed so far; tapping
@@ -430,6 +489,7 @@ struct LogEditorView: View {
             log.note = note
             log.location = location.isEmpty ? nil : location
             log.doctor = doctor.isEmpty ? nil : doctor
+            log.reminderOffsets = reminderOn && !reminderDrafts.isEmpty ? reminderDrafts.map(\.offset) : nil
             applyAttachmentChanges(to: log)
         case .measurement:
             log.value = Double(valueText)

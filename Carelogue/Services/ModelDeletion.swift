@@ -37,11 +37,13 @@ extension ModelContext {
         var logs = 0
         var artifacts = 0
         var profiles = 0
+        var medications = 0
 
-        var isEmpty: Bool { journeys == 0 && logs == 0 && artifacts == 0 && profiles == 0 }
+        var isEmpty: Bool { journeys == 0 && logs == 0 && artifacts == 0 && profiles == 0 && medications == 0 }
     }
 
-    /// 清空所有数据 (T25): removes every Journey, Log, Artifact and Profile.
+    /// 清空所有数据 (T25): removes every Journey, Log, Artifact and Profile, and
+    /// (M8) every medication plan with its check-ins.
     ///
     /// Nothing here relies on `.cascade` (m2-bugs #1): each layer is fetched
     /// and deleted explicitly — attachments first, so orphaned rows left by an
@@ -68,6 +70,15 @@ extension ModelContext {
         for profile in (try? fetch(FetchDescriptor<Profile>())) ?? [] {
             delete(profile)
             summary.profiles += 1
+        }
+        // M8 T53: plans and their check-ins (check-ins first, as above).
+        for intake in (try? fetch(FetchDescriptor<MedicationIntake>())) ?? [] {
+            delete(intake)
+        }
+        for medication in (try? fetch(FetchDescriptor<Medication>())) ?? [] {
+            medication.intakes = []
+            delete(medication)
+            summary.medications += 1
         }
 
         try? save()

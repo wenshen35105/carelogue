@@ -557,6 +557,9 @@ private struct UpcomingCard: View {
             }
             HStack(spacing: 8) {
                 TagPill(text: log.daysUntilLabel, tinted: true)
+                if log.hasPendingReminder {
+                    ReminderPill()
+                }
                 if let detail {
                     Text(detail)
                         .font(.footnote)

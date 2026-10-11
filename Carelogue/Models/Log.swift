@@ -35,6 +35,12 @@ final class Log {
     var visitSummaryJSON: String? = nil
     var questionsJSON: String? = nil
 
+    /// Encounter-only (M8 T52): when to remind about this visit, JSON-encoded
+    /// `[VisitReminderOffset]`; nil = no reminder. Personal to this account —
+    /// it syncs through the private iCloud store but is deliberately not part
+    /// of the CKShare channel, so a shared visit doesn't buzz everyone.
+    var reminderJSON: String? = nil
+
     var createdAt: Date = Date.now
     var updatedAt: Date = Date.now
 

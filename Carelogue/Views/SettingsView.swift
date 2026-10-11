@@ -18,6 +18,13 @@ struct SettingsView: View {
     @State private var showingPaywall = false
     @State private var restoreNotice: String?
 
+    // M8 T52: defaults for a newly switched-on visit reminder.
+    @State private var visitReminderDefaults = ReminderOffsetDraft.drafts(ReminderSettings.visitDefaults)
+    #if DEBUG
+    /// What the scheduler last planned, for UI tests (Debug only).
+    @State private var plannedReminders = Reminders.lastPlan
+    #endif
+
     #if DEBUG
     @State private var internalDraft = ""
     /// Mirrors the Keychain so the page redraws when the credential changes;
@@ -33,6 +40,7 @@ struct SettingsView: View {
                 #if DEBUG
                 internalAccessSection
                 #endif
+                remindersSection
                 aiSection
                 privacySection
                 dataSection
@@ -64,6 +72,79 @@ struct SettingsView: View {
             Text("AI 解释服务与隐私 · AI Services & Privacy")
                 .font(.subheadline)
                 .foregroundStyle(Theme.inkSecondary)
+        }
+    }
+
+    // MARK: - 提醒 (M8 T52)
+
+    private var remindersSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SettingsSectionHeader(icon: "bell", title: String(localized: "提醒"),
+                                  gloss: AppLanguage.gloss(String(localized: "Reminders")))
+
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("就诊提醒的默认时间")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Theme.inkPrimary)
+                    Text("在就诊里打开「提醒我」时，先填入这些时间；每条就诊还可以单独改。")
+                        .font(.footnote)
+                        .foregroundStyle(Theme.inkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.vertical, 14)
+
+                ForEach($visitReminderDefaults) { $draft in
+                    SettingsDivider()
+                    HStack(spacing: 8) {
+                        ReminderOffsetRow(offset: $draft.offset)
+                        if visitReminderDefaults.count > 1 {
+                            Button {
+                                visitReminderDefaults.removeAll { $0.id == draft.id }
+                            } label: {
+                                Image(systemName: "minus.circle")
+                                    .foregroundStyle(Theme.inkSecondary)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(String(localized: "删除这个时间"))
+                            .accessibilityIdentifier("settings.removeReminderDefault")
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+
+                SettingsDivider()
+                Button {
+                    visitReminderDefaults.append(ReminderOffsetDraft(offset: ReminderOffsetDraft.suggestion(after: visitReminderDefaults)))
+                } label: {
+                    Label("添加时间", systemImage: "plus.circle")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Theme.accent)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 14)
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("settings.addReminderDefault")
+            }
+            .padding(.horizontal, Theme.Spacing.cardPadding)
+            .cardSurface(padding: 0)
+            .onChange(of: visitReminderDefaults) { _, drafts in
+                ReminderSettings.visitDefaults = drafts.map(\.offset)
+            }
+
+            NotificationPermissionNote()
+                .padding(.horizontal, 4)
+
+            #if DEBUG
+            Text(verbatim: "Planned reminders: \(plannedReminders.count) · visits \(plannedReminders.filter { $0.hasPrefix(Reminders.visitPrefix) }.count) · doses \(plannedReminders.filter { $0.hasPrefix(Reminders.medicationPrefix) }.count)")
+                .font(.caption2)
+                .foregroundStyle(Theme.inkSecondary)
+                .padding(.horizontal, 4)
+                .accessibilityIdentifier("debug.plannedReminders")
+                .onReceive(NotificationCenter.default.publisher(for: Reminders.didReplan)) { _ in
+                    plannedReminders = Reminders.lastPlan
+                }
+            #endif
         }
     }
 
@@ -407,7 +488,7 @@ struct SettingsView: View {
                                 }
                             }
                             .lineLimit(1)
-                            Text("删除这台设备上的全部旅程、记录、附件与档案。此操作不可撤销。")
+                            Text("删除这台设备上的全部旅程、记录、附件、用药与档案。此操作不可撤销。")
                                 .font(.footnote)
                                 .foregroundStyle(Theme.inkSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -453,13 +534,14 @@ struct SettingsView: View {
         let journeys = (try? modelContext.fetchCount(FetchDescriptor<Journey>())) ?? 0
         let logs = (try? modelContext.fetchCount(FetchDescriptor<Log>())) ?? 0
         let artifacts = (try? modelContext.fetchCount(FetchDescriptor<Artifact>())) ?? 0
-        return String(localized: "将删除 \(journeys) 段旅程、\(logs) 条记录、\(artifacts) 份附件，以及档案内容。删除后无法恢复，也不会留下备份。")
+        let medications = (try? modelContext.fetchCount(FetchDescriptor<Medication>())) ?? 0
+        return String(localized: "将删除 \(journeys) 段旅程、\(logs) 条记录、\(artifacts) 份附件、\(medications) 项用药，以及档案内容。删除后无法恢复，也不会留下备份。")
     }
 
     private func eraseSummaryText(_ summary: ModelContext.EraseSummary) -> String {
         summary.isEmpty
             ? String(localized: "本机已经没有可清空的数据")
-            : String(localized: "已清空 \(summary.journeys) 段旅程、\(summary.logs) 条记录、\(summary.artifacts) 份附件")
+            : String(localized: "已清空 \(summary.journeys) 段旅程、\(summary.logs) 条记录、\(summary.artifacts) 份附件、\(summary.medications) 项用药")
     }
 
     private var footer: some View {

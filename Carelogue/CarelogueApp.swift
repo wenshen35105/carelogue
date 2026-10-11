@@ -35,11 +35,15 @@ struct CarelogueApp: App {
                 // T39: watch local saves (debounced push) and subscription
                 // pushes (pull), plus a pull+push on every activation.
                 .task { ShareChannel.start(context: container.mainContext) }
+                // M8 T52/T53: local reminders, re-planned after every save.
+                .task { Reminders.start(context: container.mainContext) }
                 .onChange(of: scenePhase) { _, phase in
                     guard phase == .active else { return }
                     Task { @MainActor in
                         await ShareChannel.syncAll(in: container.mainContext)
                     }
+                    // Synced edits from other devices, and a new day's doses.
+                    Task { @MainActor in await Reminders.replan() }
                 }
         }
         .modelContainer(container)

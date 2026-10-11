@@ -2,6 +2,7 @@ import CloudKit
 import SwiftData
 import SwiftUI
 import UIKit
+import UserNotifications
 
 /// CloudKit share acceptance arrives on a UIKit *scene* delegate callback —
 /// not the app delegate — and a pure SwiftUI app has neither (this was one of
@@ -15,6 +16,9 @@ final class ShareAppDelegate: NSObject, UIApplicationDelegate {
         // carry no alert; without registration they only arrive in the
         // foreground, which the foreground sync already covers.
         UIApplication.shared.registerForRemoteNotifications()
+        // M8 T52/T53: must be in place before launch finishes, or a tap on a
+        // reminder action that cold-launches the app is lost.
+        UNUserNotificationCenter.current().delegate = ReminderNotificationDelegate.shared
         return true
     }
 

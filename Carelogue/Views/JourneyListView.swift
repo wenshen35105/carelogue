@@ -5,6 +5,9 @@ import SwiftData
 struct JourneyListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Journey.updatedAt, order: .reverse) private var journeys: [Journey]
+    @Query private var medications: [Medication]
+    /// Notification taps and widgets push screens through here (M8).
+    @State private var router = AppRouter.shared
 
     @State private var showingCreateSheet = false
     @State private var showingProfile = false
@@ -22,7 +25,7 @@ struct JourneyListView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.path) {
             List {
                 header
                     .canvasListRow(top: 4, bottom: 16)
@@ -35,6 +38,12 @@ struct JourneyListView: View {
                 NewJourneyCard { showingCreateSheet = true }
                     .canvasListRow(top: 4, bottom: 20)
 
+                // M8 T53: the global entry to 用药.
+                MedicationsEntryCard(medications: medications) {
+                    router.path.append(AppDestination.medications)
+                }
+                .canvasListRow(bottom: 16)
+
                 profileEntry
                     .canvasListRow(bottom: 32)
             }
@@ -44,6 +53,11 @@ struct JourneyListView: View {
             .navigationTitle("Journeys")
             .navigationDestination(for: Journey.self) { journey in
                 JourneyTimelineView(journey: journey)
+            }
+            .navigationDestination(for: AppDestination.self) { destination in
+                switch destination {
+                case .medications: MedicationListView()
+                }
             }
             .sheet(isPresented: $showingCreateSheet) {
                 JourneyCreationSheet()
@@ -394,6 +408,12 @@ private struct NextAppointmentBanner: View {
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Theme.inkPrimary)
                     TagPill(text: log.daysUntilLabel, tinted: true)
+                    if log.hasPendingReminder {
+                        Image(systemName: "bell.fill")
+                            .font(.caption2)
+                            .foregroundStyle(Theme.accent)
+                            .accessibilityLabel(String(localized: "已设提醒"))
+                    }
                 }
                 if let detail {
                     Text(detail)
@@ -450,5 +470,5 @@ private struct NewJourneyCard: View {
 
 #Preview {
     JourneyListView()
-        .modelContainer(for: [Journey.self, Log.self, Artifact.self, Profile.self], inMemory: true)
+        .modelContainer(for: [Journey.self, Log.self, Artifact.self, Profile.self, Medication.self, MedicationIntake.self], inMemory: true)
 }

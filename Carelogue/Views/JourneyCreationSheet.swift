@@ -119,5 +119,5 @@ struct JourneyCreationSheet: View {
 
 #Preview {
     JourneyCreationSheet()
-        .modelContainer(for: [Journey.self, Log.self, Artifact.self, Profile.self], inMemory: true)
+        .modelContainer(for: [Journey.self, Log.self, Artifact.self, Profile.self, Medication.self, MedicationIntake.self], inMemory: true)
 }

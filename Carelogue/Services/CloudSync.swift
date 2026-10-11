@@ -42,7 +42,7 @@ enum CloudSync {
     /// so a missing entitlement or container can never stop the app from
     /// launching (and so UI tests stay hermetic).
     static func makeContainer() -> ModelContainer {
-        let schema = Schema([Journey.self, Log.self, Artifact.self, Profile.self])
+        let schema = Schema([Journey.self, Log.self, Artifact.self, Profile.self, Medication.self, MedicationIntake.self])
 
         #if DEBUG
         // Escape hatch for debugging a store problem without iCloud in the

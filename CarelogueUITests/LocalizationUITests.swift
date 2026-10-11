@@ -4,7 +4,7 @@ import XCTest
 /// keeps the side-by-side "中文 English" style.
 final class LocalizationUITests: CarelogueUITestCase {
     /// Seeded user data — allowed to stay Chinese in the English UI.
-    private let userData = ["UITest 孕期", "UITest 附件就诊"]
+    private let userData = ["UITest 孕期", "UITest 附件就诊", "UITest 复诊", "UITest 叶酸片"]
 
     private func assertNoChinese(on screen: String, file: StaticString = #filePath, line: UInt = #line) {
         let labels = [app.staticTexts, app.buttons, app.navigationBars, app.textFields]
@@ -57,6 +57,37 @@ final class LocalizationUITests: CarelogueUITestCase {
         waitFor(app.navigationBars["New Entry"])
         waitFor(app.buttons["Symptom"])
         assertNoChinese(on: "Quick note editor")
+    }
+
+    /// M8 T52/T53: the reminder section of a visit and the medication
+    /// screens, in English.
+    func testEnglishRemindersHaveNoChineseCopy() {
+        language = "en"
+        launch(["-uitest-reset", "-uitest-seed-upcoming", "-uitest-seed-medication-soon"])
+        waitFor(app.navigationBars["Journeys"])
+        let entry = app.buttons["home.medications"]
+        scrollTo(entry)
+        entry.tap()
+        waitFor(app.buttons["medication.take"])
+        assertNoChinese(on: "Medications")
+        screenshot("T53-en-medications")
+        app.buttons["medications.add"].tap()
+        waitFor(app.navigationBars["Add Medication"])
+        assertNoChinese(on: "Medication editor")
+        app.buttons["Cancel"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        app.staticTexts["UITest 复诊"].tap()
+        element(containing: "In-Person").tap()
+        waitFor(app.navigationBars["Details"])
+        app.buttons["Edit"].tap()
+        let toggle = app.switches["editor.reminderToggle"]
+        scrollTo(toggle)
+        flip(toggle)
+        allowNotificationsIfAsked()
+        waitFor(element(containing: "1 day before"))
+        assertNoChinese(on: "Visit reminder")
+        screenshot("T52-en-visit-editor")
     }
 
     func testEnglishSettingsHaveNoChineseCopy() {

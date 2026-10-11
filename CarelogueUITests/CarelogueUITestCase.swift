@@ -177,6 +177,51 @@ class CarelogueUITestCase: XCTestCase {
         tapFirstExisting([app.sheets.buttons["删除"], app.scrollViews.buttons["删除"], app.buttons["删除"]])
     }
 
+    // MARK: - Reminders (M8)
+
+    var springboard: XCUIApplication { XCUIApplication(bundleIdentifier: "com.apple.springboard") }
+
+    /// Answers the system notification-permission alert if it comes up. It
+    /// only appears once per install, so a test cannot count on seeing it.
+    func allowNotificationsIfAsked(timeout: TimeInterval = 4) {
+        let allow = springboard.alerts.buttons
+            .matching(NSPredicate(format: "label IN %@", ["Allow", "允许"])).firstMatch
+        if allow.waitForExistence(timeout: timeout) { allow.tap() }
+    }
+
+    /// Journeys -> 档案与设置 -> 设置.
+    func openSettingsPage() {
+        button(containing: t("档案与设置", "Profile & Settings")).tap()
+        let entry = app.buttons["profile.settings"]
+        waitFor(entry)
+        entry.tap()
+    }
+
+    /// The Debug-only line in Settings that counts what the reminder
+    /// scheduler planned ("Planned reminders: 3 · visits 2 · doses 1").
+    func plannedReminders(file: StaticString = #filePath, line: UInt = #line) -> String {
+        let label = app.staticTexts["debug.plannedReminders"]
+        scrollTo(label, file: file, line: line)
+        return label.label
+    }
+
+    /// Waits until the planned-reminders line contains `text` (a re-plan is
+    /// debounced after each save).
+    func waitForPlanned(_ text: String, timeout: TimeInterval = 8,
+                        file: StaticString = #filePath, line: UInt = #line) {
+        let label = app.staticTexts["debug.plannedReminders"]
+        scrollTo(label, file: file, line: line)
+        let predicate = NSPredicate(format: "label CONTAINS %@", text)
+        let found = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: predicate, object: label)], timeout: timeout)
+        XCTAssertEqual(found, .completed, "Planned reminders never showed \(text): \(label.label)", file: file, line: line)
+    }
+
+    /// Flips a SwiftUI Toggle in a Form: a tap on the switch's centre lands
+    /// on its label and does nothing, so tap the knob end.
+    func flip(_ toggle: XCUIElement) {
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+    }
+
     // MARK: - Screenshots
 
     /// Attaches a screenshot to the test result and, when the runner has

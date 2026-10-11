@@ -50,6 +50,16 @@ import UIKit
 ///                                 — unsure in every language
 ///   env INTERNAL_ACCESS_KEY=<key> unlock the internal channel at launch (T30),
 ///                                 so the relay chain can be driven unattended
+///   -uitest-seed-upcoming         (M8 T52) a Journey with a 面诊 three days
+///                                 out, no reminder yet
+///   -uitest-seed-reminder-soon    (M8 T52) a Journey with a visit tomorrow
+///                                 whose reminder ("前一天") goes off in about
+///                                 a minute
+///   -uitest-seed-medication-soon  (M8 T53) a medication plan with one dose
+///                                 due in about a minute
+///   -uitest-request-notifications ask for the notification permission at
+///                                 launch, so a test can answer the alert up
+///                                 front (the app itself never asks at launch)
 ///   -selftest-explain             explain the seeded report photo twice (needs
 ///                                 -uitest-seed-attachments, a way through the
 ///                                 relay — INTERNAL_ACCESS_KEY or a
@@ -68,6 +78,11 @@ enum UITestSupport {
             try? context.delete(model: Log.self)
             try? context.delete(model: Journey.self)
             try? context.delete(model: Profile.self)
+            try? context.delete(model: MedicationIntake.self)
+            try? context.delete(model: Medication.self)
+            for key in UserDefaults.standard.dictionaryRepresentation().keys where key.hasPrefix("reminders.") || key.hasPrefix("review.") {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
             InternalAccess.setCredential(nil)
             for key in UserDefaults.standard.dictionaryRepresentation().keys where key.hasPrefix("ai.") {
                 UserDefaults.standard.removeObject(forKey: key)
@@ -105,6 +120,16 @@ enum UITestSupport {
                 seedVisit(in: journey, context: context,
                           withRecording: arguments.contains("-uitest-seed-recording"))
             }
+        }
+        if arguments.contains("-uitest-seed-upcoming") || arguments.contains("-uitest-seed-reminder-soon") {
+            seedUpcomingVisit(context, remindSoon: arguments.contains("-uitest-seed-reminder-soon"))
+        }
+        if arguments.contains("-uitest-seed-medication-soon") {
+            let medication = Medication(name: "UITest 叶酸片", dose: "5 mg", reminderMinutes: [minuteSoon])
+            context.insert(medication)
+        }
+        if arguments.contains("-uitest-request-notifications") {
+            Task { @MainActor in await Reminders.requestPermissionIfNeeded() }
         }
         // After seeding, so the pinned journey exists to pin. (Also after
         // -uitest-seed-demo, whose first active journey is the one to stamp.)
@@ -517,6 +542,28 @@ enum UITestSupport {
     /// audio is a real (silent) m4a written here — small, valid, and enough
     /// for AVAudioPlayer to report a duration — with the transcript already
     /// filled in, which is the state the simulator cannot reach on its own.
+    static let upcomingJourneyName = "UITest 复诊"
+
+    /// The next whole minute after this one: a reminder set for it goes off
+    /// within about a minute (a calendar trigger fires at second 0).
+    private static var minuteSoon: Int {
+        min(ReminderTime.minute(of: .now) + 1, 24 * 60 - 1)
+    }
+
+    private static func seedUpcomingVisit(_ context: ModelContext, remindSoon: Bool) {
+        let journey = Journey(name: upcomingJourneyName, template: .pregnancy)
+        context.insert(journey)
+        let calendar = Calendar.current
+        let day = calendar.date(byAdding: .day, value: remindSoon ? 1 : 3, to: calendar.startOfDay(for: .now))!
+        let visit = Log(kind: .encounter, type: "面诊",
+                        occurredAt: calendar.date(byAdding: .minute, value: 10 * 60 + 30, to: day)!,
+                        location: "Women's Health Clinic", doctor: "Dr. Chen")
+        if remindSoon {
+            visit.reminderOffsets = [VisitReminderOffset(daysBefore: 1, minuteOfDay: minuteSoon)]
+        }
+        add(visit, to: journey, context: context)
+    }
+
     private static func seedVisit(in journey: Journey, context: ModelContext, withRecording: Bool) {
         let visit = Log(kind: .encounter, type: "面诊",
                         occurredAt: Calendar.current.date(byAdding: .day, value: -1, to: .now)!,

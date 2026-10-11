@@ -11,6 +11,11 @@
 - [x] ~~Apple Developer 认证~~ ✅ 2026-09-24 通过
   - ⚠️ （2026-09-24）**重复付款跟进**——认证已过，付款周期完结，不用再干等：① 查邮箱 "Apple Developer" 收据 + 账单结算状态（只扣一笔 → 删除本项）② 两笔都实扣（posted）→ 开 case：`developer.apple.com/contact/` → Membership and Account → Other Memberships/Account Questions → Email：请保留 Amex、退支付宝那笔，附两笔凭证 ③ 有笔仍挂 pending → 等结算（1–2 天）再定。开 case 不影响账号正常使用
 
+## 🆕 1.1（M8）提审前
+
+- [ ] **CloudKit schema 部署 Production**（SwiftData 新增：`Medication` / `MedicationIntake` 两个记录类型 + `Log.reminderJSON` 等新字段）：先用 Debug 构建在登录 iCloud 的设备上跑一遍（建一条用药、给一次就诊设提醒）让 Development 自动建出字段 → CloudKit Console → Deploy Schema Changes → Production。**不部署则 TestFlight / App Store 版同步静默失败**（同 §B.6）。后续卡如有新字段会追加在本节。
+- [ ] 真机复核：就诊提醒 / 用药提醒到点弹出、通知上「已服用」打卡（模拟器已自动验证，真机走一遍即可）。
+
 ## B. 认证过审后（按序）
 
 1. [x] Xcode → Settings → Accounts 登录开发者账号 ✅（随 TestFlight 上传流程已验证——构建已传到 `1.0 (8)`）
