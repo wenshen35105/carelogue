@@ -123,7 +123,18 @@ final class LogEditorUITests: CarelogueUITestCase {
             .matching(NSPredicate(format: "label CONTAINS %@", "Mount Sinai")).firstMatch
         XCTAssertTrue(place.waitForExistence(timeout: 15), "No Apple Maps place for Mount Sinai")
         screenshot("T60-place-suggestions")
-        place.tap()
+
+        // Moving on to 医生 by hand, with the places still listed, keeps
+        // the keyboard (the suggestion rows must not reload the field).
+        let doctor = app.textFields["医生"]
+        doctor.tap()
+        doctor.typeText("Dr. Chen")
+        XCTAssertEqual(doctor.value as? String, "Dr. Chen")
+        field.tap()
+        let placeAgain = app.buttons.matching(identifier: "suggestion.place")
+            .matching(NSPredicate(format: "label CONTAINS %@", "Mount Sinai")).firstMatch
+        XCTAssertTrue(placeAgain.waitForExistence(timeout: 15))
+        placeAgain.tap()
         let value = field.value as? String ?? ""
         XCTAssertTrue(value.contains("Mount Sinai") && value != "Mount Sinai", "Field holds: \(value)")
         app.buttons["保存"].tap()

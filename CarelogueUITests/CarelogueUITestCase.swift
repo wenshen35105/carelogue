@@ -177,6 +177,15 @@ class CarelogueUITestCase: XCTestCase {
         tapFirstExisting([app.sheets.buttons["删除"], app.scrollViews.buttons["删除"], app.buttons["删除"]])
     }
 
+    /// Taps a timeline card by its text, scrolling to it first: the demo
+    /// journey's header grew a progress card in M8 (T56), so cards that used
+    /// to sit on the first screen can start below the fold.
+    func tapCard(containing text: String, file: StaticString = #filePath, line: UInt = #line) {
+        let card = element(containing: text)
+        scrollTo(card, file: file, line: line)
+        card.tap()
+    }
+
     // MARK: - Reminders (M8)
 
     var springboard: XCUIApplication { XCUIApplication(bundleIdentifier: "com.apple.springboard") }

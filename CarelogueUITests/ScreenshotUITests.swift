@@ -157,7 +157,7 @@ final class ScreenshotUITests: CarelogueUITestCase {
         openJourney(journeyName)
 
         // T7 · 详情页（就诊 · 面诊：地点/医生 + 备注）.
-        element(containing: "就诊 · 面诊").tap()
+        tapCard(containing: "就诊 · 面诊")
         waitFor(app.navigationBars["详情"])
         settle()
         screenshot("T7-detail")
@@ -174,7 +174,7 @@ final class ScreenshotUITests: CarelogueUITestCase {
         // T11 · 详情页的附件宫格（验血：2 图 + 1 PDF）. The explanation card
         // sits above it, so the page is scrolled down to the gallery — the
         // explained card itself is documented by the T20 shots.
-        element(containing: reportCardText).tap()
+        tapCard(containing: reportCardText)
         waitFor(app.navigationBars["详情"])
         waitFor(app.descendants(matching: .any)["explain.summary"])
         let gallery = app.buttons.matching(identifier: "attachment.image").firstMatch
@@ -274,7 +274,7 @@ final class ScreenshotUITests: CarelogueUITestCase {
     /// The demo store's recorded 面诊 (T32). Its timeline card is the one with
     /// the doctor's own words in the note.
     private func openRecordedVisit() {
-        element(containing: "胎心音正常 152 bpm").tap()
+        tapCard(containing: "胎心音正常 152 bpm")
         waitFor(app.navigationBars["详情"])
     }
 
@@ -307,7 +307,7 @@ final class ScreenshotUITests: CarelogueUITestCase {
         settle()
         screenshot("T14-timeline-dark")
 
-        element(containing: reportCardText).tap()
+        tapCard(containing: reportCardText)
         waitFor(app.navigationBars["详情"])
         waitFor(app.descendants(matching: .any)["explain.summary"])
         settle()

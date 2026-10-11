@@ -197,7 +197,6 @@ struct LogEditorView: View {
                 }
             if focusedVisitField == .location {
                 suggestionRow(.location)
-                placeRows
             }
             TextField("医生", text: $doctor)
                 .focused($focusedVisitField, equals: .doctor)
@@ -265,73 +264,84 @@ struct LogEditorView: View {
     }
 
     /// Places / doctors used before that fit what is typed so far; tapping
-    /// one fills the field (and moves on from 地点 to 医生).
+    /// one fills the field (and moves on from 地点 to 医生). For 地点, Apple
+    /// Maps places (T60) follow in the same row: one row at most per field,
+    /// because a Form that gains or loses several rows as the focus moves
+    /// reloads the neighbouring field's cell and drops its keyboard.
     @ViewBuilder
     private func suggestionRow(_ field: VisitField) -> some View {
         let history = pastVisits.map { field == .location ? $0.location : $0.doctor }
         let options = VisitFieldSuggestions.rank(history, matching: field == .location ? location : doctor)
-        if !options.isEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(options, id: \.self) { option in
-                        ChipButton(title: option, isSelected: false) {
-                            switch field {
-                            case .location:
-                                location = option
-                                focusedVisitField = .doctor
-                            case .doctor:
-                                doctor = option
-                                focusedVisitField = nil
-                            }
-                        }
-                        .accessibilityIdentifier(field == .location ? "suggestion.location" : "suggestion.doctor")
-                    }
+        let mapPlaces = field == .location
+            ? places.suggestions(excluding: pastVisits.compactMap(\.location), typed: location)
+            : []
+        if !options.isEmpty || !mapPlaces.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                if !options.isEmpty {
+                    historyChips(options, field: field)
                 }
-                .padding(.vertical, 2)
+                if !mapPlaces.isEmpty {
+                    placeList(mapPlaces)
+                }
             }
             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
         }
     }
 
-    /// Apple Maps places for what is typed, below the history chips. A tap
-    /// stores the place's name as plain text, same as typing it. One row
-    /// holding them all: inserting several rows at once as the field gains
-    /// focus made the Form reload the field's own cell and drop the focus.
-    @ViewBuilder
-    private var placeRows: some View {
-        let options = places.suggestions(excluding: pastVisits.compactMap(\.location), typed: location)
-        if !options.isEmpty {
-            VStack(alignment: .leading, spacing: 12) {
-                ForEach(options) { place in
-                    Button {
-                        location = place.title
-                        places.update(query: "")
-                        focusedVisitField = .doctor
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: "mappin.circle")
-                                .foregroundStyle(Theme.accent)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(place.title)
-                                    .font(.subheadline)
-                                    .foregroundStyle(Theme.inkPrimary)
-                                if !place.subtitle.isEmpty {
-                                    Text(place.subtitle)
-                                        .font(.caption)
-                                        .foregroundStyle(Theme.inkSecondary)
-                                        .lineLimit(1)
-                                }
-                            }
+    private func historyChips(_ options: [String], field: VisitField) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(options, id: \.self) { option in
+                    ChipButton(title: option, isSelected: false) {
+                        switch field {
+                        case .location:
+                            location = option
+                            focusedVisitField = .doctor
+                        case .doctor:
+                            doctor = option
+                            focusedVisitField = nil
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("suggestion.place")
+                    .accessibilityIdentifier(field == .location ? "suggestion.location" : "suggestion.doctor")
                 }
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, 2)
         }
+    }
+
+    /// Apple Maps places for what is typed. A tap stores the place's name as
+    /// plain text, same as typing it.
+    private func placeList(_ options: [PlaceCompleter.Place]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(options) { place in
+                Button {
+                    location = place.title
+                    places.update(query: "")
+                    focusedVisitField = .doctor
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "mappin.circle")
+                            .foregroundStyle(Theme.accent)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(place.title)
+                                .font(.subheadline)
+                                .foregroundStyle(Theme.inkPrimary)
+                            if !place.subtitle.isEmpty {
+                                Text(place.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(Theme.inkSecondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("suggestion.place")
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     // MARK: - Attachments

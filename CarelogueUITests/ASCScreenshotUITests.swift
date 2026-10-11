@@ -64,7 +64,7 @@ class ASCScreenshotUITests: CarelogueUITestCase {
         screenshot("02-timeline")
 
         // 03 · 报告 + AI 解释 — the explained lab report.
-        element(containing: reportCardText).tap()
+        tapCard(containing: reportCardText)
         waitFor(app.navigationBars[details])
         // The explanation card sits below the recording card; bring its
         // top (the attachment chips under the title) into view.
@@ -83,7 +83,7 @@ class ASCScreenshotUITests: CarelogueUITestCase {
         backToTimeline()
 
         // 04 · 面诊录音 — the recording card with play control and waveform.
-        element(containing: t("胎心音正常 152 bpm", "Fetal heart rate normal, 152 bpm")).tap()
+        tapCard(containing: t("胎心音正常 152 bpm", "Fetal heart rate normal, 152 bpm"))
         waitFor(app.navigationBars[details])
         let card = app.descendants(matching: .any)["recording.card"]
         scrollTo(card)
@@ -124,7 +124,7 @@ class ASCScreenshotUITests: CarelogueUITestCase {
         launch(["-uitest-reset", "-uitest-seed-demo", "-uitest-icloud-account"])
 
         openJourney(journeyName)
-        element(containing: reportCardText).tap()
+        tapCard(containing: reportCardText)
         waitFor(app.navigationBars[details])
 
         // The explanation card's own attachment chips (not the gallery,
