@@ -6,6 +6,10 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		000000000000000000000130 /* CarelogueWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 000000000000000000000122 /* CarelogueWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		000000000000000260000000 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -14,11 +18,31 @@
 			remoteGlobalIDString = 000000000000000100000000;
 			remoteInfo = Carelogue;
 		};
+		000000000000000360000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 000000000000000300000000;
+			remoteInfo = CarelogueWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		000000000000000150000000 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				000000000000000000000130 /* CarelogueWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* Carelogue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Carelogue.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000121 /* CarelogueUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CarelogueUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000122 /* CarelogueWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CarelogueWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -30,6 +54,16 @@
 		000000000000000000000011 /* CarelogueUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CarelogueUITests;
+			sourceTree = "<group>";
+		};
+		000000000000000000000012 /* CarelogueWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CarelogueWidget;
+			sourceTree = "<group>";
+		};
+		000000000000000000000013 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,6 +79,11 @@
 			files = (
 			);
 		};
+		000000000000000330000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -53,6 +92,8 @@
 			children = (
 				000000000000000000000010 /* Carelogue */,
 				000000000000000000000011 /* CarelogueUITests */,
+				000000000000000000000012 /* CarelogueWidget */,
+				000000000000000000000013 /* Shared */,
 				000000000000000000000020 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,6 +103,7 @@
 			children = (
 				000000000000000000000120 /* Carelogue.app */,
 				000000000000000000000121 /* CarelogueUITests.xctest */,
+				000000000000000000000122 /* CarelogueWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,11 +118,16 @@
 				000000000000000120000000 /* Sources */,
 				000000000000000130000000 /* Frameworks */,
 				000000000000000140000000 /* Resources */,
+				000000000000000150000000 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
+			dependencies = (
+				000000000000000350000000 /* PBXTargetDependency */,
+			);
 			fileSystemSynchronizedGroups = (
 				000000000000000000000010 /* Carelogue */,
+				000000000000000000000013 /* Shared */,
 			);
 			name = Carelogue;
 			productName = Carelogue;
@@ -108,6 +155,25 @@
 			productReference = 000000000000000000000121 /* CarelogueUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		000000000000000300000000 /* CarelogueWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 000000000000000310000000 /* Build configuration list for PBXNativeTarget "CarelogueWidgetExtension" */;
+			buildPhases = (
+				000000000000000320000000 /* Sources */,
+				000000000000000330000000 /* Frameworks */,
+				000000000000000340000000 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				000000000000000000000012 /* CarelogueWidget */,
+				000000000000000000000013 /* Shared */,
+			);
+			name = CarelogueWidgetExtension;
+			productName = CarelogueWidgetExtension;
+			productReference = 000000000000000000000122 /* CarelogueWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -124,6 +190,9 @@
 					000000000000000200000000 = {
 						CreatedOnToolsVersion = 27.0;
 						TestTargetID = 000000000000000100000000;
+					};
+					000000000000000300000000 = {
+						CreatedOnToolsVersion = 27.0;
 					};
 				};
 			};
@@ -144,6 +213,7 @@
 			targets = (
 				000000000000000100000000 /* Carelogue */,
 				000000000000000200000000 /* CarelogueUITests */,
+				000000000000000300000000 /* CarelogueWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -155,6 +225,11 @@
 			);
 		};
 		000000000000000240000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		000000000000000340000000 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -172,6 +247,11 @@
 			files = (
 			);
 		};
+		000000000000000320000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -179,6 +259,11 @@
 			isa = PBXTargetDependency;
 			target = 000000000000000100000000 /* Carelogue */;
 			targetProxy = 000000000000000260000000 /* PBXContainerItemProxy */;
+		};
+		000000000000000350000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 000000000000000300000000 /* CarelogueWidgetExtension */;
+			targetProxy = 000000000000000360000000 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -457,6 +542,68 @@
 			};
 			name = Release;
 		};
+		000000000000000311000000 /* Debug configuration for PBXNativeTarget "CarelogueWidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = config/CarelogueWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7Z9M6N48N;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "config/CarelogueWidget-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Carelogue;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = ca.carelogue.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		000000000000000312000000 /* Release configuration for PBXNativeTarget "CarelogueWidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = config/CarelogueWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7Z9M6N48N;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "config/CarelogueWidget-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Carelogue;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = ca.carelogue.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -481,6 +628,14 @@
 			buildConfigurations = (
 				000000000000000211000000 /* Debug configuration for PBXNativeTarget "CarelogueUITests" */,
 				000000000000000212000000 /* Release configuration for PBXNativeTarget "CarelogueUITests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		000000000000000310000000 /* Build configuration list for PBXNativeTarget "CarelogueWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000311000000 /* Debug configuration for PBXNativeTarget "CarelogueWidgetExtension" */,
+				000000000000000312000000 /* Release configuration for PBXNativeTarget "CarelogueWidgetExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};

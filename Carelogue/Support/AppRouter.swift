@@ -21,6 +21,26 @@ final class AppRouter {
     static let shared = AppRouter()
 
     var path = NavigationPath()
+    /// A widget's 记一笔 (T58): the journey to write a quick note in. The
+    /// Journeys root presents the editor, over whatever the stack shows.
+    var quickNoteJourney: UUID?
+
+    /// carelogue:// links from the widget.
+    func handle(_ url: URL) {
+        guard let link = DeepLink(url: url) else { return }
+        switch link {
+        case .home:
+            path = NavigationPath()
+        case .journey(let id):
+            open(.journey(id))
+        case .log(let id):
+            open(.log(id))
+        case .quickNote(let id):
+            guard let id else { path = NavigationPath(); return }
+            open(.journey(id))
+            quickNoteJourney = id
+        }
+    }
 
     func open(_ route: AppRoute, context: ModelContext? = nil) {
         let context = context ?? CarelogueApp.modelContainer?.mainContext
@@ -29,16 +49,21 @@ final class AppRouter {
         case .medications:
             fresh.append(AppDestination.medications)
         case .journey(let id):
-            guard let journey = context.flatMap({ try? $0.fetch(FetchDescriptor<Journey>(predicate: #Predicate { $0.id == id })).first })
-            else { return }
+            guard let journey = Self.first(Journey.self, in: context, where: { $0.id == id }) else { return }
             fresh.append(journey)
         case .log(let id):
-            guard let log = context.flatMap({ try? $0.fetch(FetchDescriptor<Log>(predicate: #Predicate { $0.id == id })).first }),
+            guard let log = Self.first(Log.self, in: context, where: { $0.id == id }),
                   let journey = log.journey
             else { return }
             fresh.append(journey)
             fresh.append(log)
         }
         path = fresh
+    }
+
+    /// Fetch-and-filter; the stores are small.
+    private static func first<T: PersistentModel>(_ type: T.Type, in context: ModelContext?,
+                                                  where match: (T) -> Bool) -> T? {
+        ((try? context?.fetch(FetchDescriptor<T>())) ?? []).first(where: match)
     }
 }

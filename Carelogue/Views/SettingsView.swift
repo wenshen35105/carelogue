@@ -137,6 +137,11 @@ struct SettingsView: View {
                 .padding(.horizontal, 4)
 
             #if DEBUG
+            Text(verbatim: WidgetPublisher.debugSummary)
+                .font(.caption2)
+                .foregroundStyle(Theme.inkSecondary)
+                .padding(.horizontal, 4)
+                .accessibilityIdentifier("debug.widgetSnapshot")
             Text(verbatim: "Review requests: \(UserDefaults.standard.integer(forKey: ReviewPrompt.requestCountKey))")
                 .font(.caption2)
                 .foregroundStyle(Theme.inkSecondary)

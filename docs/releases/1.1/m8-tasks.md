@@ -99,6 +99,10 @@
   - 点击打开 app 对应位置（深链）。
   - 可选（finalize 定）：中型 Widget 加"快速记录"入口。
 - **验收**：预约变更后 Widget 刷新；无数据状态正常；中英；浅/深色。
+- **✅ 代码完成（2026-10-11）**：新 target `CarelogueWidgetExtension`（`CarelogueWidget/`）+ 两边共用的 `Shared/`（快照模型、深链、Widget 视图、`Widget.xcstrings`）；App Group `group.ca.carelogue.app`。App 每次保存/回前台由 `Services/WidgetPublisher.swift` 重建一份只读 JSON 快照（下次就诊 / 最近一条 / 记一笔目标旅程 / app 语言），有变化才写并 `reloadAllTimelines`；Widget 不碰 SwiftData。小型 = 下次就诊倒计时（今天/明天/N 天后 + 类型 + 时间 + 旅程），无预约 → 最近一条，无数据 → 「记录今天」；中型另加地点 + 「记一笔」按钮。深链 `carelogue://log/<id>` / `quick-note/<journey>` / `home`（`AppRouter`）。时间线在之后 3 个午夜各有一条，倒计时不靠 app 运行也会翻天。
+  - 验证：`WidgetUITests`（快照随库变化；深链打开就诊详情、记一笔直接弹随手记并保存）、`HomeScreenWidgetUITests`（**真机同款流程**：SpringBoard 加中型 Widget 到主屏，截图 `T58-home-widget` 显示 demo 数据）、英文 `testEnglishWidgetHasNoChineseCopy`；浅/深色走 Widget 自带调色（Theme 同值）。
+  - CC 自定：Widget 文案与日期跟随 **app 语言**（快照里带语言码），不跟设备语言——否则会出现「In 11 days · 体检」中英混排；记一笔 = 最近更新的进行中旅程，没有旅程则只打开 app。
+  - ⚠️ 需老板：见 owner-actions（App Group + Widget App ID 注册；首次 Archive 用 Xcode 自动签名一般会自动建好）。
 
 ## T59 · 随手记挂附件
 

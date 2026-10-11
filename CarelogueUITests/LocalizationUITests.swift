@@ -108,6 +108,15 @@ final class LocalizationUITests: CarelogueUITestCase {
         screenshot("T56-en-header")
     }
 
+    /// M8 T58: the widget's faces in English (demo data is English there).
+    func testEnglishWidgetHasNoChineseCopy() {
+        language = "en"
+        launch(["-uitest-reset", "-uitest-seed-demo", "-uitest-widget-gallery"])
+        waitFor(app.descendants(matching: .any)["widget.medium"])
+        assertNoChinese(on: "Widget")
+        screenshot("T58-en-widget")
+    }
+
     func testEnglishSettingsHaveNoChineseCopy() {
         language = "en"
         launch(["-uitest-reset"])

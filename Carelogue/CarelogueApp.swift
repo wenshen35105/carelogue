@@ -24,28 +24,44 @@ struct CarelogueApp: App {
 
     var body: some Scene {
         WindowGroup {
-            JourneyListView()
-                // M7 T46: the visit recorder and its bar, above every screen.
-                .visitRecordingHost()
-                .environment(\.locale, AppLanguage.locale)
-                .tint(Theme.accent)
-                // Loads the product and the current entitlement, and keeps
-                // watching for renewals and purchases from other devices (T27).
-                .task { SubscriptionService.shared.start() }
-                // T39: watch local saves (debounced push) and subscription
-                // pushes (pull), plus a pull+push on every activation.
-                .task { ShareChannel.start(context: container.mainContext) }
-                // M8 T52/T53: local reminders, re-planned after every save.
-                .task { Reminders.start(context: container.mainContext) }
-                .onChange(of: scenePhase) { _, phase in
-                    guard phase == .active else { return }
-                    Task { @MainActor in
-                        await ShareChannel.syncAll(in: container.mainContext)
-                    }
-                    // Synced edits from other devices, and a new day's doses.
-                    Task { @MainActor in await Reminders.replan() }
-                }
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-uitest-widget-gallery") {
+                WidgetGalleryView()
+            } else {
+                appRoot
+            }
+            #else
+            appRoot
+            #endif
         }
         .modelContainer(container)
+    }
+
+    private var appRoot: some View {
+        JourneyListView()
+            // M7 T46: the visit recorder and its bar, above every screen.
+            .visitRecordingHost()
+            .environment(\.locale, AppLanguage.locale)
+            .tint(Theme.accent)
+            // Loads the product and the current entitlement, and keeps
+            // watching for renewals and purchases from other devices (T27).
+            .task { SubscriptionService.shared.start() }
+            // T39: watch local saves (debounced push) and subscription
+            // pushes (pull), plus a pull+push on every activation.
+            .task { ShareChannel.start(context: container.mainContext) }
+            // M8 T52/T53: local reminders, re-planned after every save.
+            .task { Reminders.start(context: container.mainContext) }
+            // M8 T58: the widget's snapshot, and its links back in.
+            .task { WidgetPublisher.start(context: container.mainContext) }
+            .onOpenURL { AppRouter.shared.handle($0) }
+            .onChange(of: scenePhase) { _, phase in
+                guard phase == .active else { return }
+                Task { @MainActor in
+                    await ShareChannel.syncAll(in: container.mainContext)
+                }
+                // Synced edits from other devices, and a new day's doses.
+                Task { @MainActor in await Reminders.replan() }
+                WidgetPublisher.publish()
+            }
     }
 }

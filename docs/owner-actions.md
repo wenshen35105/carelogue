@@ -15,6 +15,8 @@
 
 - [ ] **CloudKit schema 部署 Production**（SwiftData 新增：`Medication` / `MedicationIntake` 两个记录类型 + `Log.reminderJSON` 等新字段）：先用 Debug 构建在登录 iCloud 的设备上跑一遍（建一条用药、给一次就诊设提醒）让 Development 自动建出字段 → CloudKit Console → Deploy Schema Changes → Production。**不部署则 TestFlight / App Store 版同步静默失败**（同 §B.6）。后续卡如有新字段会追加在本节。
 - [ ] **CKShare 记录类型更新**（T57 给共享通道的 `Log` 加了 `diastolic`；T55/T56 给 `Journey` 加了 `targetDate` / `targetLabel` / `progressStartDate` / `summaryItemsJSON`）——脚本已改为把新字段并入已有记录类型：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development → Console Deploy Schema Changes → Production（同 §B.6 子项）。不做则 1.1 共享旅程里这些新字段不同步给对方（其余正常）。
+- [ ] **Widget 签名（T58）**：developer.apple.com → Identifiers：① App Groups 建 `group.ca.carelogue.app` ② App ID `ca.carelogue.app` 勾 App Groups 并选上它 ③ 新 App ID `ca.carelogue.app.widget`（勾 App Groups，同一个 group）。Xcode 自动签名在首次真机 Run / Archive 时通常会自动完成这三步；若 Archive 报 provisioning 错误再手动做。
+- [ ] 真机复核：主屏加 Carelogue 小组件（小/中），点就诊进详情、点「记一笔」直接写随手记。
 - [ ] 真机复核：就诊提醒 / 用药提醒到点弹出、通知上「已服用」打卡（模拟器已自动验证，真机走一遍即可）。
 
 ## B. 认证过审后（按序）

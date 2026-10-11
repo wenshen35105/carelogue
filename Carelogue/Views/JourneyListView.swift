@@ -65,6 +65,10 @@ struct JourneyListView: View {
             .sheet(isPresented: $showingProfile) {
                 ProfileView()
             }
+            // M8 T58: the widget's 记一笔, over the journey it opened.
+            .sheet(item: quickNoteBinding) { journey in
+                LogEditorView(journey: journey, kind: .quick)
+            }
             .confirmationDialog(deletingJourney.map { String(localized: "删除「\($0.name)」？") } ?? "",
                                 isPresented: isDeletingBinding, titleVisibility: .visible,
                                 presenting: deletingJourney) { journey in
@@ -224,6 +228,13 @@ struct JourneyListView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    private var quickNoteBinding: Binding<Journey?> {
+        Binding(
+            get: { router.quickNoteJourney.flatMap { id in journeys.first { $0.id == id } } },
+            set: { if $0 == nil { router.quickNoteJourney = nil } }
+        )
     }
 
     private var isRenamingBinding: Binding<Bool> {
