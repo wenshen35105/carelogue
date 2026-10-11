@@ -30,12 +30,22 @@ echo "==> Exporting the Development schema"
 ck export-schema --environment development --output-file "$WORK/development.ckdb"
 cp "$WORK/development.ckdb" "$WORK/development.before.ckdb"
 
-if grep -qE 'RECORD TYPE "?Journey"? \(' "$WORK/development.ckdb"; then
-  echo "==> Share record types already in Development — nothing to import"
-else
-  echo "==> Appending Journey / Log / Artifact"
-  { cat "$WORK/development.ckdb"; echo; cat "$ADDITIONS"; } > "$WORK/development.new.ckdb"
+# The share record types are replaced whole with the repo's definitions:
+# a first run adds them, later runs add the fields new versions brought
+# (M8: Log.diastolic, Journey's summary / target fields). Fields are only
+# ever added, never removed, so the repo copy is always a superset.
+echo "==> Merging Journey / Log / Artifact from config/cloudkit/"
+python3 - "$WORK/development.ckdb" "$ADDITIONS" "$WORK/development.new.ckdb" <<'PY'
+import re, sys
+current, additions, out = (open(p, encoding="utf-8").read() if i < 2 else p for i, p in enumerate(sys.argv[1:]))
+pattern = re.compile(r'\n[ \t]*RECORD TYPE "?(Journey|Log|Artifact)"? \(.*?\n[ \t]*\);', re.S)
+kept = pattern.sub("", current).rstrip()
+open(out, "w", encoding="utf-8").write(kept + "\n\n" + additions)
+PY
 
+if diff -q "$WORK/development.ckdb" "$WORK/development.new.ckdb" >/dev/null; then
+  echo "==> Development already matches — nothing to import"
+else
   echo "==> Validating"
   ck validate-schema --environment development --file "$WORK/development.new.ckdb"
 
@@ -47,6 +57,6 @@ cat <<'NEXT'
 
 ==> Done with Development. Last step (Console only):
     CloudKit Console → iCloud.ca.carelogue.app → Development
-    → Deploy Schema Changes → confirm the three new types → Deploy to Production.
+    → Deploy Schema Changes → confirm the new types / fields → Deploy to Production.
     Then share again from the TestFlight build — no new build needed.
 NEXT
