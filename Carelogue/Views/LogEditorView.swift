@@ -42,6 +42,8 @@ struct LogEditorView: View {
     @Query(filter: #Predicate<Log> { $0.kindRaw == "encounter" }, sort: \Log.occurredAt, order: .reverse)
     private var pastVisits: [Log]
     @FocusState private var focusedVisitField: VisitField?
+    /// M8 T60: real places from Apple Maps, after the history chips.
+    @State private var places = PlaceCompleter()
 
     private enum VisitField { case location, doctor }
 
@@ -190,8 +192,12 @@ struct LogEditorView: View {
                 .focused($focusedVisitField, equals: .location)
                 .submitLabel(.next)
                 .onSubmit { focusedVisitField = .doctor }
+                .onChange(of: location) { _, text in
+                    if focusedVisitField == .location { places.update(query: text) }
+                }
             if focusedVisitField == .location {
                 suggestionRow(.location)
+                placeRows
             }
             TextField("医生", text: $doctor)
                 .focused($focusedVisitField, equals: .doctor)
@@ -284,6 +290,47 @@ struct LogEditorView: View {
                 .padding(.vertical, 2)
             }
             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+        }
+    }
+
+    /// Apple Maps places for what is typed, below the history chips. A tap
+    /// stores the place's name as plain text, same as typing it. One row
+    /// holding them all: inserting several rows at once as the field gains
+    /// focus made the Form reload the field's own cell and drop the focus.
+    @ViewBuilder
+    private var placeRows: some View {
+        let options = places.suggestions(excluding: pastVisits.compactMap(\.location), typed: location)
+        if !options.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(options) { place in
+                    Button {
+                        location = place.title
+                        places.update(query: "")
+                        focusedVisitField = .doctor
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: "mappin.circle")
+                                .foregroundStyle(Theme.accent)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(place.title)
+                                    .font(.subheadline)
+                                    .foregroundStyle(Theme.inkPrimary)
+                                if !place.subtitle.isEmpty {
+                                    Text(place.subtitle)
+                                        .font(.caption)
+                                        .foregroundStyle(Theme.inkSecondary)
+                                        .lineLimit(1)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("suggestion.place")
+                }
+            }
+            .padding(.vertical, 4)
         }
     }
 

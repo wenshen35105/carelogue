@@ -107,4 +107,26 @@ final class LogEditorUITests: CarelogueUITestCase {
         app.buttons["保存"].tap()
         waitFor(element(containing: "Dr. Patel"))
     }
+
+    /// M8 T60: typing a place offers real places from Apple Maps (needs the
+    /// network); picking one stores its name as plain text.
+    func testPlaceSuggestionsFromMaps() {
+        launch(["-uitest-reset", "-uitest-seed-upcoming"])
+        openJourney("UITest 复诊")
+        startNewLog("就诊")
+        selectChip("面诊")
+        let field = app.textFields["地点"]
+        scrollTo(field)
+        field.tap()
+        field.typeText("Mount Sinai")
+        let place = app.buttons.matching(identifier: "suggestion.place")
+            .matching(NSPredicate(format: "label CONTAINS %@", "Mount Sinai")).firstMatch
+        XCTAssertTrue(place.waitForExistence(timeout: 15), "No Apple Maps place for Mount Sinai")
+        screenshot("T60-place-suggestions")
+        place.tap()
+        let value = field.value as? String ?? ""
+        XCTAssertTrue(value.contains("Mount Sinai") && value != "Mount Sinai", "Field holds: \(value)")
+        app.buttons["保存"].tap()
+        waitFor(element(containing: value))
+    }
 }
