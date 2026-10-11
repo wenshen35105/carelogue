@@ -3,12 +3,12 @@
 ## 项目是什么
 
 Carelogue：iOS 患者就医旅程记录 app（SwiftUI + SwiftData + CloudKit）。
-当前阶段：**1.0 提审收尾（M6）+ 1.0.1 定义中（M7）**。M6（`docs/releases/1.0/m6-tasks.md`）：T39 CKShare 余 CloudKit schema 部署 + 双机联调；T41 余 ASC 侧动作（`docs/appstore-submission/metadata-fields.md` §D）；发布流程按 owner-actions（§顶部=当前阻塞）。M7（`docs/releases/1.0.1/m7-tasks.md`）：自用反馈修补批 T42–T50 代码完成（2026-10-01），余真机复核（见各卡「待真机复核」）。
+当前阶段：**1.1 开发中（M8）**——1.0 / 1.0.1 已上架（App Store 1.0.1）。M8（`docs/releases/1.1/m8-tasks.md`）：生态整合批 T51–T60（求好评 / 复诊+用药提醒 / Apple Health / Journey 概要与目标日 / 血压双值 / Widget / 随手记附件 / MapKit 地点联想），按卡内「排期建议」顺序推进；schema 变更随卡走（卡内已授权）。M7（`docs/releases/1.0.1/m7-tasks.md`）余真机复核（见各卡「待真机复核」）。
 
 ## 先读这些（按序）
 
 1. `docs/mvp-spec.md` — 功能蓝图、页面、数据模型、AI 契约（上级文档）
-2. `docs/releases/<版本>/` — 里程碑卡按发布版本归档：**1.0.1 = M7**（`releases/1.0.1/m7-tasks.md`，当前开发）；**1.0 = M1–M6**（`releases/1.0/`，M6 提审收尾中）。索引见 `docs/README.md`
+2. `docs/releases/<版本>/` — 里程碑卡按发布版本归档：**1.1 = M8**（`releases/1.1/m8-tasks.md`，当前开发）；**1.0.1 = M7**（`releases/1.0.1/`）；**1.0 = M1–M6**（`releases/1.0/`）。索引见 `docs/README.md`
 3. `docs/product-brief.md` — 定位与原则（背景）
 4. `docs/design-review.md` + `docs/design/stitch/` 三屏 PNG — UI 参照
 
