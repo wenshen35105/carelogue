@@ -16,8 +16,9 @@ struct HealthLinkSheet: View {
     @State private var working = false
     @State private var result: String?
     @State private var confirmingClaim = false
+    @State private var importStart: HealthImportStart
     #if DEBUG
-    @State private var exported: Int?
+    @State private var exported: String?
     #endif
 
     init(journey: Journey) {
@@ -25,6 +26,7 @@ struct HealthLinkSheet: View {
         let link = HealthSync.link(for: journey)
         _selected = State(initialValue: Set(link?.metrics ?? [.weight, .bloodPressure]))
         _isLinked = State(initialValue: link != nil)
+        _importStart = State(initialValue: link?.start ?? .journeyStart)
     }
 
     var body: some View {
@@ -48,6 +50,18 @@ struct HealthLinkSheet: View {
                         Text("读取哪些数据")
                     } footer: {
                         Text("只读取你勾选的类型，从这段旅程开始那天起。读到的数值会成为这段旅程里的测量记录；心率读取的是每天的静息心率。")
+                    }
+
+                    Section {
+                        Picker("从哪天开始读取", selection: $importStart) {
+                            ForEach(HealthImportStart.allCases) { option in
+                                Text(label(for: option)).tag(option)
+                            }
+                        }
+                        .disabled(isSomeoneElses)
+                        .accessibilityIdentifier("health.start")
+                    } footer: {
+                        Text("默认从这段旅程开始那天读取。旅程是后来才建的（比如孕 12 周才开始记录），可以往前多读一些。")
                     }
 
                     Section {
@@ -91,7 +105,7 @@ struct HealthLinkSheet: View {
                             Text("连接后，每次打开这段旅程都会自动带入新的读数；你在这段旅程里记录的测量也会写入你的「健康」（设置里可关）。数据只在这台设备和你自己的 iCloud 里，不经过我们的服务器。可以随时在「设置 › 健康 › 数据访问与设备」里修改权限。")
                             #if DEBUG
                             if let exported {
-                                Text(verbatim: "Exported to Health: \(exported)")
+                                Text(verbatim: exported)
                                     .accessibilityIdentifier("debug.healthExported")
                             }
                             #endif
@@ -123,8 +137,19 @@ struct HealthLinkSheet: View {
                 }
             }
             #if DEBUG
-            .task { exported = await HealthSync.exportedCount(context: modelContext) }
+            .task { exported = await HealthSync.exportedSummary(context: modelContext) }
             #endif
+        }
+    }
+
+    /// "从旅程开始（9月2日）" / "提前 3 个月（6月2日）" / "全部历史记录".
+    private func label(for option: HealthImportStart) -> String {
+        let date = option.date(journeyStart: HealthSync.start(of: journey)).map(\.shortDay)
+        switch option {
+        case .journeyStart: return String(localized: "从旅程开始（\(date ?? "")）")
+        case .threeMonthsEarlier: return String(localized: "提前 3 个月（\(date ?? "")）")
+        case .oneYearEarlier: return String(localized: "提前 1 年（\(date ?? "")）")
+        case .allHistory: return String(localized: "全部历史记录")
         }
     }
 
@@ -167,7 +192,7 @@ struct HealthLinkSheet: View {
         defer { working = false }
         do {
             let metrics = HealthMetric.allCases.filter(selected.contains)
-            let count = try await HealthSync.connect(journey, metrics: metrics, context: modelContext)
+            let count = try await HealthSync.connect(journey, metrics: metrics, start: importStart, context: modelContext)
             isLinked = true
             result = count > 0
                 ? String(localized: "已导入 \(count) 条读数。")

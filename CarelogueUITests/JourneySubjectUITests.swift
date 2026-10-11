@@ -126,6 +126,6 @@ final class JourneySubjectUITests: CarelogueUITestCase {
         openHealthSheet()
         let exported = app.staticTexts["debug.healthExported"]
         waitFor(exported)
-        XCTAssertEqual(exported.label, "Exported to Health: 1")
+        XCTAssertTrue(exported.label.hasPrefix("Exported to Health: 1"), exported.label)
     }
 }

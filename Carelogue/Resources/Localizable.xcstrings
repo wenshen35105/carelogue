@@ -9263,6 +9263,108 @@
           }
         }
       }
+    },
+    "从哪天开始读取": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read From"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从哪天开始读取"
+          }
+        }
+      }
+    },
+    "默认从这段旅程开始那天读取。旅程是后来才建的（比如孕 12 周才开始记录），可以往前多读一些。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading starts on the day this journey began. If you created the journey later (say, at week 12), you can reach further back."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认从这段旅程开始那天读取。旅程是后来才建的（比如孕 12 周才开始记录），可以往前多读一些。"
+          }
+        }
+      }
+    },
+    "从旅程开始（%@）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Journey start (%@)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从旅程开始（%@）"
+          }
+        }
+      }
+    },
+    "提前 3 个月（%@）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 months earlier (%@)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提前 3 个月（%@）"
+          }
+        }
+      }
+    },
+    "提前 1 年（%@）": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 year earlier (%@)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提前 1 年（%@）"
+          }
+        }
+      }
+    },
+    "全部历史记录": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All history"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部历史记录"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
