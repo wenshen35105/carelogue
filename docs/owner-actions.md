@@ -13,8 +13,11 @@
 
 ## 🆕 1.1（M8）提审前
 
-- [ ] **CloudKit schema 部署 Production**（SwiftData 新增：`Medication` / `MedicationIntake` 两个记录类型 + `Log.reminderJSON` 等新字段）：先用 Debug 构建在登录 iCloud 的设备上跑一遍（建一条用药、给一次就诊设提醒）让 Development 自动建出字段 → CloudKit Console → Deploy Schema Changes → Production。**不部署则 TestFlight / App Store 版同步静默失败**（同 §B.6）。后续卡如有新字段会追加在本节。
-- [ ] **CKShare 记录类型更新**（T57 给共享通道的 `Log` 加了 `diastolic`；T55/T56/T61 给 `Journey` 加了 `targetDate` / `targetLabel` / `progressStartDate` / `summaryItemsJSON` / `subjectName` / `subjectUserID`）——脚本已改为把新字段并入已有记录类型：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh` 导入 Development → Console Deploy Schema Changes → Production（同 §B.6 子项）。不做则 1.1 共享旅程里这些新字段不同步给对方（其余正常）。
+- [ ] **CloudKit schema 部署 Production（TestFlight 1.1 的前置，按序做）**——部署只增不改，**不影响已装 1.0.1 的用户**（旧版忽略不认识的字段/类型）；但**不可撤销**，所以 1.1 内 schema 定稿后不要再加字段。
+  1. Debug 构建装到登录了 iCloud 的手机 → 设置 › Internal Access ›「Initialize CloudKit schema (Development)」（一次性把私有库全部类型与字段建进 Development：`CD_Medication` / `CD_MedicationIntake`，`CD_Log` 的 `CD_diastolic` / `CD_reminderJSON` / `CD_healthSampleID`，`CD_Journey` 的目标日 / 概要 / 记录对象等字段）。光靠随手用 app 会漏掉平时为空的字段
+  2. 共享通道：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh`（把 `Log.diastolic` 与 `Journey` 的 `targetDate` / `targetLabel` / `progressStartDate` / `summaryItemsJSON` / `subjectName` / `subjectUserID` 并入已有的 `Journey` / `Log` 类型）
+  3. CloudKit Console → Development → Deploy Schema Changes：确认清单只有「新增」→ Deploy to Production
+  4. 传 1.1 TestFlight；先用 你(1.1) + 太太(1.0.1) 测一次共享旅程（她改带舒张压的血压，看你这边舒张压是否保留），再把她升到 1.1 测一次
 - [ ] **HealthKit 能力（T54）**：App ID `ca.carelogue.app` 勾 HealthKit（Xcode 自动签名首次真机 Run / Archive 时通常自动加上）。
 - [ ] **隐私政策上线（T54 前置①）**：`cd server && npm run deploy`，确认 `https://carelogue.ca/privacy` 出现「Apple 健康（HealthKit）」章节。**必须在提交 1.1 审核前完成**（HealthKit app 审核会查隐私政策）。
 - [ ] **隐私标签复核（T54 前置②）**：ASC → App Privacy。CC 结论维持 Data Not Collected（理由见 m8 T54 卡），你过目后不改即可。

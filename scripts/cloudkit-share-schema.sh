@@ -10,10 +10,11 @@
 # CloudKit Management Token → Generate. Paste it into CK_TOKEN only for this
 # command; it never needs saving.
 #
-# It exports the current Development schema, appends the three types (skipped
-# if they already exist), validates, and imports — existing types are carried
-# over untouched. Then deploy to Production in the Console (the last step
-# this script prints).
+# It exports the current Development schema, replaces the three share types
+# with the repo's definitions (adding the fields newer versions brought —
+# M8: Log.diastolic, Journey's target / summary / subject fields), validates,
+# and imports; every other type is carried over untouched. Then deploy to
+# Production in the Console (the last step this script prints).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

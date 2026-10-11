@@ -30,6 +30,8 @@ struct SettingsView: View {
     /// Mirrors the Keychain so the page redraws when the credential changes;
     /// SubscriptionService cannot observe a Keychain write.
     @State private var internalCredential = InternalAccess.credential
+    @State private var schemaInitResult: String?
+    @State private var schemaInitRunning = false
     #endif
 
     var body: some View {
@@ -409,6 +411,36 @@ struct SettingsView: View {
                     .font(.footnote)
                     .foregroundStyle(Theme.inkSecondary)
                     .fixedSize(horizontal: false, vertical: true)
+
+                SettingsDivider()
+
+                // Release prep: every private-database record type and field
+                // into the CloudKit Development schema (see CloudKitSchemaInit).
+                Button {
+                    schemaInitRunning = true
+                    Task { @MainActor in
+                        do {
+                            try CloudKitSchemaInit.run()
+                            schemaInitResult = "Done — check CloudKit Console › Development › Record Types."
+                        } catch {
+                            schemaInitResult = "Failed: \(error.localizedDescription)"
+                        }
+                        schemaInitRunning = false
+                    }
+                } label: {
+                    Text(verbatim: schemaInitRunning ? "Initializing CloudKit schema…" : "Initialize CloudKit schema (Development)")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.accent)
+                }
+                .buttonStyle(.plain)
+                .disabled(schemaInitRunning || !CloudSync.hasICloudAccount)
+                .accessibilityIdentifier("settings.initCloudKitSchema")
+                if let schemaInitResult {
+                    Text(verbatim: schemaInitResult)
+                        .font(.footnote)
+                        .foregroundStyle(Theme.inkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             .cardSurface()
         }
