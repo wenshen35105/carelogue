@@ -278,6 +278,27 @@ final class ScreenshotUITests: CarelogueUITestCase {
         waitFor(app.navigationBars["详情"])
     }
 
+    // MARK: - M8
+
+    func testM8Screens() {
+        launchDemo()
+
+        // T55 / T56 · header chips and the due-date ring.
+        openJourney(journeyName)
+        waitFor(app.descendants(matching: .any)["journey.progress"])
+        settle()
+        screenshot("T56-journey-header")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        // T53 · 用药 list with today's progress.
+        let entry = app.buttons["home.medications"]
+        scrollTo(entry)
+        entry.tap()
+        waitFor(app.descendants(matching: .any)["medications.progress"])
+        settle()
+        screenshot("T53-medications")
+    }
+
     func testDarkModeScreens() {
         launchDemo()
 

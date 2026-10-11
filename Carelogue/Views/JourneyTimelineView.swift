@@ -46,6 +46,8 @@ struct JourneyTimelineView: View {
     // T39 share entry state.
     @State private var showingShareInfo = false
     @State private var needsICloud = false
+    // M8 T55 / T56.
+    @State private var editingSummary = false
 
     private var measurements: [Log] {
         journey.allLogs.filter { $0.kind == .measurement }
@@ -96,6 +98,13 @@ struct JourneyTimelineView: View {
             header
                 .canvasListRow(top: 4, bottom: 20)
 
+            // M8 T56: only when a target day is set — otherwise the header
+            // is exactly what it was.
+            if journey.targetDate != nil {
+                JourneyProgressCard(journey: journey) { editingSummary = true }
+                    .canvasListRow(bottom: 20)
+            }
+
             if journey.allLogs.isEmpty {
                 emptyState
                     .canvasListRow()
@@ -123,6 +132,20 @@ struct JourneyTimelineView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        editingSummary = true
+                    } label: {
+                        Label("编辑概要与目标日", systemImage: "list.bullet.rectangle")
+                    }
+                    .accessibilityIdentifier("timeline.editSummary")
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                .accessibilityLabel(String(localized: "更多"))
+                .accessibilityIdentifier("timeline.more")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: openShare) {
                     Image(systemName: journey.isShared ? "person.2.fill" : "person.2")
                 }
@@ -141,6 +164,9 @@ struct JourneyTimelineView: View {
         }
         .sheet(isPresented: $showingChart) {
             MeasurementChartView(journey: journey, initialType: effectiveMeasurementFilter)
+        }
+        .sheet(isPresented: $editingSummary) {
+            JourneySummaryEditor(journey: journey)
         }
         .sheet(isPresented: $showingShareInfo) {
             ShareInfoSheet(journey: journey)
@@ -188,6 +214,9 @@ struct JourneyTimelineView: View {
             Text("\(journey.template.displayName) · 始于 \(journey.createdAt.yearMonth) · 共 \(journey.allLogs.count) 条记录")
                 .font(.footnote)
                 .foregroundStyle(Theme.inkSecondary)
+            // M8 T55: target + summary chips; nothing at all when empty.
+            JourneySummaryChips(journey: journey) { editingSummary = true }
+                .padding(.top, 2)
         }
     }
 

@@ -90,6 +90,24 @@ final class LocalizationUITests: CarelogueUITestCase {
         screenshot("T52-en-visit-editor")
     }
 
+    /// M8 T55 / T56: the summary editor and the header, in English.
+    func testEnglishJourneySummaryHasNoChineseCopy() {
+        language = "en"
+        launch(["-uitest-reset", "-uitest-seed-upcoming"])
+        app.staticTexts["UITest 复诊"].tap()
+        app.buttons["timeline.more"].tap()
+        app.buttons["timeline.editSummary"].tap()
+        let toggle = app.switches["summary.targetToggle"]
+        waitFor(toggle)
+        flip(toggle)
+        waitFor(app.textFields["summary.targetLabel"])
+        assertNoChinese(on: "Summary editor")
+        app.buttons["summary.save"].tap()
+        waitFor(element(containing: "days to go"))
+        assertNoChinese(on: "Timeline header")
+        screenshot("T56-en-header")
+    }
+
     func testEnglishSettingsHaveNoChineseCopy() {
         language = "en"
         launch(["-uitest-reset"])

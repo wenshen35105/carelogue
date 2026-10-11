@@ -269,6 +269,15 @@ enum UITestSupport {
         // 1. The running pregnancy Journey.
         let pregnancy = Journey(name: demoJourneyName, template: .pregnancy,
                                 createdAt: day(-84), updatedAt: day(-1, hour: 22, minute: 15))
+        // M8 T55 / T56: 14 weeks along (the visit summary below says so),
+        // due 26 weeks from now.
+        pregnancy.targetDate = day(182)
+        pregnancy.targetLabel = l("预产期", "Due date")
+        pregnancy.progressStartDate = day(-98)
+        pregnancy.summaryItems = [
+            JourneySummaryItem(key: l("血型", "Blood type"), value: "O+"),
+            JourneySummaryItem(key: l("产科医生 OB", "OB"), value: "Dr. Chen"),
+        ]
         context.insert(pregnancy)
 
         add(Log(kind: .encounter, type: "体检", occurredAt: day(11),
@@ -382,6 +391,24 @@ enum UITestSupport {
                        "2019 lower-right wisdom tooth extraction, no complications. No chronic conditions."),
             updatedAt: day(-30)
         ))
+
+        // 4. Medication plans (M8 T53), as in the Stitch board: three for
+        //    the pregnancy, one standalone that was taken this morning.
+        let plans: [(String, String, Int, Journey?)] = [
+            (l("叶酸片", "Folic acid"), "5 mg", 8 * 60, pregnancy),
+            (l("爱乐维 复合维生素", "Elevit Pronatal"), l("1 片", "1 tablet"), 12 * 60 + 30, pregnancy),
+            (l("缓释铁剂", "Iron supplement"), "150 mg", 21 * 60, pregnancy),
+            (l("钙片 + 维生素 D3", "Calcium + D3"), "600 mg", 7 * 60 + 30, nil),
+        ]
+        for (index, plan) in plans.enumerated() {
+            let medication = Medication(name: plan.0, dose: plan.1, reminderMinutes: [plan.2],
+                                        journeyID: plan.3?.id, createdAt: day(-60 + index))
+            context.insert(medication)
+            if plan.3 == nil {
+                medication.record(.taken, day: .now, slot: plan.2, context: context)
+                medication.allIntakes.first?.recordedAt = day(0, hour: 7, minute: 45)
+            }
+        }
     }
 
     /// A cached explanation for the seeded lab report: the same shape

@@ -36,6 +36,21 @@ final class Journey {
     var createdAt: Date = Date.now
     var updatedAt: Date = Date.now
 
+    // MARK: - Summary and target (M8 T55 / T56)
+    //
+    // Generic on purpose: no pregnancy fields. A template only *suggests*
+    // values (预产期 as the target's name, 血型 as a summary key); what is
+    // stored is always a plain name, date or key/value pair.
+    //
+    //   targetDate         the day the journey heads for (due date, surgery…)
+    //   targetLabel        what the user calls that day
+    //   progressStartDate  where the progress ring starts; nil = createdAt
+    //   summaryItemsJSON   [{key, value}] chips under the title
+    var targetDate: Date? = nil
+    var targetLabel: String? = nil
+    var progressStartDate: Date? = nil
+    var summaryItemsJSON: String? = nil
+
     // MARK: - CKShare metadata (T39, route B)
     //
     // All optional-with-defaults so the migration stays additive (schema

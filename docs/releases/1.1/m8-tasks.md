@@ -64,6 +64,7 @@
   - Journey 的自定义 **key-value 概要项（chips）**：任意 journey 可加/改/删；展示在 journey 头部。
   - **孕期作为第一套预设模板**：预填「预产期 / 血型 / OB」等——机制通用，内容随模板。
 - **验收**：任意 journey 可管理概要项；头部 chip 正常显示；中英。
+- **✅ 代码完成（2026-10-11，与 T56 同批）**：Journey 新增 `summaryItemsJSON`（schema 新增，可选）；时间线右上「…」→「编辑概要与目标日」sheet：概要项增删改（key/value 行 + 模板空槽一键添加，如孕期「+ 血型」「+ 产科医生 OB」）；头部标题行下显示 chips（目标日 chip 在前），点 chip 也进编辑。只存有 key 且有内容的项。**老 journey 不迁移**，字段全空时头部与 1.0.1 完全一致。CKShare 通道同步这些字段（ckdb 已加，见 owner-actions）。UI 测试 `JourneySummaryUITests` + 英文 `LocalizationUITests.testEnglishJourneySummaryHasNoChineseCopy`。
 
 ## T56 · 目标日与进度（通用机制；孕周 tracker 的 generic 化）
 
@@ -74,6 +75,8 @@
 - **验收**：设目标日期后头部出现进度；清除后消失；无目标日期的 journey 不受影响。
 - **设计稿（2026-10-11）**：`docs/design/stitch/m8-journey-header/screen.png`。头部结构 = 标题 + 元数据 chips（预产期/血型/OB…动态）+ 目标日进度环（示例 "65% · 还剩 98 天 · 第 26 周"）+ 其下接现有时间线。
   - 实现注意：稿中"宝贝约 36cm · 760g · 胎动规律"属**孕期内容层**（T56 ②，v1.1 不做）；chips 为动态数据，示例仅示意。
+- **✅ 代码完成（2026-10-11）**：Journey 新增 `targetDate` / `targetLabel` / `progressStartDate`（可选）；设了目标日 → 头部进度卡（进度环 % + 「第 N 周」+「还剩 N 天 / 就是今天 / 已过 N 天」+ 目标名·日期），清除即消失。模板只给建议：孕期目标名「预产期」、起点 = 预产期 − 40 周（手动改过起点后不再跟随）；拔牙「拔牙日/复查日」；自定义「手术日/复查日/目标日」，起点默认创建日（只在与创建日不同时才存）。截图 `T56-journey-header`（demo 数据：孕 14 周、还剩 182 天）、`T56-custom`。
+  - CC 自定：「第 N 周」= 起点后**已满**周数（182 天 = 第 26 周，与设计稿口径一致），不满 1 周不显示；目标日已过后不显示周数。
 
 ## T57 · 血压双值（收缩压 / 舒张压）
 

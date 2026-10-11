@@ -79,6 +79,10 @@ enum ShareChannel {
         static let name = "name"
         static let templateRaw = "templateRaw"
         static let statusRaw = "statusRaw"
+        static let targetDate = "targetDate"
+        static let targetLabel = "targetLabel"
+        static let progressStartDate = "progressStartDate"
+        static let summaryItemsJSON = "summaryItemsJSON"
         static let type = "type"
         static let kindRaw = "kindRaw"
         static let occurredAt = "occurredAt"
@@ -100,7 +104,7 @@ enum ShareChannel {
 
         /// Everything except the binary — what pull and diff fetches ask for.
         static let metadataKeys: [CKRecord.FieldKey] = [
-            name, templateRaw, statusRaw, type, kindRaw, occurredAt, note, location, doctor,
+            name, templateRaw, statusRaw, targetDate, targetLabel, progressStartDate, summaryItemsJSON, type, kindRaw, occurredAt, note, location, doctor,
             value, unit, diastolic, visitSummaryJSON, questionsJSON, fileName, mime, aiExplainJSON,
             transcript, createdAt, updatedAt,
         ]
@@ -247,6 +251,10 @@ enum ShareChannel {
         record[Field.name] = journey.name
         record[Field.templateRaw] = journey.templateRaw
         record[Field.statusRaw] = journey.statusRaw
+        record[Field.targetDate] = journey.targetDate
+        record[Field.targetLabel] = journey.targetLabel
+        record[Field.progressStartDate] = journey.progressStartDate
+        record[Field.summaryItemsJSON] = journey.summaryItemsJSON
         record[Field.createdAt] = journey.createdAt
         record[Field.updatedAt] = journey.updatedAt
     }
@@ -813,6 +821,10 @@ enum ShareChannel {
         journey.name = record[Field.name] as? String ?? journey.name
         journey.templateRaw = record[Field.templateRaw] as? String ?? journey.templateRaw
         journey.statusRaw = record[Field.statusRaw] as? String ?? journey.statusRaw
+        journey.targetDate = record[Field.targetDate] as? Date
+        journey.targetLabel = record[Field.targetLabel] as? String
+        journey.progressStartDate = record[Field.progressStartDate] as? Date
+        journey.summaryItemsJSON = record[Field.summaryItemsJSON] as? String
         journey.createdAt = record[Field.createdAt] as? Date ?? journey.createdAt
         journey.updatedAt = record[Field.updatedAt] as? Date ?? journey.updatedAt
     }
