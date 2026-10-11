@@ -48,6 +48,8 @@ struct JourneyTimelineView: View {
     @State private var needsICloud = false
     // M8 T55 / T56.
     @State private var editingSummary = false
+    // M8 T54.
+    @State private var showingHealth = false
 
     private var measurements: [Log] {
         journey.allLogs.filter { $0.kind == .measurement }
@@ -139,6 +141,14 @@ struct JourneyTimelineView: View {
                         Label("编辑概要与目标日", systemImage: "list.bullet.rectangle")
                     }
                     .accessibilityIdentifier("timeline.editSummary")
+                    if HealthSync.isAvailable {
+                        Button {
+                            showingHealth = true
+                        } label: {
+                            Label("Apple 健康", systemImage: "heart.text.square")
+                        }
+                        .accessibilityIdentifier("timeline.health")
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
@@ -168,6 +178,11 @@ struct JourneyTimelineView: View {
         .sheet(isPresented: $editingSummary) {
             JourneySummaryEditor(journey: journey)
         }
+        .sheet(isPresented: $showingHealth) {
+            HealthLinkSheet(journey: journey)
+        }
+        // M8 T54: a linked journey picks up new Health readings on open.
+        .task { await HealthSync.importNew(into: journey, context: modelContext) }
         .sheet(isPresented: $showingShareInfo) {
             ShareInfoSheet(journey: journey)
         }

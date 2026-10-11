@@ -14,6 +14,8 @@ extension ModelContext {
     /// (log == nil) behind, so attachments are removed explicitly. The Log is
     /// also removed from `journey.logs` so views observing the Journey refresh.
     func deleteLog(_ log: Log) {
+        // M8 T54: the copy Carelogue wrote into Apple Health goes too.
+        HealthSync.willDelete(log)
         for artifact in log.removeAllArtifacts() {
             delete(artifact)
         }

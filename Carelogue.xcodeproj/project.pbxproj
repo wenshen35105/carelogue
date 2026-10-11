@@ -408,6 +408,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Carelogue;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo of a lab report or record to attach it. Photos stay on this device.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Bring the weight, blood pressure, heart rate and temperature readings you choose into a journey's timeline. They stay on this device and in your private iCloud.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Save the measurements you record in Carelogue to Apple Health. You can turn this off in Settings.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record your own appointment so you can review it at home. Recordings stay on this device and in your private iCloud.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Turn your recording into text on this device, so the notes can be tidied up without the audio ever leaving.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -462,6 +464,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Carelogue;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take a photo of a lab report or record to attach it. Photos stay on this device.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Bring the weight, blood pressure, heart rate and temperature readings you choose into a journey's timeline. They stay on this device and in your private iCloud.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Save the measurements you record in Carelogue to Apple Health. You can turn this off in Settings.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record your own appointment so you can review it at home. Recordings stay on this device and in your private iCloud.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Turn your recording into text on this device, so the notes can be tidied up without the audio ever leaving.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

@@ -70,7 +70,7 @@ enum LogTypePreset {
     static let quick = ["症状", "情绪", "备注"]
     /// Measurement presets with their default unit; 自定义 = user-named type.
     static let measurement: [(name: String, unit: String)] = [
-        ("体重", "kg"), ("血压", "mmHg"), ("体温", "°C"), ("自定义", "")
+        ("体重", "kg"), ("血压", "mmHg"), ("心率", "bpm"), ("体温", "°C"), ("自定义", "")
     ]
     static let custom = "自定义"
     /// The one type recorded as two readings (M8 T57).
@@ -89,6 +89,7 @@ enum LogTypePreset {
         case "体重": return String(localized: "体重")
         case "血压": return String(localized: "血压")
         case "体温": return String(localized: "体温")
+        case "心率": return String(localized: "心率")
         case "自定义": return String(localized: "自定义")
         case "": return String(localized: "未命名")
         default: return raw

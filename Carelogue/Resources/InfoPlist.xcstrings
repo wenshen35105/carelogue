@@ -78,6 +78,42 @@
           }
         }
       }
+    },
+    "NSHealthShareUsageDescription": {
+      "comment": "Health read permission prompt (M8 T54)",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bring the weight, blood pressure, heart rate and temperature readings you choose into a journey's timeline. They stay on this device and in your private iCloud."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把你选择的体重、血压、心率、体温读数带进旅程时间线。它们只存在这台设备和你自己的 iCloud 里。"
+          }
+        }
+      }
+    },
+    "NSHealthUpdateUsageDescription": {
+      "comment": "Health write permission prompt (M8 T54)",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save the measurements you record in Carelogue to Apple Health. You can turn this off in Settings."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把你在 Carelogue 记录的测量写入 Apple 健康。可以在设置里关闭。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

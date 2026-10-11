@@ -8668,6 +8668,278 @@
           }
         }
       }
+    },
+    "心率": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart Rate"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "心率"
+          }
+        }
+      }
+    },
+    "读取哪些数据": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What to read"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读取哪些数据"
+          }
+        }
+      }
+    },
+    "只读取你勾选的类型，从这段旅程开始那天起。读到的数值会成为这段旅程里的测量记录；心率读取的是每天的静息心率。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only the types you tick, from the day this journey started. Readings become measurements in this journey; heart rate is the daily resting rate."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只读取你勾选的类型，从这段旅程开始那天起。读到的数值会成为这段旅程里的测量记录；心率读取的是每天的静息心率。"
+          }
+        }
+      }
+    },
+    "更新并立即同步": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update and Sync Now"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更新并立即同步"
+          }
+        }
+      }
+    },
+    "连接并导入": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect and Import"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连接并导入"
+          }
+        }
+      }
+    },
+    "停止读取": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop Reading"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止读取"
+          }
+        }
+      }
+    },
+    "已停止读取。已经导入的记录保留在旅程里。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopped. Readings already imported stay in the journey."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已停止读取。已经导入的记录保留在旅程里。"
+          }
+        }
+      }
+    },
+    "这台设备不支持 Apple 健康。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health isn't available on this device."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这台设备不支持 Apple 健康。"
+          }
+        }
+      }
+    },
+    "连接后，每次打开这段旅程都会自动带入新的读数。数据只在这台设备和你自己的 iCloud 里，不经过我们的服务器。可以随时在「设置 › 健康 › 数据访问与设备」里修改权限。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Once connected, new readings come in each time you open this journey. They stay on this device and in your own iCloud, never on our servers. Change access any time in Settings › Health › Data Access & Devices."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连接后，每次打开这段旅程都会自动带入新的读数。数据只在这台设备和你自己的 iCloud 里，不经过我们的服务器。可以随时在「设置 › 健康 › 数据访问与设备」里修改权限。"
+          }
+        }
+      }
+    },
+    "Apple 健康": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 健康"
+          }
+        }
+      }
+    },
+    "Apple Health": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health"
+          }
+        }
+      }
+    },
+    "已导入 %lld 条读数。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imported %lld readings."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已导入 %lld 条读数。"
+          }
+        }
+      }
+    },
+    "已连接，暂时没有新的读数。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected — no new readings yet."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已连接，暂时没有新的读数。"
+          }
+        }
+      }
+    },
+    "写入 Apple 健康": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save to Apple Health"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写入 Apple 健康"
+          }
+        }
+      }
+    },
+    "在 Carelogue 记录的体重、血压、心率、体温，同时保存到「健康」App。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weight, blood pressure, heart rate and temperature recorded in Carelogue are also saved to the Health app."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在 Carelogue 记录的体重、血压、心率、体温，同时保存到「健康」App。"
+          }
+        }
+      }
+    },
+    "读取在每段旅程里单独开启：旅程右上角「…」› Apple 健康。": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading is turned on per journey: the journey's … menu › Apple Health."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读取在每段旅程里单独开启：旅程右上角「…」› Apple 健康。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

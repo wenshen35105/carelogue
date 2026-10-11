@@ -566,6 +566,11 @@ struct LogEditorView: View {
             applyAttachmentChanges(to: log)
         }
         try? modelContext.save()
+        if kind == .measurement {
+            // M8 T54: mirror into Apple Health (when allowed).
+            let context = modelContext
+            Task { await HealthSync.didSave(log, context: context) }
+        }
         if existingLog == nil {
             ReviewPrompt.newRecordSaved(logCount: (try? modelContext.fetchCount(FetchDescriptor<Log>())) ?? 0)
         }

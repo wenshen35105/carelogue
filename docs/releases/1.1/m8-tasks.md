@@ -56,6 +56,10 @@
     2. 隐私标签复核（数据仅设备上处理、不进服务器——"不收集"结论大概率维持，但要重走一遍）；
     3. 权限文案 + 选择性授权（只读用户勾选的类型）。
 - **验收**：授权后 Health 里已有的体重出现在时间线；拒绝授权不影响其他功能；写回开关可关。
+- **✅ 代码完成（2026-10-11）**：`Services/HealthSync.swift` + `Views/HealthLinkSheet.swift`。旅程「…」→「Apple 健康」：勾选体重/血压/心率/体温（默认体重+血压）→「连接并导入」→ 系统授权页**只请求读取勾选的类型**（写入：写回开启时请求四类）→ 导入旅程起点（T56 起点，否则创建日）至今的读数成为该旅程的测量记录；之后每次打开该旅程自动增量导入；「停止读取」保留已导入记录。去重 = 新字段 `Log.healthSampleID`（`in:`/`out:` + HealthKit UUID，跨旅程、不进 CKShare）。写回：设置 › Apple 健康 ›「写入 Apple 健康」（默认开）——在 Carelogue 保存的四类测量写入「健康」，编辑即替换、删除即移除；从「健康」导入的读数不回写；无写权限时静默跳过、不弹窗。新增测量预设「心率」(bpm)。心率读取**每日静息心率**（原始心率每天上千条会淹没时间线）。
+  - 验证：`HealthUITests`（模拟器真实 HealthKit：授权页 → 导入 3 条体重 + 1 条血压 → 再连接不重复 → 新建体重写入「健康」→ 删除后「健康」里也没了），英文 `testEnglishHealthSheetHasNoChineseCopy`；拒绝授权路径：读取被拒时 HealthKit 只返回空结果（系统设计，不暴露是否被拒），导入 0 条、不影响其他功能。
+  - **前置三项**：① 隐私政策已加 HealthKit 章节（+ 提醒 / Apple 地图联想 / 小组件），`docs/legal/privacy-policy.md`，生效日期改为 2026/10/11，server 测试 63/63 通过——**线上需老板 `cd server && npm run deploy`**；② 隐私标签复核（CC 结论）：健康读数只在设备 + 用户自己的 iCloud 私有库，不传给开发者/第三方；地点联想的查询词发给 Apple 自家服务；Widget 数据在本机 App Group——按 Apple「收集 = 传出设备且开发者/第三方可访问」口径，**维持 Data Not Collected**，老板在 ASC 过目确认即可；③ 权限文案（`NSHealthShareUsageDescription` / `NSHealthUpdateUsageDescription`，中英）+ 选择性授权 ✅。
+  - ⚠️ **提审风险（需老板知悉/决定）**：App Review Guideline 5.1.3(ii) 写明「may not store personal health information in iCloud」。Carelogue 1.0 已把健康记录存在用户 iCloud 私有库并已过审；接入 HealthKit 后审核通常更严，**从「健康」导入的读数同样会随 CloudKit 同步**。若被拒，可选方案：(a) 导入的读数只存本机（需一个不同步的独立 store，改动较大）；(b) 只做写回、不做读取。本批按卡片方案实现，未做规避。
 
 ## T55 · Journey 元数据（通用概要项）
 

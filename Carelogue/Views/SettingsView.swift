@@ -41,6 +41,7 @@ struct SettingsView: View {
                 internalAccessSection
                 #endif
                 remindersSection
+                healthSection
                 aiSection
                 privacySection
                 dataSection
@@ -156,6 +157,38 @@ struct SettingsView: View {
                     plannedReminders = Reminders.lastPlan
                 }
             #endif
+        }
+    }
+
+    // MARK: - Apple 健康 (M8 T54)
+
+    @AppStorage(HealthSync.writeBackKey) private var healthWriteBack = true
+
+    private var healthSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SettingsSectionHeader(icon: "heart.text.square", title: String(localized: "Apple 健康"),
+                                  gloss: AppLanguage.gloss(String(localized: "Apple Health")))
+            VStack(spacing: 0) {
+                Toggle(isOn: $healthWriteBack) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("写入 Apple 健康")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Theme.inkPrimary)
+                        Text("在 Carelogue 记录的体重、血压、心率、体温，同时保存到「健康」App。")
+                            .font(.footnote)
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                }
+                .tint(Theme.accent)
+                .padding(.vertical, 14)
+                .accessibilityIdentifier("settings.healthWriteBack")
+            }
+            .padding(.horizontal, Theme.Spacing.cardPadding)
+            .cardSurface(padding: 0)
+            Label("读取在每段旅程里单独开启：旅程右上角「…」› Apple 健康。", systemImage: "info.circle")
+                .font(.caption)
+                .foregroundStyle(Theme.inkSecondary)
+                .padding(.horizontal, 4)
         }
     }
 

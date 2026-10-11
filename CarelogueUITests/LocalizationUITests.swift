@@ -117,6 +117,17 @@ final class LocalizationUITests: CarelogueUITestCase {
         screenshot("T58-en-widget")
     }
 
+    /// M8 T54: the Apple Health sheet in English.
+    func testEnglishHealthSheetHasNoChineseCopy() {
+        language = "en"
+        launch(["-uitest-reset", "-uitest-seed-upcoming"])
+        app.staticTexts["UITest 复诊"].tap()
+        app.buttons["timeline.more"].tap()
+        app.buttons["timeline.health"].tap()
+        waitFor(app.navigationBars["Apple Health"])
+        assertNoChinese(on: "Apple Health sheet")
+    }
+
     func testEnglishSettingsHaveNoChineseCopy() {
         language = "en"
         launch(["-uitest-reset"])

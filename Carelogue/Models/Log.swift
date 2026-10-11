@@ -44,6 +44,11 @@ final class Log {
     /// of the CKShare channel, so a shared visit doesn't buzz everyone.
     var reminderJSON: String? = nil
 
+    /// Measurement-only (M8 T54): this reading's twin in Apple Health.
+    /// "in:<uuid>" = imported from Health; "out:<uuid>" = written there by
+    /// Carelogue. Device-local meaning, so not part of the CKShare channel.
+    var healthSampleID: String? = nil
+
     var createdAt: Date = Date.now
     var updatedAt: Date = Date.now
 

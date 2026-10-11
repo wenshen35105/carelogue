@@ -1,6 +1,6 @@
 # Carelogue 隐私政策 · Privacy Policy
 
-- **生效日期 Effective date**：2026/09/25
+- **生效日期 Effective date**：2026/10/11（1.1 起：Apple 健康、提醒、地点联想、小组件 · From 1.1: Apple Health, reminders, place suggestions, widget）
 - **运营方 Operator**：Jiajin Lin · Canada · Ontario
 - **联系方式 Contact**：support@carelogue.ca
 
@@ -25,6 +25,7 @@ iCloud 里；只有在你主动点击「白话解释」时，这份报告里**�
 | 附件（照片、PDF、录音） | 同上 | 同上 |
 | 档案（过敏、长期用药等） | 同上 | 只有你 |
 | AI 解释结果 | 同上（缓存在本机记录里） | 只有你 |
+| 用药计划与打卡记录 | 同上 | 只有你（不随旅程共享） |
 
 iCloud 同步由 Apple 提供，适用 Apple 的隐私政策；数据存放在你个人的 iCloud 私有
 数据库中，我们无法读取。
@@ -40,6 +41,29 @@ iCloud 同步由 Apple 提供，适用 Apple 的隐私政策；数据存放在�
 - 受邀者和你一样可以查看与编辑；两边同时改同一条记录时，保留较新的一条。
 - 任何一方都可以停止共享。停止后，对方设备上已有的副本会保留，但不再更新。
 - 你清空或删除本机数据，不影响对方设备上已有的副本。
+
+### Apple 健康（HealthKit）
+
+Carelogue 可以与 Apple「健康」交换四类测量：体重、血压、心率、体温。
+
+- **读取**：只在你为某段旅程打开「Apple 健康」并勾选类型后进行，而且只读你勾选的
+  类型、只读这段旅程开始之后的数据（心率读取每日静息心率）。读到的数值会成为这段
+  旅程里的测量记录，和你手动记录的测量一样存在你的设备和你自己的 iCloud 私有库。
+- **写入**：你在 Carelogue 记录的这四类测量会同时写入「健康」（设置 › Apple 健康，
+  默认开启，可关闭）；在 Carelogue 删除记录，它写入的那条也会从「健康」删除。
+- **不会离开你的设备与 iCloud**：来自「健康」的数据不会发送给我们的服务器、AI 服
+  务或任何第三方，不用于广告、营销或数据挖掘，也不会出售。AI 解释只针对你主动选择
+  的报告附件，不包含来自「健康」的读数。
+- 权限可以随时在 iOS「设置 › 健康 › 数据访问与设备」里修改或撤销。
+
+### 提醒、地点联想与小组件
+
+- **提醒**（就诊提醒、用药提醒）是只在本机安排的系统通知，不经过任何服务器。用药
+  提醒只提醒你自己设置的计划，不提供用药建议。
+- **地点联想**：填写就诊地点时，你输入的文字会发给 Apple 地图以联想真实地点（适用
+  Apple 的隐私政策）；不包含记录里的任何其他内容。不联网时只使用你自己的历史记录。
+- **主屏小组件**显示的内容（下次就诊、最近一条记录）由 App 写在本机的共享区域，只
+  有你的设备能读取。
 
 ### 使用 AI 解释时会发生什么
 
@@ -116,6 +140,7 @@ no account system; there is nothing to sign up for.
 | Attachments (photos, PDFs, recordings) | Same | Same |
 | Profile (allergies, medications, …) | Same | Only you |
 | AI explanations | Same (cached with the record) | Only you |
+| Medication plans and check-ins | Same | Only you (never shared with a journey) |
 
 iCloud syncing is provided by Apple under Apple's privacy policy; the data sits
 in your personal private database, which we cannot read.
@@ -137,6 +162,39 @@ signed in to iCloud). Notes:
   there but stops updating.
 - Erasing your local data (or deleting the app) does not remove copies already
   on the other person's device.
+
+### Apple Health (HealthKit)
+
+Carelogue can exchange four kinds of measurement with Apple Health: weight,
+blood pressure, heart rate and body temperature.
+
+- **Reading** happens only after you turn on Apple Health for a journey and tick
+  the types — only those types, and only from the journey's start (heart rate
+  is the daily resting rate). Readings become measurements in that journey,
+  stored like the ones you enter yourself: on your device and in your own
+  private iCloud database.
+- **Writing**: the measurements of those four kinds you record in Carelogue are
+  also saved to Health (Settings › Apple Health; on by default, can be turned
+  off). Deleting a record in Carelogue removes the copy it wrote to Health.
+- **It never leaves your device and iCloud**: data from Health is not sent to
+  our servers, to the AI service or to anyone else; it is not used for
+  advertising, marketing or data mining, and it is never sold. AI explanations
+  cover only the report attachments you choose, never Health readings.
+- Change or revoke access at any time in iOS Settings › Health › Data Access &
+  Devices.
+
+### Reminders, place suggestions and the widget
+
+- **Reminders** (visits and medications) are system notifications scheduled on
+  your device; no server is involved. Medication reminders only follow the plan
+  you set up and give no medication advice.
+- **Place suggestions**: while you type a visit's location, the text you type is
+  sent to Apple Maps to suggest real places (under Apple's privacy policy);
+  nothing else from the record is included. Offline, only your own history is
+  used.
+- The **home-screen widget** shows content (your next visit, your latest
+  record) that the app writes to a shared area on your device; only your
+  device can read it.
 
 ### What happens when you use an AI explanation
 
