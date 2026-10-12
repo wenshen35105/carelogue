@@ -36,7 +36,7 @@
 | 主 / 副类别 | 主：Health & Fitness；副：Medical | 📝 建议 |
 | 年龄分级 | 按问卷照实——**逐题答案见下方「年龄分级问卷」** | ⏳ 填问卷 |
 | App Privacy（隐私标签） | **Data Not Collected**——逐项复核：无追踪、无第三方 SDK、AI 转发=实时处理不留存；1.0 共享功能不改变结论（走用户自己的 iCloud，不经我们）；与 `docs/legal/` 隐私政策一致（2026/09/25 已补「共享功能」章节） | ✅ 2026-09-25 已填（owner-actions B.4「隐私问卷」） |
-| 价格与地区 | ✅ **已设（2026-09-25）：仅 United States + Canada**——白名单方式（比全选减中国更稳：避开欧盟 DSA、韩国分级、巴西评级等合规填报；扩展随时可改、无需重审）。Price Schedule 保持 Free，收费走订阅 | ✅ 已办 |
+| 价格与地区 | ✅ **已设：United States + Canada（2026-09-25）；2026-10-11 扩展 + 英国、澳大利亚、新西兰、新加坡、马来西亚**（白名单方式；**欧盟仍未开**——绕开 DSA trader 公开地址/电话要求；扩展无需重审）。留意：AU 年龄分级 2026-06 新体系，勾选时看 ASC 有无确认提示；SG/AU 的 18+ age assurance 与 16+ 评级无关。Price Schedule 保持 Free，收费走订阅 | ✅ 已办 |
 | 订阅产品 | `ca.carelogue.app.plus.monthly`（$3.99/月、首周免费、Family Sharing 开、multiseat No）——**首次须随版本提交**（版本页勾选）。⚠️ 仓库里的 `Carelogue.storekit` 只是 UI 测试夹具（无试用期、无家庭共享）；「首周免费 + 家庭共享」要在 **ASC 订阅配置里真的开**，否则改文案（见 review-notes 警示） | ✅ 已办 |
 
 ## B2. 年龄分级问卷答案（ASC · App Information → Age Ratings）
