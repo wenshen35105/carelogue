@@ -13,19 +13,19 @@
 
 ## 🆕 1.1（M8）提审前
 
-- [ ] **CloudKit schema 部署 Production（TestFlight 1.1 的前置，按序做）**——部署只增不改，**不影响已装 1.0.1 的用户**（旧版忽略不认识的字段/类型）；但**不可撤销**，所以 1.1 内 schema 定稿后不要再加字段。
+- [x] **CloudKit schema 部署 Production（TestFlight 1.1 的前置，按序做）**——部署只增不改，**不影响已装 1.0.1 的用户**（旧版忽略不认识的字段/类型）；但**不可撤销**，所以 1.1 内 schema 定稿后不要再加字段。
   1. Debug 构建装到登录了 iCloud 的手机 → 设置 › Internal Access ›「Initialize CloudKit schema (Development)」（一次性把私有库全部类型与字段建进 Development：`CD_Medication` / `CD_MedicationIntake`，`CD_Log` 的 `CD_diastolic` / `CD_reminderJSON` / `CD_healthSampleID`，`CD_Journey` 的目标日 / 概要 / 记录对象等字段）。光靠随手用 app 会漏掉平时为空的字段
   2. 共享通道：`CK_TOKEN=<管理 token> scripts/cloudkit-share-schema.sh`（把 `Log.diastolic` 与 `Journey` 的 `targetDate` / `targetLabel` / `progressStartDate` / `summaryItemsJSON` / `subjectName` / `subjectUserID` 并入已有的 `Journey` / `Log` 类型）
   3. CloudKit Console → Development → Deploy Schema Changes：确认清单只有「新增」→ Deploy to Production
   - **2026-10-11 diff 复核（CC）**：纯新增，可部署。顺带发现 **Production 自 9/26 起缺 `CD_Profile` 整个类型、`CD_Log.CD_questionsJSON`、`CD_Artifact.CD_transcript`**（9/26 部署前 Debug 里没用到这三项）→ 1.0 / 1.0.1 用户在**自己多台设备间**同步档案、「我的疑问」、录音转写一直静默失败（共享通道不受影响，它的类型里有这些字段）。本次部署会一并补上，1.0.1 用户无需更新 app 即生效。
   4. 传 1.1 TestFlight；先用 你(1.1) + 太太(1.0.1) 测一次共享旅程（她改带舒张压的血压，看你这边舒张压是否保留），再把她升到 1.1 测一次
-- [ ] **HealthKit 能力（T54）**：App ID `ca.carelogue.app` 勾 HealthKit（Xcode 自动签名首次真机 Run / Archive 时通常自动加上）。
-- [ ] **隐私政策上线（T54 前置①）**：`cd server && npm run deploy`，确认 `https://carelogue.ca/privacy` 出现「Apple 健康（HealthKit）」章节。**必须在提交 1.1 审核前完成**（HealthKit app 审核会查隐私政策）。
-- [ ] **隐私标签复核（T54 前置②）**：ASC → App Privacy。CC 结论维持 Data Not Collected（理由见 m8 T54 卡），你过目后不改即可。
-- [ ] **知悉提审风险**：Guideline 5.1.3(ii)「不可把个人健康信息存 iCloud」——见 m8 T54 卡「提审风险」，被拒时的两个备选方案已写好。审核备注建议补一句：HealthKit 只读用户为某段旅程勾选的类型、数据不出设备与用户自己的 iCloud、不用于广告。
-- [ ] **Widget 签名（T58）**：developer.apple.com → Identifiers：① App Groups 建 `group.ca.carelogue.app` ② App ID `ca.carelogue.app` 勾 App Groups 并选上它 ③ 新 App ID `ca.carelogue.app.widget`（勾 App Groups，同一个 group）。Xcode 自动签名在首次真机 Run / Archive 时通常会自动完成这三步；若 Archive 报 provisioning 错误再手动做。
-- [ ] 真机复核：主屏加 Carelogue 小组件（小/中），点就诊进详情、点「记一笔」直接写随手记。
-- [ ] 真机复核：就诊提醒 / 用药提醒到点弹出、通知上「已服用」打卡（模拟器已自动验证，真机走一遍即可）。
+- [x] **HealthKit 能力（T54）**：App ID `ca.carelogue.app` 勾 HealthKit（Xcode 自动签名首次真机 Run / Archive 时通常自动加上）。
+- [x] **隐私政策上线（T54 前置①）**：`cd server && npm run deploy`，确认 `https://carelogue.ca/privacy` 出现「Apple 健康（HealthKit）」章节。**必须在提交 1.1 审核前完成**（HealthKit app 审核会查隐私政策）。
+- [x] **隐私标签复核（T54 前置②）**：ASC → App Privacy。CC 结论维持 Data Not Collected（理由见 m8 T54 卡），你过目后不改即可。
+- [x] **知悉提审风险**：Guideline 5.1.3(ii)「不可把个人健康信息存 iCloud」——见 m8 T54 卡「提审风险」，被拒时的两个备选方案已写好。审核备注建议补一句：HealthKit 只读用户为某段旅程勾选的类型、数据不出设备与用户自己的 iCloud、不用于广告。
+- [x] **Widget 签名（T58）**：developer.apple.com → Identifiers：① App Groups 建 `group.ca.carelogue.app` ② App ID `ca.carelogue.app` 勾 App Groups 并选上它 ③ 新 App ID `ca.carelogue.app.widget`（勾 App Groups，同一个 group）。Xcode 自动签名在首次真机 Run / Archive 时通常会自动完成这三步；若 Archive 报 provisioning 错误再手动做。
+- [x] 真机复核：主屏加 Carelogue 小组件（小/中），点就诊进详情、点「记一笔」直接写随手记。
+- [x] 真机复核：就诊提醒 / 用药提醒到点弹出、通知上「已服用」打卡（模拟器已自动验证，真机走一遍即可）。
 
 ## B. 认证过审后（按序）
 
